@@ -20,6 +20,7 @@
     html{scroll-behavior:smooth}
     body{margin:0;background:var(--cream);color:var(--ink);font-family:'Outfit',system-ui,Arial,sans-serif;line-height:1.6}
     body.modal-open{overflow:hidden}
+    [hidden]{display:none!important}
     img{display:block;width:100%;height:100%;object-fit:cover}
     a{color:inherit;text-decoration:none}
     button,input,select,textarea{font:inherit}
@@ -141,6 +142,25 @@
     input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
     textarea{min-height:110px;resize:vertical}
     .form-note{margin-top:14px;font-size:.78rem;color:var(--muted)}
+    /* quote builder wizard */
+    .modal-card.qb{width:min(660px,100%)}
+    .qb-sub{margin-top:12px;color:var(--body);font-size:.98rem}
+    .qb-progress{margin-top:22px;height:7px;border-radius:999px;background:var(--line);overflow:hidden}
+    .qb-bar{height:100%;width:25%;background:var(--sage);border-radius:999px;transition:width .32s ease}
+    .qb-steplabel{margin-top:10px;font-size:.76rem;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+    .qb-steplabel b{color:var(--sage-deep)}
+    .qb-step{margin-top:22px}
+    .qb-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .qb-grid .field-full{grid-column:1/-1}
+    .qb-legend{display:block;font-size:.92rem;font-weight:700;margin-bottom:12px}
+    .qb-checks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .qb-check{display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:.9rem;font-weight:500;transition:150ms ease}
+    .qb-check:hover{border-color:#d8cfba}
+    .qb-check input{width:auto;margin:2px 0 0;accent-color:var(--sage)}
+    .qb-check:has(input:checked){border-color:var(--sage);background:var(--sage-soft)}
+    .qb-nav{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}
+    #qbBack{margin-right:auto}
+    @media(max-width:560px){.qb-grid,.qb-checks{grid-template-columns:1fr}}
 
     @media(max-width:980px){
       .nav-links{position:absolute;top:78px;left:22px;right:22px;display:none;padding:22px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow);flex-direction:column;align-items:stretch;gap:18px}
@@ -328,23 +348,70 @@
     </div>
   </footer>
 
-  <!-- REGISTRATION MODAL -->
+  <!-- QUOTE BUILDER MODAL -->
   <div class="modal" id="registrationModal" role="dialog" aria-modal="true" aria-labelledby="registrationTitle">
-    <div class="modal-card">
+    <div class="modal-card qb">
       <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
       <div class="eyebrow">Begin the Experience</div>
-      <h2 id="registrationTitle">Register Your Interest</h2>
-      <p style="margin-top:12px">Complete the form and the registration team will contact you with dates, locations, pricing, and availability.</p>
-      <form class="form-grid" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-        <div class="field"><label for="firstName">First name</label><input id="firstName" name="first_name" type="text" required /></div>
-        <div class="field"><label for="lastName">Last name</label><input id="lastName" name="last_name" type="text" required /></div>
-        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /></div>
-        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" /></div>
-        <div class="field field-full"><label for="program">Program of interest</label><select id="program" name="program"><option>Weekend Experience</option><option>Intensive Workshop</option><option>Coaching &amp; Follow-Up</option><option>Not sure yet</option></select></div>
-        <div class="field field-full"><label for="message">What would you like to create in your marriage?</label><textarea id="message" name="message"></textarea></div>
-        <div class="field field-full"><button class="button button-primary" type="submit" style="width:100%">Submit Registration Interest</button></div>
+      <h2 id="registrationTitle">Build Your Experience</h2>
+      <p class="qb-sub">Answer a few quick questions and the team will follow up with tailored options, dates, and pricing. No obligation.</p>
+      <div class="qb-progress"><div class="qb-bar" id="qbBar"></div></div>
+      <div class="qb-steplabel"><b id="qbStepNum">Step 1 of 4</b> &middot; <span id="qbStepTitle">About you</span></div>
+
+      <form id="qbForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <!-- STEP 1 · About you -->
+        <div class="qb-step" data-step="1">
+          <div class="qb-grid">
+            <div class="field"><label for="firstName">Your first name</label><input id="firstName" name="first_name" type="text" required /></div>
+            <div class="field"><label for="lastName">Your last name</label><input id="lastName" name="last_name" type="text" required /></div>
+            <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /></div>
+            <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" /></div>
+            <div class="field field-full"><label for="contactPref">Best way to reach you</label><select id="contactPref" name="contact_preference"><option>Email</option><option>Phone call</option><option>Text message</option></select></div>
+          </div>
+        </div>
+        <!-- STEP 2 · Your relationship -->
+        <div class="qb-step" data-step="2" hidden>
+          <div class="qb-grid">
+            <div class="field"><label for="status">Relationship status</label><select id="status" name="relationship_status"><option>Dating</option><option>Engaged</option><option>Married</option><option>Remarried</option><option>Separated</option><option>Other</option></select></div>
+            <div class="field"><label for="together">How long have you been together?</label><select id="together" name="time_together"><option>Less than 1 year</option><option>1–3 years</option><option>3–7 years</option><option>7–15 years</option><option>15+ years</option></select></div>
+            <div class="field"><label for="children">Children</label><select id="children" name="children"><option>No children</option><option>Yes — we have children</option><option>Blended family</option><option>Expecting</option></select></div>
+            <div class="field"><label for="priorWork">Done marriage work before?</label><select id="priorWork" name="prior_work"><option>No — this would be our first</option><option>Yes — a little</option><option>Yes — quite a bit</option></select></div>
+          </div>
+        </div>
+        <!-- STEP 3 · What you'd like to create -->
+        <div class="qb-step" data-step="3" hidden>
+          <span class="qb-legend">What would you like to work on? (choose any that fit)</span>
+          <div class="qb-checks">
+            <label class="qb-check"><input type="checkbox" name="focus" value="Communication" /> Communication</label>
+            <label class="qb-check"><input type="checkbox" name="focus" value="Rebuilding trust &amp; repair" /> Rebuilding trust &amp; repair</label>
+            <label class="qb-check"><input type="checkbox" name="focus" value="Breaking conflict patterns" /> Breaking conflict patterns</label>
+            <label class="qb-check"><input type="checkbox" name="focus" value="Deeper connection &amp; intimacy" /> Connection &amp; intimacy</label>
+            <label class="qb-check"><input type="checkbox" name="focus" value="Blended-family dynamics" /> Blended-family dynamics</label>
+            <label class="qb-check"><input type="checkbox" name="focus" value="Faith &amp; shared values" /> Faith &amp; shared values</label>
+            <label class="qb-check"><input type="checkbox" name="focus" value="Preparing for marriage" /> Preparing for marriage</label>
+            <label class="qb-check"><input type="checkbox" name="focus" value="Reconnecting after distance" /> Reconnecting after distance</label>
+          </div>
+          <div class="qb-grid" style="margin-top:16px">
+            <div class="field"><label for="program">Program of interest</label><select id="program" name="program"><option>Not sure yet — help me choose</option><option>Weekend Experience</option><option>Intensive Workshop</option><option>Coaching &amp; Follow-Up</option></select></div>
+            <div class="field"><label for="format">Format preference</label><select id="format" name="format"><option>Either</option><option>In person</option><option>Online</option></select></div>
+          </div>
+        </div>
+        <!-- STEP 4 · Timing & details -->
+        <div class="qb-step" data-step="4" hidden>
+          <div class="qb-grid">
+            <div class="field"><label for="timeframe">When are you hoping to start?</label><select id="timeframe" name="timeframe"><option>As soon as possible</option><option>In the next 1–3 months</option><option>Just exploring for now</option></select></div>
+            <div class="field"><label for="location">City &amp; state</label><input id="location" name="location" type="text" placeholder="e.g. Austin, TX" /></div>
+            <div class="field field-full"><label for="message">Anything you'd like the team to know?</label><textarea id="message" name="message" placeholder="Share whatever feels helpful — your story, your hopes, any questions."></textarea></div>
+          </div>
+          <p class="form-note">On submit, the team will reach out about dates, locations, pricing, and availability.</p>
+        </div>
+
+        <div class="qb-nav">
+          <button type="button" class="button button-ghost" id="qbBack" hidden>Back</button>
+          <button type="button" class="button button-primary" id="qbNext">Next</button>
+          <button type="submit" class="button button-primary" id="qbSubmit" hidden>Submit Request</button>
+        </div>
       </form>
-      <p class="form-note">Note for setup: replace the Formspree URL with your real form endpoint so submissions email through.</p>
     </div>
   </div>
 
@@ -356,12 +423,44 @@
     const openButtons=document.querySelectorAll('.js-open-register');
     menuButton.addEventListener('click',()=>{const isOpen=navLinks.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(isOpen));});
     navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{navLinks.classList.remove('open');menuButton.setAttribute('aria-expanded','false');}));
-    function openModal(e){if(e)e.preventDefault();modal.classList.add('open');document.body.classList.add('modal-open');modalClose.focus();}
+    function openModal(e){if(e)e.preventDefault();qbGoTo(1);modal.classList.add('open');document.body.classList.add('modal-open');modalClose.focus();}
     function closeModal(){modal.classList.remove('open');document.body.classList.remove('modal-open');}
     openButtons.forEach(button=>button.addEventListener('click',openModal));
     modalClose.addEventListener('click',closeModal);
     modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('open'))closeModal();});
+
+    // Quote builder wizard
+    const qbCard=modal.querySelector('.modal-card');
+    const qbSteps=[...modal.querySelectorAll('.qb-step')];
+    const qbTotal=qbSteps.length;
+    const qbBar=document.getElementById('qbBar');
+    const qbStepNum=document.getElementById('qbStepNum');
+    const qbStepTitle=document.getElementById('qbStepTitle');
+    const qbBack=document.getElementById('qbBack');
+    const qbNext=document.getElementById('qbNext');
+    const qbSubmit=document.getElementById('qbSubmit');
+    const qbTitles=['About you','Your relationship','What you’d like to create','Timing & details'];
+    let qbCur=1;
+    function qbRender(){
+      qbSteps.forEach(s=>{s.hidden=(Number(s.dataset.step)!==qbCur);});
+      qbBar.style.width=(qbCur/qbTotal*100)+'%';
+      qbStepNum.textContent='Step '+qbCur+' of '+qbTotal;
+      qbStepTitle.textContent=qbTitles[qbCur-1];
+      qbBack.hidden=(qbCur===1);
+      qbNext.hidden=(qbCur===qbTotal);
+      qbSubmit.hidden=(qbCur!==qbTotal);
+      if(qbCard)qbCard.scrollTop=0;
+    }
+    function qbGoTo(n){qbCur=Math.min(Math.max(n,1),qbTotal);qbRender();}
+    function qbStepValid(){
+      const req=qbSteps[qbCur-1].querySelectorAll('[required]');
+      for(const f of req){if(!f.reportValidity())return false;}
+      return true;
+    }
+    qbNext.addEventListener('click',()=>{if(qbStepValid()&&qbCur<qbTotal)qbGoTo(qbCur+1);});
+    qbBack.addEventListener('click',()=>{if(qbCur>1)qbGoTo(qbCur-1);});
+    qbGoTo(1);
   </script>
 </body>
 </html>
