@@ -356,54 +356,26 @@
       <h2 id="registrationTitle">Build Your Experience</h2>
       <p class="qb-sub">Answer a few quick questions and the team will follow up with tailored options, dates, and pricing. No obligation.</p>
       <div class="qb-progress"><div class="qb-bar" id="qbBar"></div></div>
-      <div class="qb-steplabel"><b id="qbStepNum">Step 1 of 4</b> &middot; <span id="qbStepTitle">About you</span></div>
+      <div class="qb-steplabel"><b id="qbStepNum">Step 1 of 2</b> &middot; <span id="qbStepTitle">What brings you here</span></div>
 
       <form id="qbForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-        <!-- About you (now the final step) -->
-        <div class="qb-step" data-step="4" hidden>
+        <!-- STEP 1 · What brings you here -->
+        <div class="qb-step" data-step="1">
           <div class="qb-grid">
-            <div class="field"><label for="firstName">Your first name</label><input id="firstName" name="first_name" type="text" required /></div>
-            <div class="field"><label for="lastName">Your last name</label><input id="lastName" name="last_name" type="text" required /></div>
+            <div class="field field-full"><label for="program">Which program are you curious about?</label><select id="program" name="program"><option>Not sure yet — help me choose</option><option>Weekend Experience</option><option>Intensive Workshop</option><option>Coaching &amp; Follow-Up</option></select></div>
+            <div class="field field-full"><label for="message">Anything you'd like us to know? <span style="font-weight:400;color:var(--muted)">(optional)</span></label><textarea id="message" name="message" placeholder="A sentence or two about what brings you here — whatever feels comfortable."></textarea></div>
+          </div>
+        </div>
+        <!-- STEP 2 · About you -->
+        <div class="qb-step" data-step="2" hidden>
+          <div class="qb-grid">
+            <div class="field"><label for="firstName">First name</label><input id="firstName" name="first_name" type="text" required /></div>
+            <div class="field"><label for="lastName">Last name</label><input id="lastName" name="last_name" type="text" required /></div>
             <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /></div>
             <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" /></div>
             <div class="field field-full"><label for="contactPref">Best way to reach you</label><select id="contactPref" name="contact_preference"><option>Email</option><option>Phone call</option><option>Text message</option></select></div>
           </div>
-        </div>
-        <!-- Your relationship -->
-        <div class="qb-step" data-step="1">
-          <div class="qb-grid">
-            <div class="field"><label for="status">Relationship status</label><select id="status" name="relationship_status"><option>Dating</option><option>Engaged</option><option>Married</option><option>Remarried</option><option>Separated</option><option>Other</option></select></div>
-            <div class="field"><label for="together">How long have you been together?</label><select id="together" name="time_together"><option>Less than 1 year</option><option>1–3 years</option><option>3–7 years</option><option>7–15 years</option><option>15+ years</option></select></div>
-            <div class="field"><label for="children">Children</label><select id="children" name="children"><option>No children</option><option>Yes — we have children</option><option>Blended family</option><option>Expecting</option></select></div>
-            <div class="field"><label for="priorWork">Done marriage work before?</label><select id="priorWork" name="prior_work"><option>No — this would be our first</option><option>Yes — a little</option><option>Yes — quite a bit</option></select></div>
-          </div>
-        </div>
-        <!-- What you'd like to create -->
-        <div class="qb-step" data-step="2" hidden>
-          <span class="qb-legend">What would you like to work on? (choose any that fit)</span>
-          <div class="qb-checks">
-            <label class="qb-check"><input type="checkbox" name="focus" value="Communication" /> Communication</label>
-            <label class="qb-check"><input type="checkbox" name="focus" value="Rebuilding trust &amp; repair" /> Rebuilding trust &amp; repair</label>
-            <label class="qb-check"><input type="checkbox" name="focus" value="Breaking conflict patterns" /> Breaking conflict patterns</label>
-            <label class="qb-check"><input type="checkbox" name="focus" value="Deeper connection &amp; intimacy" /> Connection &amp; intimacy</label>
-            <label class="qb-check"><input type="checkbox" name="focus" value="Blended-family dynamics" /> Blended-family dynamics</label>
-            <label class="qb-check"><input type="checkbox" name="focus" value="Faith &amp; shared values" /> Faith &amp; shared values</label>
-            <label class="qb-check"><input type="checkbox" name="focus" value="Preparing for marriage" /> Preparing for marriage</label>
-            <label class="qb-check"><input type="checkbox" name="focus" value="Reconnecting after distance" /> Reconnecting after distance</label>
-          </div>
-          <div class="qb-grid" style="margin-top:16px">
-            <div class="field"><label for="program">Program of interest</label><select id="program" name="program"><option>Not sure yet — help me choose</option><option>Weekend Experience</option><option>Intensive Workshop</option><option>Coaching &amp; Follow-Up</option></select></div>
-            <div class="field"><label for="format">Format preference</label><select id="format" name="format"><option>Either</option><option>In person</option><option>Online</option></select></div>
-          </div>
-        </div>
-        <!-- Timing & details -->
-        <div class="qb-step" data-step="3" hidden>
-          <div class="qb-grid">
-            <div class="field"><label for="timeframe">When are you hoping to start?</label><select id="timeframe" name="timeframe"><option>As soon as possible</option><option>In the next 1–3 months</option><option>Just exploring for now</option></select></div>
-            <div class="field"><label for="location">City &amp; state</label><input id="location" name="location" type="text" placeholder="e.g. Austin, TX" /></div>
-            <div class="field field-full"><label for="message">Anything you'd like the team to know?</label><textarea id="message" name="message" placeholder="Share whatever feels helpful — your story, your hopes, any questions."></textarea></div>
-          </div>
-          <p class="form-note">On submit, the team will reach out about dates, locations, pricing, and availability.</p>
+          <p class="form-note">The team will reach out about dates, locations, pricing, and availability. No obligation.</p>
         </div>
 
         <div class="qb-nav">
@@ -440,7 +412,7 @@
     const qbBack=document.getElementById('qbBack');
     const qbNext=document.getElementById('qbNext');
     const qbSubmit=document.getElementById('qbSubmit');
-    const qbTitles=['Your relationship','What you’d like to create','Timing & details','About you'];
+    const qbTitles=['What brings you here','About you'];
     let qbCur=1;
     function qbRender(){
       qbSteps.forEach(s=>{s.hidden=(Number(s.dataset.step)!==qbCur);});
