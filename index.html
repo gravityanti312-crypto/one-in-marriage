@@ -129,6 +129,7 @@
     .footer{padding:28px 0;background:var(--paper);border-top:1px solid var(--line)}
     .footer-row{display:flex;justify-content:space-between;gap:16px;color:#83867d;font-size:.85rem;flex-wrap:wrap}
     .footer-row .brand{font-size:1.05rem}
+    .mobile-cta{display:none}
 
     /* modal */
     .modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(28,32,26,.6);backdrop-filter:blur(6px)}
@@ -181,6 +182,9 @@
       .field-full{grid-column:auto}
       .oneline-row{flex-direction:column;align-items:flex-start;gap:22px}
       .footer-row{flex-direction:column}
+      body{padding-bottom:82px}
+      .mobile-cta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;gap:10px;padding:11px 14px calc(11px + env(safe-area-inset-bottom));background:rgba(250,246,238,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(60,54,38,.1)}
+      .mobile-cta .button{flex:1;min-height:50px;padding:0 8px;font-size:.85rem;white-space:nowrap}
     }
   </style>
 </head>
@@ -348,6 +352,12 @@
       <div>ONEinMarriage.com &nbsp;&middot;&nbsp; A Pattern-Aware Marriage Experience</div>
     </div>
   </footer>
+
+  <!-- MOBILE STICKY CTA (phone only) -->
+  <div class="mobile-cta">
+    <button class="button button-primary js-open-register" type="button">Begin the Experience</button>
+    <a class="button button-ghost" href="#experience">See How It Works</a>
+  </div>
 
   <!-- QUOTE BUILDER MODAL -->
   <div class="modal" id="registrationModal" role="dialog" aria-modal="true" aria-labelledby="registrationTitle">
