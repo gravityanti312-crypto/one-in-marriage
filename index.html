@@ -190,7 +190,33 @@
     .qb-check:has(input:checked){border-color:var(--sage);background:var(--sage-soft)}
     .qb-nav{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}
     #qbBack{margin-right:auto}
-    @media(max-width:560px){.qb-grid,.qb-checks{grid-template-columns:1fr}}
+    /* quote builder · safety check */
+    .qb-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-right:52px;margin-bottom:16px}
+    .qb-top .eyebrow{margin:0}
+    .qb-exit{min-height:36px;padding:0 15px;border:0;border-radius:999px;background:var(--ink);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer}
+    .qb-exit:hover{background:#000}
+    .qb-intro{margin-bottom:6px;font-size:.95rem}
+    .sq{padding:18px 0;border-top:1px solid var(--line)}
+    .sq:first-of-type{border-top:0}
+    .sq-text{margin-bottom:12px;font-size:.98rem;font-weight:500;color:var(--ink)}
+    .sq-pills{display:flex;flex-wrap:wrap;gap:9px}
+    .sq-pill{min-height:42px;padding:0 18px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:.9rem;font-weight:500;cursor:pointer;transition:150ms ease}
+    .sq-pill:hover{border-color:#d8cfba}
+    .sq-pill[aria-pressed="true"]{border-color:var(--sage);background:var(--sage);color:#fff}
+    .qb-error{margin-top:12px;font-size:.88rem;font-weight:600;color:#9c4a34}
+    .qb-safety{margin-top:22px}
+    .qb-safety > p{font-size:.95rem}
+    .sf-emergency{margin:20px 0;padding:14px 16px;border-radius:14px;background:#f3e4dd;color:#5c2a1b;font-size:.95rem}
+    .sf-emergency a{font-weight:700;text-decoration:underline}
+    .sf-title{font-size:1.1rem;margin-bottom:6px}
+    .sf-res{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+    .sf-title + .sf-res{border-top:0}
+    .sf-res strong{font-weight:600;font-size:.95rem}
+    .sf-res div{text-align:right;font-size:.9rem;color:var(--body);line-height:1.55}
+    .sf-res a{color:var(--sage-deep);font-weight:600}
+    .sf-res a:hover{text-decoration:underline}
+    .sf-device{margin-top:16px;padding:14px 16px;border-radius:14px;background:var(--sage-soft);color:#33473b;font-size:.86rem}
+    @media(max-width:560px){.qb-grid,.qb-checks{grid-template-columns:1fr}.sf-res{flex-direction:column;gap:4px}.sf-res div{text-align:left}}
 
     .nav-links a{white-space:nowrap}
     @media(max-width:1120px){
@@ -470,11 +496,14 @@
   <div class="modal" id="registrationModal" role="dialog" aria-modal="true" aria-labelledby="registrationTitle">
     <div class="modal-card qb">
       <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
-      <div class="eyebrow">Begin the Experience</div>
+      <div class="qb-top">
+        <div class="eyebrow">Begin the Experience</div>
+        <button class="qb-exit" id="qbExit" type="button" aria-label="Leave this site immediately" hidden>Quick exit</button>
+      </div>
       <h2 id="registrationTitle">Build Your Experience</h2>
-      <p class="qb-sub">Answer a few quick questions and the team will follow up with tailored options, dates, and pricing. No obligation.</p>
-      <div class="qb-progress"><div class="qb-bar" id="qbBar"></div></div>
-      <div class="qb-steplabel"><b id="qbStepNum">Step 1 of 2</b> &middot; <span id="qbStepTitle">What brings you here</span></div>
+      <p class="qb-sub" id="qbSub">Answer a few quick questions and the team will follow up with tailored options, dates, and pricing. No obligation.</p>
+      <div class="qb-progress" id="qbProgress"><div class="qb-bar" id="qbBar"></div></div>
+      <div class="qb-steplabel" id="qbStepLabel"><b id="qbStepNum">Step 1 of 3</b> &middot; <span id="qbStepTitle">What brings you here</span></div>
 
       <form id="qbForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
         <!-- STEP 1 · What brings you here -->
@@ -484,22 +513,66 @@
             <div class="field field-full"><label for="message">Anything you'd like us to know?</label><textarea id="message" name="message" required placeholder="A sentence or two about what brings you here."></textarea></div>
           </div>
         </div>
-        <!-- STEP 2 · About you -->
+        <!-- STEP 2 · Safety check (answers are never submitted) -->
         <div class="qb-step" data-step="2" hidden>
+          <p class="qb-intro">Every couple answers these before registering. There are no wrong answers, and nothing here is shared with your partner. This is simply how we make sure the program is a safe fit.</p>
+          <div class="sq">
+            <p class="sq-text" id="sq1Label">Has your partner ever hit, pushed, choked, or otherwise physically hurt you?</p>
+            <div class="sq-pills" role="group" aria-labelledby="sq1Label" data-question="sq1">
+              <button type="button" class="sq-pill" data-value="yes" aria-pressed="false">Yes</button>
+              <button type="button" class="sq-pill" data-value="no" aria-pressed="false">No</button>
+              <button type="button" class="sq-pill" data-value="private" aria-pressed="false">Prefer not to say</button>
+            </div>
+          </div>
+          <div class="sq">
+            <p class="sq-text" id="sq2Label">Are you currently afraid of being physically hurt by your partner?</p>
+            <div class="sq-pills" role="group" aria-labelledby="sq2Label" data-question="sq2">
+              <button type="button" class="sq-pill" data-value="yes" aria-pressed="false">Yes</button>
+              <button type="button" class="sq-pill" data-value="no" aria-pressed="false">No</button>
+              <button type="button" class="sq-pill" data-value="private" aria-pressed="false">Prefer not to say</button>
+            </div>
+          </div>
+          <div class="sq">
+            <p class="sq-text" id="sq3Label">Has your partner threatened to hurt you, your children, or someone you love?</p>
+            <div class="sq-pills" role="group" aria-labelledby="sq3Label" data-question="sq3">
+              <button type="button" class="sq-pill" data-value="yes" aria-pressed="false">Yes</button>
+              <button type="button" class="sq-pill" data-value="no" aria-pressed="false">No</button>
+              <button type="button" class="sq-pill" data-value="private" aria-pressed="false">Prefer not to say</button>
+            </div>
+          </div>
+          <p class="form-note">Your answers are only used to guide you to the right next step. They are not stored, shared with your partner, or reviewed by our team.</p>
+          <p class="qb-error" id="sqError" role="alert" hidden>Please answer all three questions to continue.</p>
+        </div>
+        <!-- STEP 3 · About you -->
+        <div class="qb-step" data-step="3" hidden>
           <div class="qb-grid">
             <div class="field"><label for="firstName">First name</label><input id="firstName" name="first_name" type="text" required /></div>
             <div class="field"><label for="lastName">Last name</label><input id="lastName" name="last_name" type="text" required /></div>
             <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /></div>
             <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" required /></div>
+            <div class="field field-full"><label for="partnerName">Partner&rsquo;s name</label><input id="partnerName" name="partner_name" type="text" required /></div>
             <div class="field field-full"><label for="contactPref">Best way to reach you</label><select id="contactPref" name="contact_preference"><option>Email</option><option>Phone call</option><option>Text message</option></select></div>
           </div>
           <p class="form-note">The team will reach out about dates, locations, pricing, and availability. No obligation.</p>
+        </div>
+
+        <!-- SAFETY RESOURCES (shown instead of step 3 if any answer is "Yes") -->
+        <div class="qb-safety" id="qbSafety" hidden>
+          <p>Thank you for answering honestly. ONE in Marriage is built for couples working through disconnection and old patterns &mdash; it is not designed or staffed to help when physical violence, threats, or fear are part of the relationship. Registration isn&rsquo;t available through this form right now, but real support is.</p>
+          <div class="sf-emergency">If you are in immediate danger, call <a href="tel:911">911</a> if it is safe to do so.</div>
+          <h3 class="sf-title">Confidential support, available now</h3>
+          <div class="sf-res"><strong>National Domestic Violence Hotline</strong><div>Call <a href="tel:18007997233">1-800-799-7233</a><br>Text START to <a href="sms:88788?&body=START">88788</a><br>Chat at <a href="https://www.thehotline.org" target="_blank" rel="noopener">thehotline.org</a></div></div>
+          <div class="sf-res"><strong>StrongHearts Native Helpline</strong><div>Call or text <a href="tel:18447628483">1-844-762-8483</a></div></div>
+          <div class="sf-res"><strong>Domestic Abuse Helpline for Men and Women</strong><div>Call <a href="tel:18887435754">1-888-743-5754</a></div></div>
+          <p class="form-note">These services are free, confidential, and available 24 hours a day. You don&rsquo;t need to be in crisis to reach out &mdash; advocates can help you think through options at your own pace.</p>
+          <div class="sf-device">If you&rsquo;re worried your device or internet use is being monitored, consider using a phone or computer your partner can&rsquo;t access, and clear your browser history after this visit.</div>
         </div>
 
         <div class="qb-nav">
           <button type="button" class="button button-ghost" id="qbBack" hidden>Back</button>
           <button type="button" class="button button-primary" id="qbNext">Next</button>
           <button type="submit" class="button button-primary" id="qbSubmit" hidden>Submit Request</button>
+          <button type="button" class="button button-ghost" id="qbDone" hidden>Close</button>
         </div>
       </form>
     </div>
@@ -513,12 +586,22 @@
     const openButtons=document.querySelectorAll('.js-open-register');
     menuButton.addEventListener('click',()=>{const isOpen=navLinks.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(isOpen));});
     navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{navLinks.classList.remove('open');menuButton.setAttribute('aria-expanded','false');}));
-    function openModal(e){if(e)e.preventDefault();qbGoTo(1);modal.classList.add('open');document.body.classList.add('modal-open');modalClose.focus();}
+    function openModal(e){if(e)e.preventDefault();qbReset();modal.classList.add('open');document.body.classList.add('modal-open');modalClose.focus();}
     function closeModal(){modal.classList.remove('open');document.body.classList.remove('modal-open');}
     openButtons.forEach(button=>button.addEventListener('click',openModal));
     modalClose.addEventListener('click',closeModal);
     modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});
-    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('open'))closeModal();});
+
+    // Quick exit: replaces this page with a neutral site (also: press Escape twice)
+    function quickExit(){window.location.replace('https://www.weather.com');}
+    let escCount=0,escTimer=null;
+    document.addEventListener('keydown',event=>{
+      if(event.key!=='Escape'||!modal.classList.contains('open'))return;
+      if(qbExit.hidden){closeModal();return;}
+      escCount++;clearTimeout(escTimer);
+      if(escCount>=2){quickExit();return;}
+      escTimer=setTimeout(()=>{escCount=0;closeModal();},450);
+    });
 
     // Quote builder wizard
     const qbCard=modal.querySelector('.modal-card');
@@ -530,28 +613,69 @@
     const qbBack=document.getElementById('qbBack');
     const qbNext=document.getElementById('qbNext');
     const qbSubmit=document.getElementById('qbSubmit');
-    const qbTitles=['What brings you here','About you'];
-    let qbCur=1;
+    const qbDone=document.getElementById('qbDone');
+    const qbExit=document.getElementById('qbExit');
+    const qbForm=document.getElementById('qbForm');
+    const qbSafety=document.getElementById('qbSafety');
+    const qbTitle=document.getElementById('registrationTitle');
+    const qbSub=document.getElementById('qbSub');
+    const qbProgress=document.getElementById('qbProgress');
+    const qbStepLabel=document.getElementById('qbStepLabel');
+    const sqError=document.getElementById('sqError');
+    const qbTitles=['What brings you here','Safety check','About you'];
+    let qbCur=1,qbStopped=false,sqAnswers={};
     function qbRender(){
-      qbSteps.forEach(s=>{s.hidden=(Number(s.dataset.step)!==qbCur);});
+      qbSteps.forEach(s=>{s.hidden=qbStopped||(Number(s.dataset.step)!==qbCur);});
+      qbSafety.hidden=!qbStopped;
+      qbTitle.textContent=qbStopped?'Your safety comes first':'Build Your Experience';
+      qbProgress.hidden=qbStepLabel.hidden=qbStopped;
+      qbSub.hidden=qbStopped||qbCur!==1;
       qbBar.style.width=(qbCur/qbTotal*100)+'%';
       qbStepNum.textContent='Step '+qbCur+' of '+qbTotal;
       qbStepTitle.textContent=qbTitles[qbCur-1];
-      qbBack.hidden=(qbCur===1);
-      qbNext.hidden=(qbCur===qbTotal);
-      qbSubmit.hidden=(qbCur!==qbTotal);
+      qbExit.hidden=!(qbStopped||qbCur>=2);
+      qbBack.hidden=qbStopped||qbCur===1;
+      qbNext.hidden=qbStopped||qbCur===qbTotal;
+      qbSubmit.hidden=qbStopped||qbCur!==qbTotal;
+      qbDone.hidden=!qbStopped;
       if(qbCard)qbCard.scrollTop=0;
     }
     function qbGoTo(n){qbCur=Math.min(Math.max(n,1),qbTotal);qbRender();}
+    function qbReset(){
+      qbStopped=false;sqAnswers={};sqError.hidden=true;
+      modal.querySelectorAll('.sq-pill').forEach(b=>b.setAttribute('aria-pressed','false'));
+      qbGoTo(1);
+    }
     function qbStepValid(){
+      if(qbCur===2){
+        const ok=['sq1','sq2','sq3'].every(k=>sqAnswers[k]);
+        sqError.hidden=ok;
+        return ok;
+      }
       const el=qbSteps.find(s=>Number(s.dataset.step)===qbCur);
       const req=el?el.querySelectorAll('[required]'):[];
       for(const f of req){if(!f.reportValidity())return false;}
       return true;
     }
-    qbNext.addEventListener('click',()=>{if(qbStepValid()&&qbCur<qbTotal)qbGoTo(qbCur+1);});
+    modal.querySelectorAll('.sq-pills').forEach(group=>{
+      group.querySelectorAll('.sq-pill').forEach(btn=>btn.addEventListener('click',()=>{
+        group.querySelectorAll('.sq-pill').forEach(b=>b.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+        sqAnswers[group.dataset.question]=btn.dataset.value;
+        if(['sq1','sq2','sq3'].every(k=>sqAnswers[k]))sqError.hidden=true;
+      }));
+    });
+    qbNext.addEventListener('click',()=>{
+      if(!qbStepValid())return;
+      // Any "Yes" on the safety check stops registration and shows support resources
+      if(qbCur===2&&Object.values(sqAnswers).includes('yes')){qbStopped=true;qbRender();return;}
+      if(qbCur<qbTotal)qbGoTo(qbCur+1);
+    });
     qbBack.addEventListener('click',()=>{if(qbCur>1)qbGoTo(qbCur-1);});
-    qbGoTo(1);
+    qbDone.addEventListener('click',closeModal);
+    qbExit.addEventListener('click',quickExit);
+    qbForm.addEventListener('submit',e=>{if(qbStopped)e.preventDefault();});
+    qbReset();
   </script>
 </body>
 </html>
