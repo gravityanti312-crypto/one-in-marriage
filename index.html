@@ -189,12 +189,13 @@
     .qb-check input{width:auto;margin:2px 0 0;accent-color:var(--sage)}
     .qb-check:has(input:checked){border-color:var(--sage);background:var(--sage-soft)}
     .qb-nav{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}
-    #qbBack{margin-right:auto}
     /* quote builder · safety check */
-    .qb-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-right:52px;margin-bottom:16px}
+    .qb-top{display:flex;align-items:center;min-height:40px;padding-right:52px;margin:-6px 0 10px}
     .qb-top .eyebrow{margin:0}
-    .qb-exit{min-height:36px;padding:0 15px;border:0;border-radius:999px;background:var(--ink);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer}
-    .qb-exit:hover{background:#000}
+    .qb-back{display:inline-flex;align-items:center;gap:8px;min-height:40px;margin-left:-10px;padding:0 16px 0 10px;border:0;border-radius:999px;background:transparent;color:var(--sage-deep);font-size:.92rem;font-weight:600;cursor:pointer;transition:150ms ease}
+    .qb-back svg{width:18px;height:18px;transition:transform 150ms ease}
+    .qb-back:hover{background:var(--sage-soft)}
+    .qb-back:hover svg{transform:translateX(-3px)}
     .qb-intro{margin-bottom:6px;font-size:.95rem}
     .sq{padding:18px 0;border-top:1px solid var(--line)}
     .sq:first-of-type{border-top:0}
@@ -497,8 +498,8 @@
     <div class="modal-card qb">
       <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
       <div class="qb-top">
-        <div class="eyebrow">Begin the Experience</div>
-        <button class="qb-exit" id="qbExit" type="button" aria-label="Leave this site immediately" hidden>Quick exit</button>
+        <div class="eyebrow" id="qbEyebrow">Begin the Experience</div>
+        <button class="qb-back" id="qbBack" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
       </div>
       <h2 id="registrationTitle">Build Your Experience</h2>
       <p class="qb-sub" id="qbSub">Answer a few quick questions and the team will follow up with tailored options, dates, and pricing. No obligation.</p>
@@ -566,7 +567,6 @@
         </div>
 
         <div class="qb-nav">
-          <button type="button" class="button button-ghost" id="qbBack" hidden>Back</button>
           <button type="button" class="button button-primary" id="qbNext">Next</button>
           <button type="submit" class="button button-primary" id="qbSubmit" hidden>Submit Request</button>
           <button type="button" class="button button-ghost" id="qbDone" hidden>Close</button>
@@ -589,16 +589,7 @@
     modalClose.addEventListener('click',closeModal);
     modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});
 
-    // Quick exit: replaces this page with a neutral site (also: press Escape twice)
-    function quickExit(){window.location.replace('https://www.weather.com');}
-    let escCount=0,escTimer=null;
-    document.addEventListener('keydown',event=>{
-      if(event.key!=='Escape'||!modal.classList.contains('open'))return;
-      if(qbExit.hidden){closeModal();return;}
-      escCount++;clearTimeout(escTimer);
-      if(escCount>=2){quickExit();return;}
-      escTimer=setTimeout(()=>{escCount=0;closeModal();},450);
-    });
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('open'))closeModal();});
 
     // Quote builder wizard
     const qbCard=modal.querySelector('.modal-card');
@@ -611,7 +602,7 @@
     const qbNext=document.getElementById('qbNext');
     const qbSubmit=document.getElementById('qbSubmit');
     const qbDone=document.getElementById('qbDone');
-    const qbExit=document.getElementById('qbExit');
+    const qbEyebrow=document.getElementById('qbEyebrow');
     const qbForm=document.getElementById('qbForm');
     const qbSafety=document.getElementById('qbSafety');
     const qbTitle=document.getElementById('registrationTitle');
@@ -630,8 +621,8 @@
       qbBar.style.width=(qbCur/qbTotal*100)+'%';
       qbStepNum.textContent='Step '+qbCur+' of '+qbTotal;
       qbStepTitle.textContent=qbTitles[qbCur-1];
-      qbExit.hidden=!(qbStopped||qbCur>=2);
-      qbBack.hidden=qbStopped||qbCur===1;
+      qbBack.hidden=!qbStopped&&qbCur===1;
+      qbEyebrow.hidden=!qbBack.hidden;
       qbNext.hidden=qbStopped||qbCur===qbTotal;
       qbSubmit.hidden=qbStopped||qbCur!==qbTotal;
       qbDone.hidden=!qbStopped;
@@ -668,9 +659,8 @@
       if(qbCur===2&&Object.values(sqAnswers).includes('yes')){qbStopped=true;qbRender();return;}
       if(qbCur<qbTotal)qbGoTo(qbCur+1);
     });
-    qbBack.addEventListener('click',()=>{if(qbCur>1)qbGoTo(qbCur-1);});
+    qbBack.addEventListener('click',()=>{if(qbStopped){qbStopped=false;qbRender();}else if(qbCur>1)qbGoTo(qbCur-1);});
     qbDone.addEventListener('click',closeModal);
-    qbExit.addEventListener('click',quickExit);
     qbForm.addEventListener('submit',e=>{if(qbStopped)e.preventDefault();});
     qbReset();
   </script>
