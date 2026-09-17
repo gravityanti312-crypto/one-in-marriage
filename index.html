@@ -216,6 +216,9 @@
     .sf-res div{text-align:right;font-size:.9rem;color:var(--body);line-height:1.55}
     .sf-res a{color:var(--sage-deep);font-weight:600}
     .sf-res a:hover{text-decoration:underline}
+    .fit-reason{margin-top:16px;padding:16px 18px;border-left:3px solid var(--gold);border-radius:0 14px 14px 0;background:#f6efe0}
+    .fit-reason strong{display:block;margin-bottom:5px;font-family:'Lora',Georgia,serif;font-size:1.04rem;font-weight:600;color:var(--ink)}
+    .fit-reason p{font-size:.93rem;color:#5a5347}
     .sf-device{margin-top:16px;padding:14px 16px;border-radius:14px;background:var(--sage-soft);color:#33473b;font-size:.86rem}
     @media(max-width:560px){.qb-grid,.qb-checks{grid-template-columns:1fr}.sf-res{flex-direction:column;gap:4px}.sf-res div{text-align:left}}
 
@@ -562,8 +565,16 @@
 
         <!-- Shown when the couple isn't a fit for the format (not a safety concern) -->
         <div class="qb-safety" id="qbFit" hidden>
-          <p>Thanks for letting us know. The Weekend Marriage Experience is built for two committed partners attending together &mdash; the work happens between the two of you, in the room, over the whole weekend. If one of you can&rsquo;t attend, or you&rsquo;re not in a committed relationship right now, this format won&rsquo;t serve you the way it should.</p>
-          <p class="form-note">That doesn&rsquo;t mean there&rsquo;s nothing here for you. Reach out and we&rsquo;ll talk through where you are and what might fit &mdash; including other formats and future dates.</p>
+          <p>Thank you for answering honestly. Based on what you shared, the Weekend Marriage Experience isn&rsquo;t the right fit for your situation right now &mdash; and we&rsquo;d rather tell you that kindly up front than take your registration and have the weekend fall short for you.</p>
+          <div class="fit-reason" id="fitCommitted" hidden>
+            <strong>This experience is built for couples in a committed relationship.</strong>
+            <p>The weekend asks both of you to be honest about painful patterns and to practice repair in the room. That kind of honesty only feels safe when both people know they&rsquo;re staying. Without that foundation underneath it, the work tends to open things up without giving you anywhere safe to put them.</p>
+          </div>
+          <div class="fit-reason" id="fitBoth" hidden>
+            <strong>Both partners need to attend, start to finish.</strong>
+            <p>Everything in the weekend happens between the two of you &mdash; discovering your lenses, mapping your patterns, practicing repair, and writing your marriage agreement together. When one partner attends alone, they leave with language and insight their spouse doesn&rsquo;t share, and that usually widens the distance instead of closing it.</p>
+          </div>
+          <p class="form-note">None of this means the door is closed. If your season changes, or you both can make a future weekend, we&rsquo;d genuinely love to have you. Reach out any time and we&rsquo;ll tell you about upcoming dates.</p>
           <div style="margin-top:22px"><a class="button button-primary" href="mailto:hello@oneinmarriage.com?subject=Question%20about%20the%20program">Request a Conversation</a></div>
         </div>
 
@@ -607,6 +618,8 @@
     const qbForm=document.getElementById('qbForm');
     const qbSafety=document.getElementById('qbSafety');
     const qbFit=document.getElementById('qbFit');
+    const fitCommitted=document.getElementById('fitCommitted');
+    const fitBoth=document.getElementById('fitBoth');
     const qbTitle=document.getElementById('registrationTitle');
     const qbSub=document.getElementById('qbSub');
     const qbProgress=document.getElementById('qbProgress');
@@ -618,7 +631,9 @@
       qbSteps.forEach(s=>{s.hidden=!!qbStop||(Number(s.dataset.step)!==qbCur);});
       qbSafety.hidden=qbStop!=='safety';
       qbFit.hidden=qbStop!=='fit';
-      qbTitle.textContent=qbStop==='safety'?'Your safety comes first':qbStop==='fit'?'Let\u2019s talk first':'Build Your Experience';
+      fitCommitted.hidden=!(qbStop==='fit'&&sqAnswers.sq1==='no');
+      fitBoth.hidden=!(qbStop==='fit'&&sqAnswers.sq2==='no');
+      qbTitle.textContent=qbStop==='safety'?'Your safety comes first':qbStop==='fit'?'Not the right fit right now':'Build Your Experience';
       qbProgress.hidden=qbStepLabel.hidden=!!qbStop;
       qbSub.hidden=!!qbStop||qbCur!==1;
       qbBar.style.width=(qbCur/qbTotal*100)+'%';
