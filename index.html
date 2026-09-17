@@ -181,6 +181,8 @@
     .qb-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .qb-grid .field-full{grid-column:1/-1}
     .qb-legend{display:block;font-size:.92rem;font-weight:700;margin-bottom:12px}
+    .qb-grid .qb-legend{margin-bottom:-4px}
+    .qb-grid-second{margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}
     .qb-checks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .qb-check{display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:.9rem;font-weight:500;transition:150ms ease}
     .qb-check:hover{border-color:#d8cfba}
@@ -529,11 +531,18 @@
         <!-- STEP 3 · About you -->
         <div class="qb-step" data-step="3" hidden>
           <div class="qb-grid">
+            <span class="qb-legend field-full">About you</span>
             <div class="field"><label for="firstName">First name</label><input id="firstName" name="first_name" type="text" required /></div>
             <div class="field"><label for="lastName">Last name</label><input id="lastName" name="last_name" type="text" required /></div>
             <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /></div>
             <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" required /></div>
-            <div class="field field-full"><label for="partnerName">Partner&rsquo;s name</label><input id="partnerName" name="partner_name" type="text" required /></div>
+          </div>
+          <div class="qb-grid qb-grid-second">
+            <span class="qb-legend field-full">About your partner</span>
+            <div class="field"><label for="partnerFirstName">First name</label><input id="partnerFirstName" name="partner_first_name" type="text" required /></div>
+            <div class="field"><label for="partnerLastName">Last name</label><input id="partnerLastName" name="partner_last_name" type="text" required /></div>
+            <div class="field"><label for="partnerEmail">Email</label><input id="partnerEmail" name="partner_email" type="email" required /></div>
+            <div class="field"><label for="partnerPhone">Phone</label><input id="partnerPhone" name="partner_phone" type="tel" required /></div>
             <div class="field field-full"><label for="contactPref">Best way to reach you</label><select id="contactPref" name="contact_preference"><option>Email</option><option>Phone call</option><option>Text message</option></select></div>
           </div>
           <p class="form-note">The team will reach out about dates, locations, pricing, and availability. No obligation.</p>
