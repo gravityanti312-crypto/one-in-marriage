@@ -503,23 +503,23 @@
         </div>
         <!-- STEP 2 · Safety check (answers are never submitted) -->
         <div class="qb-step" data-step="2" hidden>
-          <p class="qb-intro">Every couple answers these before registering. There are no wrong answers, and nothing here is shared with your partner. This is simply how we make sure the program is a safe fit.</p>
+          <p class="qb-intro">Every couple answers these before registering. There are no wrong answers &mdash; this is simply how we make sure the program is a good and safe fit.</p>
           <div class="sq">
-            <p class="sq-text" id="sq1Label">Has your partner ever hit, pushed, choked, or otherwise physically hurt you?</p>
+            <p class="sq-text" id="sq1Label">Are you in a committed relationship?</p>
             <div class="sq-pills" role="group" aria-labelledby="sq1Label" data-question="sq1">
               <button type="button" class="sq-pill" data-value="yes" aria-pressed="false">Yes</button>
               <button type="button" class="sq-pill" data-value="no" aria-pressed="false">No</button>
             </div>
           </div>
           <div class="sq">
-            <p class="sq-text" id="sq2Label">Are you currently afraid of being physically hurt by your partner?</p>
+            <p class="sq-text" id="sq2Label">Are both parties intending to attend the training?</p>
             <div class="sq-pills" role="group" aria-labelledby="sq2Label" data-question="sq2">
               <button type="button" class="sq-pill" data-value="yes" aria-pressed="false">Yes</button>
               <button type="button" class="sq-pill" data-value="no" aria-pressed="false">No</button>
             </div>
           </div>
           <div class="sq">
-            <p class="sq-text" id="sq3Label">Has your partner threatened to hurt you, your children, or someone you love?</p>
+            <p class="sq-text" id="sq3Label">Are there any serious occurrences of physical abuse or coercion in your relationship?</p>
             <div class="sq-pills" role="group" aria-labelledby="sq3Label" data-question="sq3">
               <button type="button" class="sq-pill" data-value="yes" aria-pressed="false">Yes</button>
               <button type="button" class="sq-pill" data-value="no" aria-pressed="false">No</button>
@@ -558,6 +558,13 @@
           <div class="sf-res"><strong>Domestic Abuse Helpline for Men and Women</strong><div>Call <a href="tel:18887435754">1-888-743-5754</a></div></div>
           <p class="form-note">These services are free, confidential, and available 24 hours a day. You don&rsquo;t need to be in crisis to reach out &mdash; advocates can help you think through options at your own pace.</p>
           <div class="sf-device">If you&rsquo;re worried your device or internet use is being monitored, consider using a phone or computer your partner can&rsquo;t access, and clear your browser history after this visit.</div>
+        </div>
+
+        <!-- Shown when the couple isn't a fit for the format (not a safety concern) -->
+        <div class="qb-safety" id="qbFit" hidden>
+          <p>Thanks for letting us know. The Weekend Marriage Experience is built for two committed partners attending together &mdash; the work happens between the two of you, in the room, over the whole weekend. If one of you can&rsquo;t attend, or you&rsquo;re not in a committed relationship right now, this format won&rsquo;t serve you the way it should.</p>
+          <p class="form-note">That doesn&rsquo;t mean there&rsquo;s nothing here for you. Reach out and we&rsquo;ll talk through where you are and what might fit &mdash; including other formats and future dates.</p>
+          <div style="margin-top:22px"><a class="button button-primary" href="mailto:hello@oneinmarriage.com?subject=Question%20about%20the%20program">Request a Conversation</a></div>
         </div>
 
         <div class="qb-nav">
@@ -599,32 +606,34 @@
     const qbEyebrow=document.getElementById('qbEyebrow');
     const qbForm=document.getElementById('qbForm');
     const qbSafety=document.getElementById('qbSafety');
+    const qbFit=document.getElementById('qbFit');
     const qbTitle=document.getElementById('registrationTitle');
     const qbSub=document.getElementById('qbSub');
     const qbProgress=document.getElementById('qbProgress');
     const qbStepLabel=document.getElementById('qbStepLabel');
     const sqError=document.getElementById('sqError');
     const qbTitles=['What brings you here','Safety check','About you'];
-    let qbCur=1,qbStopped=false,sqAnswers={};
+    let qbCur=1,qbStop=null,sqAnswers={};
     function qbRender(){
-      qbSteps.forEach(s=>{s.hidden=qbStopped||(Number(s.dataset.step)!==qbCur);});
-      qbSafety.hidden=!qbStopped;
-      qbTitle.textContent=qbStopped?'Your safety comes first':'Build Your Experience';
-      qbProgress.hidden=qbStepLabel.hidden=qbStopped;
-      qbSub.hidden=qbStopped||qbCur!==1;
+      qbSteps.forEach(s=>{s.hidden=!!qbStop||(Number(s.dataset.step)!==qbCur);});
+      qbSafety.hidden=qbStop!=='safety';
+      qbFit.hidden=qbStop!=='fit';
+      qbTitle.textContent=qbStop==='safety'?'Your safety comes first':qbStop==='fit'?'Let\u2019s talk first':'Build Your Experience';
+      qbProgress.hidden=qbStepLabel.hidden=!!qbStop;
+      qbSub.hidden=!!qbStop||qbCur!==1;
       qbBar.style.width=(qbCur/qbTotal*100)+'%';
       qbStepNum.textContent='Step '+qbCur+' of '+qbTotal;
       qbStepTitle.textContent=qbTitles[qbCur-1];
-      qbBack.hidden=!qbStopped&&qbCur===1;
+      qbBack.hidden=!qbStop&&qbCur===1;
       qbEyebrow.hidden=!qbBack.hidden;
-      qbNext.hidden=qbStopped||qbCur===qbTotal;
-      qbSubmit.hidden=qbStopped||qbCur!==qbTotal;
-      qbDone.hidden=!qbStopped;
+      qbNext.hidden=!!qbStop||qbCur===qbTotal;
+      qbSubmit.hidden=!!qbStop||qbCur!==qbTotal;
+      qbDone.hidden=!qbStop;
       if(qbCard)qbCard.scrollTop=0;
     }
     function qbGoTo(n){qbCur=Math.min(Math.max(n,1),qbTotal);qbRender();}
     function qbReset(){
-      qbStopped=false;sqAnswers={};sqError.hidden=true;
+      qbStop=null;sqAnswers={};sqError.hidden=true;
       modal.querySelectorAll('.sq-pill').forEach(b=>b.setAttribute('aria-pressed','false'));
       qbGoTo(1);
     }
@@ -649,13 +658,16 @@
     });
     qbNext.addEventListener('click',()=>{
       if(!qbStepValid())return;
-      // Any "Yes" on the safety check stops registration and shows support resources
-      if(qbCur===2&&Object.values(sqAnswers).includes('yes')){qbStopped=true;qbRender();return;}
+      // Abuse or coercion routes to support resources; the other two route to a conversation
+      if(qbCur===2){
+        if(sqAnswers.sq3==='yes'){qbStop='safety';qbRender();return;}
+        if(sqAnswers.sq1==='no'||sqAnswers.sq2==='no'){qbStop='fit';qbRender();return;}
+      }
       if(qbCur<qbTotal)qbGoTo(qbCur+1);
     });
-    qbBack.addEventListener('click',()=>{if(qbStopped){qbStopped=false;qbRender();}else if(qbCur>1)qbGoTo(qbCur-1);});
+    qbBack.addEventListener('click',()=>{if(qbStop){qbStop=null;qbRender();}else if(qbCur>1)qbGoTo(qbCur-1);});
     qbDone.addEventListener('click',closeModal);
-    qbForm.addEventListener('submit',e=>{if(qbStopped)e.preventDefault();});
+    qbForm.addEventListener('submit',e=>{if(qbStop)e.preventDefault();});
     qbReset();
   </script>
 </body>
