@@ -551,19 +551,7 @@
           <p class="form-note">The team will reach out about dates, locations, pricing, and availability. No obligation.</p>
         </div>
 
-        <!-- SAFETY RESOURCES (shown instead of step 3 if any answer is "Yes") -->
-        <div class="qb-safety" id="qbSafety" hidden>
-          <p>Thank you for answering honestly. ONE in Marriage is built for couples working through disconnection and old patterns &mdash; it is not designed or staffed to help when physical violence, threats, or fear are part of the relationship. Registration isn&rsquo;t available through this form right now, but real support is.</p>
-          <div class="sf-emergency">If you are in immediate danger, call <a href="tel:911">911</a> if it is safe to do so.</div>
-          <h3 class="sf-title">Confidential support, available now</h3>
-          <div class="sf-res"><strong>National Domestic Violence Hotline</strong><div>Call <a href="tel:18007997233">1-800-799-7233</a><br>Text START to <a href="sms:88788?&body=START">88788</a><br>Chat at <a href="https://www.thehotline.org" target="_blank" rel="noopener">thehotline.org</a></div></div>
-          <div class="sf-res"><strong>StrongHearts Native Helpline</strong><div>Call or text <a href="tel:18447628483">1-844-762-8483</a></div></div>
-          <div class="sf-res"><strong>Domestic Abuse Helpline for Men and Women</strong><div>Call <a href="tel:18887435754">1-888-743-5754</a></div></div>
-          <p class="form-note">These services are free, confidential, and available 24 hours a day. You don&rsquo;t need to be in crisis to reach out &mdash; advocates can help you think through options at your own pace.</p>
-          <div class="sf-device">If you&rsquo;re worried your device or internet use is being monitored, consider using a phone or computer your partner can&rsquo;t access, and clear your browser history after this visit.</div>
-        </div>
-
-        <!-- Shown when the couple isn't a fit for the format (not a safety concern) -->
+        <!-- NOT THE RIGHT FIT: one screen, with the reason(s) that match their answers -->
         <div class="qb-safety" id="qbFit" hidden>
           <p>Thank you for answering honestly. Based on what you shared, the Weekend Marriage Experience isn&rsquo;t the right fit for your situation right now &mdash; and we&rsquo;d rather tell you that kindly up front than take your registration and have the weekend fall short for you.</p>
           <div class="fit-reason" id="fitCommitted" hidden>
@@ -574,8 +562,25 @@
             <strong>Both partners need to attend, start to finish.</strong>
             <p>Everything in the weekend happens between the two of you &mdash; discovering your lenses, mapping your patterns, practicing repair, and writing your marriage agreement together. When one partner attends alone, they leave with language and insight their spouse doesn&rsquo;t share, and that usually widens the distance instead of closing it.</p>
           </div>
-          <p class="form-note">None of this means the door is closed. If your season changes, or you both can make a future weekend, we&rsquo;d genuinely love to have you. Reach out any time and we&rsquo;ll tell you about upcoming dates.</p>
-          <div style="margin-top:22px"><a class="button button-primary" href="mailto:hello@oneinmarriage.com?subject=Question%20about%20the%20program">Request a Conversation</a></div>
+          <div class="fit-reason" id="fitSafety" hidden>
+            <strong>Your safety has to come first.</strong>
+            <p>ONE in Marriage is built for couples working through disconnection and old patterns. It isn&rsquo;t designed or staffed to help when abuse or coercion is part of the relationship &mdash; and in that situation, couples work can actually make things less safe. You deserve support from people trained for exactly this, and it&rsquo;s available right now.</p>
+          </div>
+
+          <div id="fitResources" hidden>
+            <div class="sf-emergency">If you are in immediate danger, call <a href="tel:911">911</a> if it is safe to do so.</div>
+            <h3 class="sf-title">Confidential support, available now</h3>
+            <div class="sf-res"><strong>National Domestic Violence Hotline</strong><div>Call <a href="tel:18007997233">1-800-799-7233</a><br>Text START to <a href="sms:88788?&body=START">88788</a><br>Chat at <a href="https://www.thehotline.org" target="_blank" rel="noopener">thehotline.org</a></div></div>
+            <div class="sf-res"><strong>StrongHearts Native Helpline</strong><div>Call or text <a href="tel:18447628483">1-844-762-8483</a></div></div>
+            <div class="sf-res"><strong>Domestic Abuse Helpline for Men and Women</strong><div>Call <a href="tel:18887435754">1-888-743-5754</a></div></div>
+            <p class="form-note">These services are free, confidential, and available 24 hours a day. You don&rsquo;t need to be in crisis to reach out &mdash; advocates can help you think through options at your own pace.</p>
+            <div class="sf-device">If you&rsquo;re worried your device or internet use is being monitored, consider using a phone or computer your partner can&rsquo;t access, and clear your browser history after this visit.</div>
+          </div>
+
+          <div id="fitDoorOpen" hidden>
+            <p class="form-note">None of this means the door is closed. If your season changes, or you both can make a future weekend, we&rsquo;d genuinely love to have you. Reach out any time and we&rsquo;ll tell you about upcoming dates.</p>
+            <div style="margin-top:22px"><a class="button button-primary" href="mailto:hello@oneinmarriage.com?subject=Question%20about%20the%20program">Request a Conversation</a></div>
+          </div>
         </div>
 
         <div class="qb-nav">
@@ -616,10 +621,12 @@
     const qbDone=document.getElementById('qbDone');
     const qbEyebrow=document.getElementById('qbEyebrow');
     const qbForm=document.getElementById('qbForm');
-    const qbSafety=document.getElementById('qbSafety');
     const qbFit=document.getElementById('qbFit');
     const fitCommitted=document.getElementById('fitCommitted');
     const fitBoth=document.getElementById('fitBoth');
+    const fitSafety=document.getElementById('fitSafety');
+    const fitResources=document.getElementById('fitResources');
+    const fitDoorOpen=document.getElementById('fitDoorOpen');
     const qbTitle=document.getElementById('registrationTitle');
     const qbSub=document.getElementById('qbSub');
     const qbProgress=document.getElementById('qbProgress');
@@ -629,11 +636,13 @@
     let qbCur=1,qbStop=null,sqAnswers={};
     function qbRender(){
       qbSteps.forEach(s=>{s.hidden=!!qbStop||(Number(s.dataset.step)!==qbCur);});
-      qbSafety.hidden=qbStop!=='safety';
-      qbFit.hidden=qbStop!=='fit';
-      fitCommitted.hidden=!(qbStop==='fit'&&sqAnswers.sq1==='no');
-      fitBoth.hidden=!(qbStop==='fit'&&sqAnswers.sq2==='no');
-      qbTitle.textContent=qbStop==='safety'?'Your safety comes first':qbStop==='fit'?'Not the right fit right now':'Build Your Experience';
+      const abuse=!!qbStop&&sqAnswers.sq3==='yes';
+      qbFit.hidden=!qbStop;
+      fitCommitted.hidden=!(qbStop&&sqAnswers.sq1==='no');
+      fitBoth.hidden=!(qbStop&&sqAnswers.sq2==='no');
+      fitSafety.hidden=fitResources.hidden=!abuse;
+      fitDoorOpen.hidden=!qbStop||abuse;
+      qbTitle.textContent=qbStop?'Not the right fit right now':'Build Your Experience';
       qbProgress.hidden=qbStepLabel.hidden=!!qbStop;
       qbSub.hidden=!!qbStop||qbCur!==1;
       qbBar.style.width=(qbCur/qbTotal*100)+'%';
@@ -675,8 +684,7 @@
       if(!qbStepValid())return;
       // Abuse or coercion routes to support resources; the other two route to a conversation
       if(qbCur===2){
-        if(sqAnswers.sq3==='yes'){qbStop='safety';qbRender();return;}
-        if(sqAnswers.sq1==='no'||sqAnswers.sq2==='no'){qbStop='fit';qbRender();return;}
+        if(sqAnswers.sq3==='yes'||sqAnswers.sq1==='no'||sqAnswers.sq2==='no'){qbStop='fit';qbRender();return;}
       }
       if(qbCur<qbTotal)qbGoTo(qbCur+1);
     });
