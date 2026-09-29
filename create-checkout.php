@@ -20,6 +20,13 @@ foreach ($_POST as $k => $v) {
     $metadata[$k] = function_exists('mb_substr') ? mb_substr($v, 0, 480) : substr($v, 0, 480); // Stripe metadata value limit
 }
 
+// ---- capacity check: stop selling once November is full ----
+$paid = count_paid_registrations($STRIPE_SECRET_KEY);
+if ($paid !== null && $paid >= $MAX_COUPLES) {
+    header('Location: sold-out.html');
+    exit;
+}
+
 $base = base_url();
 $params = array(
     'mode'        => 'payment',
@@ -36,6 +43,9 @@ $params = array(
         ),
     ),
     'metadata' => $metadata,
+    'custom_text' => array(
+        'submit' => array('message' => $REFUND_POLICY),
+    ),
 );
 if ($customer_email !== '') { $params['customer_email'] = $customer_email; }
 
