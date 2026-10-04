@@ -25,7 +25,7 @@
     .sec{margin-top:40px;padding-top:26px;border-top:1px solid var(--line)}
     .secnote{margin:0 0 18px;color:var(--muted);font-size:.92rem}
     .q{margin:0 0 22px;padding:20px 22px;border:1px solid var(--line);border-radius:18px;background:var(--paper)}
-    legend{padding:0;font-weight:600;font-size:1.02rem;line-height:1.45}
+    .qlabel{margin:0;font-weight:600;font-size:1.02rem;line-height:1.45;color:var(--ink)}
     .hint{display:inline-block;margin-left:6px;color:var(--tan);font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
     .note{margin:10px 0 0;color:var(--muted);font-size:.88rem}
     .opts{display:grid;gap:8px;margin-top:14px}
@@ -83,8 +83,8 @@
       </div>
 
 <section class="sec"><h2>Section 1: My Lens</h2><p class="secnote">Private — completed on your own.</p>
-<fieldset class="q" data-max="0">
-<legend>My primary lens is <span class="hint">Pick one</span></legend>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">My primary lens is <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q1" value="Savior: “I am valuable when I rescue or help.”"><span>Savior: “I am valuable when I rescue or help.”</span></label>
 <label class="opt"><input type="radio" name="q1" value="Survivor: “I am safe when I protect myself.”"><span>Survivor: “I am safe when I protect myself.”</span></label>
@@ -95,9 +95,9 @@
 <label class="opt"><input type="radio" name="q1" value="Ghost: “I am safe when I disappear.”"><span>Ghost: “I am safe when I disappear.”</span></label>
 <label class="opt"><input type="radio" name="q1" value="Chameleon: “I am accepted when I adapt.”"><span>Chameleon: “I am accepted when I adapt.”</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>My secondary lens (the one that shows up under heavier stress) is <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">My secondary lens (the one that shows up under heavier stress) is <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q2" value="Savior"><span>Savior</span></label>
 <label class="opt"><input type="radio" name="q2" value="Survivor"><span>Survivor</span></label>
@@ -109,9 +109,9 @@
 <label class="opt"><input type="radio" name="q2" value="Chameleon"><span>Chameleon</span></label>
 <label class="opt"><input type="radio" name="q2" value="None / not sure"><span>None / not sure</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>My partner's lens, as they described it to me during “Read Me, Don't Diagnose Me,” is <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">My partner's lens, as they described it to me during “Read Me, Don't Diagnose Me,” is <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q3" value="Savior"><span>Savior</span></label>
 <label class="opt"><input type="radio" name="q3" value="Survivor"><span>Survivor</span></label>
@@ -123,9 +123,9 @@
 <label class="opt"><input type="radio" name="q3" value="Chameleon"><span>Chameleon</span></label>
 <label class="opt"><input type="radio" name="q3" value="They haven't shared it yet"><span>They haven't shared it yet</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>The Noble Birth: my lens helped me survive or accomplish <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">The Noble Birth: my lens helped me survive or accomplish <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q4" value="Keeping peace in a chaotic home"><span>Keeping peace in a chaotic home</span></label>
 <label class="opt"><input type="radio" name="q4" value="Earning love or attention"><span>Earning love or attention</span></label>
@@ -137,9 +137,9 @@
 <label class="opt"><input type="radio" name="q4" value="Getting through pain without falling apart"><span>Getting through pain without falling apart</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q4_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>The gift my lens brings to our relationship <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">The gift my lens brings to our relationship <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q5" value="Generosity and care"><span>Generosity and care</span></label>
 <label class="opt"><input type="radio" name="q5" value="Strength and self-reliance"><span>Strength and self-reliance</span></label>
@@ -151,9 +151,9 @@
 <label class="opt"><input type="radio" name="q5" value="Flexibility and attunement"><span>Flexibility and attunement</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q5_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>If Savior — when my lens is activated, I tend to <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">If Savior — when my lens is activated, I tend to <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q6_savior[]" value="Jump in to fix before being asked"><span>Jump in to fix before being asked</span></label>
 <label class="opt"><input type="checkbox" name="q6_savior[]" value="Take on my partner's problems as mine"><span>Take on my partner's problems as mine</span></label>
@@ -161,9 +161,9 @@
 <label class="opt"><input type="checkbox" name="q6_savior[]" value="Neglect my own needs"><span>Neglect my own needs</span></label>
 <label class="opt"><input type="checkbox" name="q6_savior[]" value="Treat my partner like a project instead of a partner"><span>Treat my partner like a project instead of a partner</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>If Survivor <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">If Survivor <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q6_survivor[]" value="Armor up and stop being vulnerable"><span>Armor up and stop being vulnerable</span></label>
 <label class="opt"><input type="checkbox" name="q6_survivor[]" value="Handle things alone rather than ask"><span>Handle things alone rather than ask</span></label>
@@ -171,9 +171,9 @@
 <label class="opt"><input type="checkbox" name="q6_survivor[]" value="Push back hard when I feel threatened"><span>Push back hard when I feel threatened</span></label>
 <label class="opt"><input type="checkbox" name="q6_survivor[]" value="Keep score to protect myself"><span>Keep score to protect myself</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>If Prover <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">If Prover <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q6_prover[]" value="Hear feedback as failure"><span>Hear feedback as failure</span></label>
 <label class="opt"><input type="checkbox" name="q6_prover[]" value="Work harder instead of connecting"><span>Work harder instead of connecting</span></label>
@@ -181,9 +181,9 @@
 <label class="opt"><input type="checkbox" name="q6_prover[]" value="Measure my worth by results"><span>Measure my worth by results</span></label>
 <label class="opt"><input type="checkbox" name="q6_prover[]" value="Struggle to rest or play"><span>Struggle to rest or play</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>If Martyr <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">If Martyr <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q6_martyr[]" value="Give until I'm resentful"><span>Give until I'm resentful</span></label>
 <label class="opt"><input type="checkbox" name="q6_martyr[]" value="Say yes when I mean no"><span>Say yes when I mean no</span></label>
@@ -191,9 +191,9 @@
 <label class="opt"><input type="checkbox" name="q6_martyr[]" value="Remind my partner of what I've given up"><span>Remind my partner of what I've given up</span></label>
 <label class="opt"><input type="checkbox" name="q6_martyr[]" value="Struggle to ask directly for what I want"><span>Struggle to ask directly for what I want</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>If Analyst <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">If Analyst <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q6_analyst[]" value="Explain instead of feel"><span>Explain instead of feel</span></label>
 <label class="opt"><input type="checkbox" name="q6_analyst[]" value="Need to understand before I can respond"><span>Need to understand before I can respond</span></label>
@@ -201,9 +201,9 @@
 <label class="opt"><input type="checkbox" name="q6_analyst[]" value="Try to control outcomes"><span>Try to control outcomes</span></label>
 <label class="opt"><input type="checkbox" name="q6_analyst[]" value="Retreat into logic"><span>Retreat into logic</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>If Endurer <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">If Endurer <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q6_endurer[]" value="Silently put up with things too long"><span>Silently put up with things too long</span></label>
 <label class="opt"><input type="checkbox" name="q6_endurer[]" value="Minimize my own pain"><span>Minimize my own pain</span></label>
@@ -211,9 +211,9 @@
 <label class="opt"><input type="checkbox" name="q6_endurer[]" value="Feel proud of how much I can tolerate"><span>Feel proud of how much I can tolerate</span></label>
 <label class="opt"><input type="checkbox" name="q6_endurer[]" value="Erupt or shut down after holding too long"><span>Erupt or shut down after holding too long</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>If Ghost <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">If Ghost <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q6_ghost[]" value="Go quiet or physically leave"><span>Go quiet or physically leave</span></label>
 <label class="opt"><input type="checkbox" name="q6_ghost[]" value="Avoid conflict entirely"><span>Avoid conflict entirely</span></label>
@@ -221,9 +221,9 @@
 <label class="opt"><input type="checkbox" name="q6_ghost[]" value="Disappear into screens, work, or hobbies"><span>Disappear into screens, work, or hobbies</span></label>
 <label class="opt"><input type="checkbox" name="q6_ghost[]" value="Let things go unspoken"><span>Let things go unspoken</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>If Chameleon <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">If Chameleon <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q6_chameleon[]" value="Agree to keep the peace (the Fake Yes)"><span>Agree to keep the peace (the Fake Yes)</span></label>
 <label class="opt"><input type="checkbox" name="q6_chameleon[]" value="Lose track of what I actually want"><span>Lose track of what I actually want</span></label>
@@ -231,9 +231,9 @@
 <label class="opt"><input type="checkbox" name="q6_chameleon[]" value="Hide my real opinion"><span>Hide my real opinion</span></label>
 <label class="opt"><input type="checkbox" name="q6_chameleon[]" value="Feel resentful later about what I went along with"><span>Feel resentful later about what I went along with</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="4">
-<legend>My most common activators are <span class="hint">Pick up to 4</span></legend>
+</div>
+<div class="q" role="group" data-max="4">
+<p class="qlabel">My most common activators are <span class="hint">Pick up to 4</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q7[]" value="Feeling criticized"><span>Feeling criticized</span></label>
 <label class="opt"><input type="checkbox" name="q7[]" value="Feeling ignored or not responded to"><span>Feeling ignored or not responded to</span></label>
@@ -252,9 +252,9 @@
 <label class="opt"><input type="checkbox" name="q7[]" value="Feeling pressured for affection"><span>Feeling pressured for affection</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q7_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>When I'm activated, my body tends to <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">When I'm activated, my body tends to <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q8[]" value="Tighten (jaw, shoulders, chest)"><span>Tighten (jaw, shoulders, chest)</span></label>
 <label class="opt"><input type="checkbox" name="q8[]" value="Get hot or flushed"><span>Get hot or flushed</span></label>
@@ -266,9 +266,9 @@
 <label class="opt"><input type="checkbox" name="q8[]" value="Raise my voice"><span>Raise my voice</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q8_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="2">
-<legend>The story I most often make up is <span class="hint">Pick up to 2</span></legend>
+</div>
+<div class="q" role="group" data-max="2">
+<p class="qlabel">The story I most often make up is <span class="hint">Pick up to 2</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q9[]" value="“You don't care.”"><span>“You don't care.”</span></label>
 <label class="opt"><input type="checkbox" name="q9[]" value="“I'm not important to you.”"><span>“I'm not important to you.”</span></label>
@@ -282,9 +282,9 @@
 <label class="opt"><input type="checkbox" name="q9[]" value="“This will never change.”"><span>“This will never change.”</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q9_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="2">
-<legend>What I'm usually trying to protect is <span class="hint">Pick up to 2</span></legend>
+</div>
+<div class="q" role="group" data-max="2">
+<p class="qlabel">What I'm usually trying to protect is <span class="hint">Pick up to 2</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q10[]" value="My sense of worth"><span>My sense of worth</span></label>
 <label class="opt"><input type="checkbox" name="q10[]" value="Connection"><span>Connection</span></label>
@@ -295,9 +295,9 @@
 <label class="opt"><input type="checkbox" name="q10[]" value="Fairness"><span>Fairness</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q10_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="2">
-<legend>My automatic move when activated is <span class="hint">Pick up to 2</span></legend>
+</div>
+<div class="q" role="group" data-max="2">
+<p class="qlabel">My automatic move when activated is <span class="hint">Pick up to 2</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q11[]" value="Defend or explain"><span>Defend or explain</span></label>
 <label class="opt"><input type="checkbox" name="q11[]" value="Criticize or correct"><span>Criticize or correct</span></label>
@@ -312,9 +312,9 @@
 <label class="opt"><input type="checkbox" name="q11[]" value="Over-function (do everything myself)"><span>Over-function (do everything myself)</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q11_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="3">
-<legend>What helps me return <span class="hint">Pick up to 3</span></legend>
+</div>
+<div class="q" role="group" data-max="3">
+<p class="qlabel">What helps me return <span class="hint">Pick up to 3</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q12[]" value="Time alone with a clear return time"><span>Time alone with a clear return time</span></label>
 <label class="opt"><input type="checkbox" name="q12[]" value="A gentle touch"><span>A gentle touch</span></label>
@@ -329,9 +329,9 @@
 <label class="opt"><input type="checkbox" name="q12[]" value="Sleeping on it"><span>Sleeping on it</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q12_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="3">
-<legend>What usually adds gasoline <span class="hint">Pick up to 3</span></legend>
+</div>
+<div class="q" role="group" data-max="3">
+<p class="qlabel">What usually adds gasoline <span class="hint">Pick up to 3</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q13[]" value="Being followed when I need space"><span>Being followed when I need space</span></label>
 <label class="opt"><input type="checkbox" name="q13[]" value="Being lectured"><span>Being lectured</span></label>
@@ -346,9 +346,9 @@
 <label class="opt"><input type="checkbox" name="q13[]" value="Bringing in other people's opinions"><span>Bringing in other people's opinions</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q13_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>The kind of game challenge that would stretch my lens in a healthy way <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">The kind of game challenge that would stretch my lens in a healthy way <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q14" value="Receiving help without returning it right away"><span>Receiving help without returning it right away</span></label>
 <label class="opt"><input type="radio" name="q14" value="Asking for support out loud"><span>Asking for support out loud</span></label>
@@ -360,9 +360,9 @@
 <label class="opt"><input type="radio" name="q14" value="Stating my real preference first"><span>Stating my real preference first</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q14_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>When my lens is activated, the most helpful thing my partner could say is <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">When my lens is activated, the most helpful thing my partner could say is <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q15" value="I don't need you to fix this; I just need you here."><span>I don't need you to fix this; I just need you here.</span></label>
 <label class="opt"><input type="radio" name="q15" value="You don't have to handle this alone."><span>You don't have to handle this alone.</span></label>
@@ -374,11 +374,11 @@
 <label class="opt"><input type="radio" name="q15" value="I want to know what you really think."><span>I want to know what you really think.</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q15_other" placeholder="In your own words"></label>
-</fieldset>
+</div>
 </section>
 <section class="sec"><h2>Section 2: Our Cycle &amp; Named Opponents</h2><p class="secnote">Private, then confirmed together.</p>
-<fieldset class="q" data-max="0">
-<legend>The name we gave our recurring cycle is <span class="hint">Pick one</span></legend>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">The name we gave our recurring cycle is <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q16" value="The Courtroom"><span>The Courtroom</span></label>
 <label class="opt"><input type="radio" name="q16" value="The Fixer"><span>The Fixer</span></label>
@@ -389,9 +389,9 @@
 <label class="opt"><input type="radio" name="q16" value="The Fake Yes"><span>The Fake Yes</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q16_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Where does our cycle most often start? <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Where does our cycle most often start? <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q17" value="Communication / texting"><span>Communication / texting</span></label>
 <label class="opt"><input type="radio" name="q17" value="Money"><span>Money</span></label>
@@ -406,9 +406,9 @@
 <label class="opt"><input type="radio" name="q17" value="Decision-making"><span>Decision-making</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q17_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>When does it most often happen? <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">When does it most often happen? <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q18" value="Mornings"><span>Mornings</span></label>
 <label class="opt"><input type="radio" name="q18" value="After work / transition time"><span>After work / transition time</span></label>
@@ -419,18 +419,18 @@
 <label class="opt"><input type="radio" name="q18" value="During busy or stressful seasons"><span>During busy or stressful seasons</span></label>
 <label class="opt"><input type="radio" name="q18" value="No clear pattern"><span>No clear pattern</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>How intense is our cycle typically? <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">How intense is our cycle typically? <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q19" value="Mild irritation that passes quickly"><span>Mild irritation that passes quickly</span></label>
 <label class="opt"><input type="radio" name="q19" value="Moderate tension that lingers for hours"><span>Moderate tension that lingers for hours</span></label>
 <label class="opt"><input type="radio" name="q19" value="Significant conflict that lingers for days"><span>Significant conflict that lingers for days</span></label>
 <label class="opt"><input type="radio" name="q19" value="Varies a lot"><span>Varies a lot</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our earliest available exit is usually <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our earliest available exit is usually <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q20" value="Noticing my body cue"><span>Noticing my body cue</span></label>
 <label class="opt"><input type="radio" name="q20" value="Naming the story before acting on it"><span>Naming the story before acting on it</span></label>
@@ -439,11 +439,11 @@
 <label class="opt"><input type="radio" name="q20" value="Acknowledging before explaining"><span>Acknowledging before explaining</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q20_other" placeholder="In your own words"></label>
-</fieldset>
+</div>
 </section>
 <section class="sec"><h2>Section 3: The Four Results</h2><p class="secnote">Private.</p>
-<fieldset class="q" data-max="3">
-<legend>I feel SAFE when my partner <span class="hint">Pick up to 3</span></legend>
+<div class="q" role="group" data-max="3">
+<p class="qlabel">I feel SAFE when my partner <span class="hint">Pick up to 3</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q21[]" value="Listens without interrupting"><span>Listens without interrupting</span></label>
 <label class="opt"><input type="checkbox" name="q21[]" value="Stays calm when I'm upset"><span>Stays calm when I'm upset</span></label>
@@ -453,9 +453,9 @@
 <label class="opt"><input type="checkbox" name="q21[]" value="Is honest even when it's hard"><span>Is honest even when it's hard</span></label>
 <label class="opt"><input type="checkbox" name="q21[]" value="Reassures me during conflict"><span>Reassures me during conflict</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="3">
-<legend>I experience PARTNERSHIP when we <span class="hint">Pick up to 3</span></legend>
+</div>
+<div class="q" role="group" data-max="3">
+<p class="qlabel">I experience PARTNERSHIP when we <span class="hint">Pick up to 3</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q22[]" value="Make decisions together"><span>Make decisions together</span></label>
 <label class="opt"><input type="checkbox" name="q22[]" value="Share the household load fairly"><span>Share the household load fairly</span></label>
@@ -465,9 +465,9 @@
 <label class="opt"><input type="checkbox" name="q22[]" value="Check in on each other's day"><span>Check in on each other's day</span></label>
 <label class="opt"><input type="checkbox" name="q22[]" value="Have each other's back with money"><span>Have each other's back with money</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="4">
-<legend>I feel AFFECTION when my partner <span class="hint">Pick up to 4</span></legend>
+</div>
+<div class="q" role="group" data-max="4">
+<p class="qlabel">I feel AFFECTION when my partner <span class="hint">Pick up to 4</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q23[]" value="Touches me casually (hand, back, hug)"><span>Touches me casually (hand, back, hug)</span></label>
 <label class="opt"><input type="checkbox" name="q23[]" value="Flirts with me"><span>Flirts with me</span></label>
@@ -479,9 +479,9 @@
 <label class="opt"><input type="checkbox" name="q23[]" value="Surprises me"><span>Surprises me</span></label>
 <label class="opt"><input type="checkbox" name="q23[]" value="Sends sweet messages"><span>Sends sweet messages</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="3">
-<legend>I experience LOVE &amp; RESPECT (that I matter) when my partner <span class="hint">Pick up to 3</span></legend>
+</div>
+<div class="q" role="group" data-max="3">
+<p class="qlabel">I experience LOVE &amp; RESPECT (that I matter) when my partner <span class="hint">Pick up to 3</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q24[]" value="Asks my opinion and considers it"><span>Asks my opinion and considers it</span></label>
 <label class="opt"><input type="checkbox" name="q24[]" value="Prioritizes me over other demands"><span>Prioritizes me over other demands</span></label>
@@ -491,18 +491,18 @@
 <label class="opt"><input type="checkbox" name="q24[]" value="Respects my time"><span>Respects my time</span></label>
 <label class="opt"><input type="checkbox" name="q24[]" value="Acknowledges my feelings"><span>Acknowledges my feelings</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>The result I most want to grow in the next 90 days is <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">The result I most want to grow in the next 90 days is <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q25" value="Safety"><span>Safety</span></label>
 <label class="opt"><input type="radio" name="q25" value="Partnership"><span>Partnership</span></label>
 <label class="opt"><input type="radio" name="q25" value="Affection"><span>Affection</span></label>
 <label class="opt"><input type="radio" name="q25" value="Love &amp; Respect"><span>Love &amp; Respect</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our current behaviors are producing this level of SAFETY for me <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our current behaviors are producing this level of SAFETY for me <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q26" value="1–2: Rarely present"><span>1–2: Rarely present</span></label>
 <label class="opt"><input type="radio" name="q26" value="3–4: Sometimes present"><span>3–4: Sometimes present</span></label>
@@ -510,9 +510,9 @@
 <label class="opt"><input type="radio" name="q26" value="7–8: Usually present"><span>7–8: Usually present</span></label>
 <label class="opt"><input type="radio" name="q26" value="9–10: Consistently present"><span>9–10: Consistently present</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our current behaviors are producing this level of PARTNERSHIP for me <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our current behaviors are producing this level of PARTNERSHIP for me <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q27" value="1–2: Rarely present"><span>1–2: Rarely present</span></label>
 <label class="opt"><input type="radio" name="q27" value="3–4: Sometimes present"><span>3–4: Sometimes present</span></label>
@@ -520,9 +520,9 @@
 <label class="opt"><input type="radio" name="q27" value="7–8: Usually present"><span>7–8: Usually present</span></label>
 <label class="opt"><input type="radio" name="q27" value="9–10: Consistently present"><span>9–10: Consistently present</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our current behaviors are producing this level of AFFECTION for me <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our current behaviors are producing this level of AFFECTION for me <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q28" value="1–2: Rarely present"><span>1–2: Rarely present</span></label>
 <label class="opt"><input type="radio" name="q28" value="3–4: Sometimes present"><span>3–4: Sometimes present</span></label>
@@ -530,9 +530,9 @@
 <label class="opt"><input type="radio" name="q28" value="7–8: Usually present"><span>7–8: Usually present</span></label>
 <label class="opt"><input type="radio" name="q28" value="9–10: Consistently present"><span>9–10: Consistently present</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our current behaviors are producing this level of LOVE &amp; RESPECT for me <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our current behaviors are producing this level of LOVE &amp; RESPECT for me <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q29" value="1–2: Rarely present"><span>1–2: Rarely present</span></label>
 <label class="opt"><input type="radio" name="q29" value="3–4: Sometimes present"><span>3–4: Sometimes present</span></label>
@@ -540,11 +540,11 @@
 <label class="opt"><input type="radio" name="q29" value="7–8: Usually present"><span>7–8: Usually present</span></label>
 <label class="opt"><input type="radio" name="q29" value="9–10: Consistently present"><span>9–10: Consistently present</span></label>
 </div>
-</fieldset>
+</div>
 </section>
 <section class="sec"><h2>Section 4: Couple Agreement Lab</h2><p class="secnote">Private draft, finalized together. Answer for your most recurring pattern.</p>
-<fieldset class="q" data-max="0">
-<legend>OLD MOVE: What do I automatically do? <span class="hint">Pick all that apply</span></legend>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">OLD MOVE: What do I automatically do? <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q30[]" value="Criticize"><span>Criticize</span></label>
 <label class="opt"><input type="checkbox" name="q30[]" value="Defend"><span>Defend</span></label>
@@ -557,9 +557,9 @@
 <label class="opt"><input type="checkbox" name="q30[]" value="Go cold"><span>Go cold</span></label>
 <label class="opt"><input type="checkbox" name="q30[]" value="Take over"><span>Take over</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>IMPACT: What does it tend to create for my partner? <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">IMPACT: What does it tend to create for my partner? <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q31[]" value="They feel criticized"><span>They feel criticized</span></label>
 <label class="opt"><input type="checkbox" name="q31[]" value="They feel dismissed"><span>They feel dismissed</span></label>
@@ -570,9 +570,9 @@
 <label class="opt"><input type="checkbox" name="q31[]" value="They escalate"><span>They escalate</span></label>
 <label class="opt"><input type="checkbox" name="q31[]" value="They withdraw"><span>They withdraw</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>NEW MOVE: What will I practice instead? <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">NEW MOVE: What will I practice instead? <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q32[]" value="Ask before fixing"><span>Ask before fixing</span></label>
 <label class="opt"><input type="checkbox" name="q32[]" value="Request space with a return time"><span>Request space with a return time</span></label>
@@ -583,27 +583,27 @@
 <label class="opt"><input type="checkbox" name="q32[]" value="Ask before assigning motive"><span>Ask before assigning motive</span></label>
 <label class="opt"><input type="checkbox" name="q32[]" value="Offer affection with no strings attached"><span>Offer affection with no strings attached</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>PURPOSE: What different experience are we trying to create? <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">PURPOSE: What different experience are we trying to create? <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q33" value="More Safety"><span>More Safety</span></label>
 <label class="opt"><input type="radio" name="q33" value="More Partnership"><span>More Partnership</span></label>
 <label class="opt"><input type="radio" name="q33" value="More Affection"><span>More Affection</span></label>
 <label class="opt"><input type="radio" name="q33" value="More Love &amp; Respect"><span>More Love &amp; Respect</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>REPAIR: When I miss, I will <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">REPAIR: When I miss, I will <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q34" value="Name it quickly: “I just did my old move. Can I try again?”"><span>Name it quickly: “I just did my old move. Can I try again?”</span></label>
 <label class="opt"><input type="radio" name="q34" value="Use our pivot word or signal"><span>Use our pivot word or signal</span></label>
 <label class="opt"><input type="radio" name="q34" value="Come back within a set time and own it"><span>Come back within a set time and own it</span></label>
 <label class="opt"><input type="radio" name="q34" value="Write a short repair note"><span>Write a short repair note</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Agreements I want to propose for us <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Agreements I want to propose for us <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q35[]" value="Ask Before Fixing"><span>Ask Before Fixing</span></label>
 <label class="opt"><input type="checkbox" name="q35[]" value="Space Has a Return Commitment"><span>Space Has a Return Commitment</span></label>
@@ -615,9 +615,9 @@
 <label class="opt"><input type="checkbox" name="q35[]" value="Verify Before Verdict"><span>Verify Before Verdict</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q35_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our pivot signal (to interrupt the cycle) will be <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our pivot signal (to interrupt the cycle) will be <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q36" value="A code word"><span>A code word</span></label>
 <label class="opt"><input type="radio" name="q36" value="A hand signal"><span>A hand signal</span></label>
@@ -625,9 +625,9 @@
 <label class="opt"><input type="radio" name="q36" value="A touch"><span>A touch</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q36_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>When one of us needs space, our standard return time is <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">When one of us needs space, our standard return time is <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q37" value="15 minutes"><span>15 minutes</span></label>
 <label class="opt"><input type="radio" name="q37" value="30 minutes"><span>30 minutes</span></label>
@@ -635,11 +635,11 @@
 <label class="opt"><input type="radio" name="q37" value="Same day, before bed"><span>Same day, before bed</span></label>
 <label class="opt"><input type="radio" name="q37" value="Named in the moment"><span>Named in the moment</span></label>
 </div>
-</fieldset>
+</div>
 </section>
 <section class="sec"><h2>Section 5: Reciprocity</h2><p class="secnote">Private.</p>
-<fieldset class="q" data-max="0">
-<legend>What I most want my partner to create for me <span class="hint">Pick one</span></legend>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">What I most want my partner to create for me <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q38" value="Feeling wanted"><span>Feeling wanted</span></label>
 <label class="opt"><input type="radio" name="q38" value="Feeling heard"><span>Feeling heard</span></label>
@@ -650,9 +650,9 @@
 <label class="opt"><input type="radio" name="q38" value="Fun and lightness"><span>Fun and lightness</span></label>
 <label class="opt"><input type="radio" name="q38" value="Physical affection"><span>Physical affection</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>How consistently do I create that same experience for my partner? <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">How consistently do I create that same experience for my partner? <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q39" value="Rarely"><span>Rarely</span></label>
 <label class="opt"><input type="radio" name="q39" value="Sometimes"><span>Sometimes</span></label>
@@ -660,9 +660,9 @@
 <label class="opt"><input type="radio" name="q39" value="Consistently"><span>Consistently</span></label>
 <label class="opt"><input type="radio" name="q39" value="Honestly not sure"><span>Honestly not sure</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>My one unilateral commitment (I go first, no invoice) <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">My one unilateral commitment (I go first, no invoice) <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q40" value="Initiate one moment of affection daily"><span>Initiate one moment of affection daily</span></label>
 <label class="opt"><input type="radio" name="q40" value="Offer one sincere appreciation daily"><span>Offer one sincere appreciation daily</span></label>
@@ -671,11 +671,11 @@
 <label class="opt"><input type="radio" name="q40" value="Lead with curiosity before reacting"><span>Lead with curiosity before reacting</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q40_other" placeholder="In your own words"></label>
-</fieldset>
+</div>
 </section>
 <section class="sec"><h2>Section 6: Awaken the Dream</h2><p class="secnote">Private.</p>
-<fieldset class="q" data-max="3">
-<legend>If this relationship were something to build, I most want to create more <span class="hint">Pick up to 3</span></legend>
+<div class="q" role="group" data-max="3">
+<p class="qlabel">If this relationship were something to build, I most want to create more <span class="hint">Pick up to 3</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q41[]" value="Adventure"><span>Adventure</span></label>
 <label class="opt"><input type="checkbox" name="q41[]" value="Friendship"><span>Friendship</span></label>
@@ -692,9 +692,9 @@
 <label class="opt"><input type="checkbox" name="q41[]" value="Learning"><span>Learning</span></label>
 <label class="opt"><input type="checkbox" name="q41[]" value="Legacy"><span>Legacy</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>On an ordinary Tuesday a year from now, the moment I'm most looking forward to is <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">On an ordinary Tuesday a year from now, the moment I'm most looking forward to is <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q42" value="How we wake up"><span>How we wake up</span></label>
 <label class="opt"><input type="radio" name="q42" value="How we say goodbye"><span>How we say goodbye</span></label>
@@ -704,9 +704,9 @@
 <label class="opt"><input type="radio" name="q42" value="Bedtime"><span>Bedtime</span></label>
 <label class="opt"><input type="radio" name="q42" value="Handling frustration well"><span>Handling frustration well</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>A dream I'd love us to take a first step toward in the next 90 days <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">A dream I'd love us to take a first step toward in the next 90 days <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q43" value="Plan a trip we've talked about"><span>Plan a trip we've talked about</span></label>
 <label class="opt"><input type="radio" name="q43" value="Start a new tradition"><span>Start a new tradition</span></label>
@@ -718,20 +718,20 @@
 <label class="opt"><input type="radio" name="q43" value="Reignite romance and sexual connection"><span>Reignite romance and sexual connection</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q43_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>How I prefer to approach big dreams <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">How I prefer to approach big dreams <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q44" value="Plan it in detail"><span>Plan it in detail</span></label>
 <label class="opt"><input type="radio" name="q44" value="Set the destination and figure out the route as we go (Walk East)"><span>Set the destination and figure out the route as we go (Walk East)</span></label>
 <label class="opt"><input type="radio" name="q44" value="Take small experiments first"><span>Take small experiments first</span></label>
 <label class="opt"><input type="radio" name="q44" value="Let my partner lead; I'll join enthusiastically"><span>Let my partner lead; I'll join enthusiastically</span></label>
 </div>
-</fieldset>
+</div>
 </section>
 <section class="sec"><h2>Section 7: Affection, Romance, Sensuality &amp; Sexuality</h2><p class="secnote">Private — mutual-match only.</p>
-<fieldset class="q ymn">
-<legend>Affection &amp; romance I'd welcome in the game <span class="hint">Mark each Yes, Maybe or No</span></legend>
+<div class="q ymn" role="group">
+<p class="qlabel">Affection &amp; romance I'd welcome in the game <span class="hint">Mark each Yes, Maybe or No</span></p>
 <p class="note">Only items where both partners answer Yes or Maybe appear in the game. Your “No” answers are never shown to your partner.</p>
 <div class="ymn-rows">
 <div class="ymn-row"><span class="ymn-label">Daily non-sexual touch (hugs, hand-holding)</span><div class="ymn-opts">
@@ -774,9 +774,9 @@
 <label class="chip"><input type="radio" name="q45_7" value="Maybe"><span>Maybe</span></label>
 <label class="chip"><input type="radio" name="q45_7" value="No"><span>No</span></label>
 </div><input type="hidden" name="q45_7_item" value="Recreating early dating memories"></div>
-</div></fieldset>
-<fieldset class="q ymn">
-<legend>Sensuality I'd welcome in the game <span class="hint">Mark each Yes, Maybe or No</span></legend>
+</div></div>
+<div class="q ymn" role="group">
+<p class="qlabel">Sensuality I'd welcome in the game <span class="hint">Mark each Yes, Maybe or No</span></p>
 <p class="note">Only items where both partners answer Yes or Maybe appear in the game. Your “No” answers are never shown to your partner.</p>
 <div class="ymn-rows">
 <div class="ymn-row"><span class="ymn-label">Massage</span><div class="ymn-opts">
@@ -804,9 +804,9 @@
 <label class="chip"><input type="radio" name="q46_4" value="Maybe"><span>Maybe</span></label>
 <label class="chip"><input type="radio" name="q46_4" value="No"><span>No</span></label>
 </div><input type="hidden" name="q46_4_item" value="Extended cuddling without expectation"></div>
-</div></fieldset>
-<fieldset class="q ymn">
-<legend>Sexual connection I'd welcome in the game <span class="hint">Mark each Yes, Maybe or No</span></legend>
+</div></div>
+<div class="q ymn" role="group">
+<p class="qlabel">Sexual connection I'd welcome in the game <span class="hint">Mark each Yes, Maybe or No</span></p>
 <p class="note">Only items where both partners answer Yes or Maybe appear in the game. Your “No” answers are never shown to your partner.</p>
 <div class="ymn-rows">
 <div class="ymn-row"><span class="ymn-label">Conversations about desire and preferences</span><div class="ymn-opts">
@@ -839,18 +839,18 @@
 <label class="chip"><input type="radio" name="q47_5" value="Maybe"><span>Maybe</span></label>
 <label class="chip"><input type="radio" name="q47_5" value="No"><span>No</span></label>
 </div><input type="hidden" name="q47_5_item" value="Role play"></div>
-</div></fieldset>
-<fieldset class="q" data-max="0">
-<legend>How much of the game should focus on physical intimacy? <span class="hint">Pick one</span></legend>
+</div></div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">How much of the game should focus on physical intimacy? <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q48" value="None"><span>None</span></label>
 <label class="opt"><input type="radio" name="q48" value="A little (occasional)"><span>A little (occasional)</span></label>
 <label class="opt"><input type="radio" name="q48" value="A moderate amount"><span>A moderate amount</span></label>
 <label class="opt"><input type="radio" name="q48" value="A significant part"><span>A significant part</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="2">
-<legend>My most important agreement around physical affection is <span class="hint">Pick up to 2</span></legend>
+</div>
+<div class="q" role="group" data-max="2">
+<p class="qlabel">My most important agreement around physical affection is <span class="hint">Pick up to 2</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q49[]" value="Affection never creates an obligation for more"><span>Affection never creates an obligation for more</span></label>
 <label class="opt"><input type="checkbox" name="q49[]" value="Either of us can pause or decline anything, anytime, without penalty"><span>Either of us can pause or decline anything, anytime, without penalty</span></label>
@@ -858,11 +858,11 @@
 <label class="opt"><input type="checkbox" name="q49[]" value="Talk before trying anything new"><span>Talk before trying anything new</span></label>
 <label class="opt"><input type="checkbox" name="q49[]" value="Keep intimate activities private and planned around the kids"><span>Keep intimate activities private and planned around the kids</span></label>
 </div>
-</fieldset>
+</div>
 </section>
 <section class="sec"><h2>Section 8: Game Preferences</h2><p class="secnote">Private.</p>
-<fieldset class="q" data-max="0">
-<legend>Daily time I can realistically commit <span class="hint">Pick one</span></legend>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Daily time I can realistically commit <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q50" value="5 minutes"><span>5 minutes</span></label>
 <label class="opt"><input type="radio" name="q50" value="10–15 minutes"><span>10–15 minutes</span></label>
@@ -870,9 +870,9 @@
 <label class="opt"><input type="radio" name="q50" value="30–60 minutes"><span>30–60 minutes</span></label>
 <label class="opt"><input type="radio" name="q50" value="Varies by day"><span>Varies by day</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Weekly &ldquo;bigger experience&rdquo; time I can commit <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Weekly &ldquo;bigger experience&rdquo; time I can commit <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q51" value="None"><span>None</span></label>
 <label class="opt"><input type="radio" name="q51" value="1 hour"><span>1 hour</span></label>
@@ -880,9 +880,9 @@
 <label class="opt"><input type="radio" name="q51" value="Half a day"><span>Half a day</span></label>
 <label class="opt"><input type="radio" name="q51" value="A full day"><span>A full day</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Total budget for the 90 days <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Total budget for the 90 days <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q52" value="$0 (free activities only)"><span>$0 (free activities only)</span></label>
 <label class="opt"><input type="radio" name="q52" value="Under $100"><span>Under $100</span></label>
@@ -891,9 +891,9 @@
 <label class="opt"><input type="radio" name="q52" value="$750–$1,500"><span>$750–$1,500</span></label>
 <label class="opt"><input type="radio" name="q52" value="Over $1,500"><span>Over $1,500</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="3">
-<legend>Game formats that appeal to me <span class="hint">Pick up to 3</span></legend>
+</div>
+<div class="q" role="group" data-max="3">
+<p class="qlabel">Game formats that appeal to me <span class="hint">Pick up to 3</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q53[]" value="Mission Impossible"><span>Mission Impossible</span></label>
 <label class="opt"><input type="checkbox" name="q53[]" value="Board Game"><span>Board Game</span></label>
@@ -907,9 +907,9 @@
 <label class="opt"><input type="checkbox" name="q53[]" value="Role Play / RPG"><span>Role Play / RPG</span></label>
 <label class="opt"><input type="checkbox" name="q53[]" value="Hybrid"><span>Hybrid</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="2">
-<legend>The tone I want the game to have <span class="hint">Pick up to 2</span></legend>
+</div>
+<div class="q" role="group" data-max="2">
+<p class="qlabel">The tone I want the game to have <span class="hint">Pick up to 2</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q54[]" value="Playful and silly"><span>Playful and silly</span></label>
 <label class="opt"><input type="checkbox" name="q54[]" value="Romantic"><span>Romantic</span></label>
@@ -919,9 +919,9 @@
 <label class="opt"><input type="checkbox" name="q54[]" value="Calm and steady"><span>Calm and steady</span></label>
 <label class="opt"><input type="checkbox" name="q54[]" value="Surprising"><span>Surprising</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="5">
-<legend>The kinds of experiences I actually enjoy <span class="hint">Pick up to 5</span></legend>
+</div>
+<div class="q" role="group" data-max="5">
+<p class="qlabel">The kinds of experiences I actually enjoy <span class="hint">Pick up to 5</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q55[]" value="Outdoors"><span>Outdoors</span></label>
 <label class="opt"><input type="checkbox" name="q55[]" value="Cooking / food"><span>Cooking / food</span></label>
@@ -938,9 +938,9 @@
 <label class="opt"><input type="checkbox" name="q55[]" value="Home projects"><span>Home projects</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q55_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Subjects I'd rather keep OUT of the game for now <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Subjects I'd rather keep OUT of the game for now <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q56[]" value="Money"><span>Money</span></label>
 <label class="opt"><input type="checkbox" name="q56[]" value="Parenting"><span>Parenting</span></label>
@@ -951,9 +951,9 @@
 <label class="opt"><input type="checkbox" name="q56[]" value="Health / body"><span>Health / body</span></label>
 <label class="opt"><input type="checkbox" name="q56[]" value="None"><span>None</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>How I want daily accountability to work <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">How I want daily accountability to work <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q57" value="Quick check-in conversation"><span>Quick check-in conversation</span></label>
 <label class="opt"><input type="radio" name="q57" value="App or text check-in"><span>App or text check-in</span></label>
@@ -961,9 +961,9 @@
 <label class="opt"><input type="radio" name="q57" value="Weekly review instead of daily"><span>Weekly review instead of daily</span></label>
 <label class="opt"><input type="radio" name="q57" value="Combination"><span>Combination</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Best time of day for our game activity <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Best time of day for our game activity <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q58" value="Morning"><span>Morning</span></label>
 <label class="opt"><input type="radio" name="q58" value="Midday (text or call)"><span>Midday (text or call)</span></label>
@@ -971,9 +971,9 @@
 <label class="opt"><input type="radio" name="q58" value="Bedtime"><span>Bedtime</span></label>
 <label class="opt"><input type="radio" name="q58" value="Flexible"><span>Flexible</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="3">
-<legend>Rewards that would motivate me <span class="hint">Pick up to 3</span></legend>
+</div>
+<div class="q" role="group" data-max="3">
+<p class="qlabel">Rewards that would motivate me <span class="hint">Pick up to 3</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q59[]" value="Date night of my choosing"><span>Date night of my choosing</span></label>
 <label class="opt"><input type="checkbox" name="q59[]" value="Small gift"><span>Small gift</span></label>
@@ -983,35 +983,35 @@
 <label class="opt"><input type="checkbox" name="q59[]" value="Celebration with friends"><span>Celebration with friends</span></label>
 <label class="opt"><input type="checkbox" name="q59[]" value="Just the satisfaction of the streak"><span>Just the satisfaction of the streak</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>What should happen on a rough day? <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">What should happen on a rough day? <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q60" value="Use an Off-Duty pass (no penalty)"><span>Use an Off-Duty pass (no penalty)</span></label>
 <label class="opt"><input type="radio" name="q60" value="Do a smaller “minimum version” of the day"><span>Do a smaller “minimum version” of the day</span></label>
 <label class="opt"><input type="radio" name="q60" value="Run our Pivot protocol, then continue"><span>Run our Pivot protocol, then continue</span></label>
 <label class="opt"><input type="radio" name="q60" value="Reschedule for the next day"><span>Reschedule for the next day</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Off-Duty passes each of us gets in 90 days <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Off-Duty passes each of us gets in 90 days <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q61" value="3"><span>3</span></label>
 <label class="opt"><input type="radio" name="q61" value="5"><span>5</span></label>
 <label class="opt"><input type="radio" name="q61" value="7"><span>7</span></label>
 <label class="opt"><input type="radio" name="q61" value="10"><span>10</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Recalibration check-ins <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Recalibration check-ins <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q62" value="Day 30 and Day 60"><span>Day 30 and Day 60</span></label>
 <label class="opt"><input type="radio" name="q62" value="Day 45 only"><span>Day 45 only</span></label>
 <label class="opt"><input type="radio" name="q62" value="No, keep the original plan"><span>No, keep the original plan</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>The final celebration that would mean the most to me <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">The final celebration that would mean the most to me <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q63" value="A getaway"><span>A getaway</span></label>
 <label class="opt"><input type="radio" name="q63" value="A special dinner"><span>A special dinner</span></label>
@@ -1020,11 +1020,11 @@
 <label class="opt"><input type="radio" name="q63" value="A gift that symbolizes the journey"><span>A gift that symbolizes the journey</span></label>
 <label class="opt"><input type="radio" name="q63" value="Something we design together"><span>Something we design together</span></label>
 </div>
-</fieldset>
+</div>
 </section>
 <section class="sec"><h2>Section 9: Joint Approval</h2><p class="secnote">Complete this section <strong>together</strong> — one of you can record your shared answers.</p>
-<fieldset class="q" data-max="0">
-<legend>What are we creating? <span class="hint">Pick one</span></legend>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">What are we creating? <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q64" value="A safe harbor where we can both be honest"><span>A safe harbor where we can both be honest</span></label>
 <label class="opt"><input type="radio" name="q64" value="A true partnership where we're on the same team"><span>A true partnership where we're on the same team</span></label>
@@ -1033,9 +1033,9 @@
 <label class="opt"><input type="radio" name="q64" value="A combination of these"><span>A combination of these</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q64_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>The patterns we're playing against <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">The patterns we're playing against <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q65[]" value="Our named cycle from Q16"><span>Our named cycle from Q16</span></label>
 <label class="opt"><input type="checkbox" name="q65[]" value="Partner A's activated lens"><span>Partner A's activated lens</span></label>
@@ -1045,9 +1045,9 @@
 <label class="opt"><input type="checkbox" name="q65[]" value="Assuming motive"><span>Assuming motive</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q65_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Subjects that belong in our game <span class="hint">Pick all that apply</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Subjects that belong in our game <span class="hint">Pick all that apply</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q66[]" value="Communication and repair"><span>Communication and repair</span></label>
 <label class="opt"><input type="checkbox" name="q66[]" value="Affection and romance"><span>Affection and romance</span></label>
@@ -1059,27 +1059,27 @@
 <label class="opt"><input type="checkbox" name="q66[]" value="Our dream from Q43"><span>Our dream from Q43</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q66_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our affection and intimacy agreements <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our affection and intimacy agreements <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q67" value="Confirm the mutual-match results as-is"><span>Confirm the mutual-match results as-is</span></label>
 <label class="opt"><input type="radio" name="q67" value="Confirm with some items removed"><span>Confirm with some items removed</span></label>
 <label class="opt"><input type="radio" name="q67" value="Keep intimacy out of the game for now"><span>Keep intimacy out of the game for now</span></label>
 <label class="opt"><input type="radio" name="q67" value="Revisit at the Day 30 recalibration"><span>Revisit at the Day 30 recalibration</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Daily time we're committing <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Daily time we're committing <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q68" value="5 minutes"><span>5 minutes</span></label>
 <label class="opt"><input type="radio" name="q68" value="10–15 minutes"><span>10–15 minutes</span></label>
 <label class="opt"><input type="radio" name="q68" value="20–30 minutes"><span>20–30 minutes</span></label>
 <label class="opt"><input type="radio" name="q68" value="30–60 minutes"><span>30–60 minutes</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Weekly bigger-experience time we're committing <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Weekly bigger-experience time we're committing <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q69" value="None"><span>None</span></label>
 <label class="opt"><input type="radio" name="q69" value="1 hour"><span>1 hour</span></label>
@@ -1087,9 +1087,9 @@
 <label class="opt"><input type="radio" name="q69" value="Half a day"><span>Half a day</span></label>
 <label class="opt"><input type="radio" name="q69" value="A full day"><span>A full day</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Money we're committing <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Money we're committing <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q70" value="$0"><span>$0</span></label>
 <label class="opt"><input type="radio" name="q70" value="Under $100"><span>Under $100</span></label>
@@ -1098,9 +1098,9 @@
 <label class="opt"><input type="radio" name="q70" value="$750–$1,500"><span>$750–$1,500</span></label>
 <label class="opt"><input type="radio" name="q70" value="Over $1,500"><span>Over $1,500</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our chosen game format <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our chosen game format <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q71" value="Mission Impossible"><span>Mission Impossible</span></label>
 <label class="opt"><input type="radio" name="q71" value="Board Game"><span>Board Game</span></label>
@@ -1114,9 +1114,9 @@
 <label class="opt"><input type="radio" name="q71" value="Role Play / RPG"><span>Role Play / RPG</span></label>
 <label class="opt"><input type="radio" name="q71" value="Hybrid"><span>Hybrid</span></label>
 </div>
-</fieldset>
-<fieldset class="q" data-max="8">
-<legend>Our 4&ndash;8 Couple Agreements <span class="hint">Pick up to 8</span></legend>
+</div>
+<div class="q" role="group" data-max="8">
+<p class="qlabel">Our 4&ndash;8 Couple Agreements <span class="hint">Pick up to 8</span></p>
 <div class="opts">
 <label class="opt"><input type="checkbox" name="q72[]" value="Ask Before Fixing"><span>Ask Before Fixing</span></label>
 <label class="opt"><input type="checkbox" name="q72[]" value="Space Has a Return Commitment"><span>Space Has a Return Commitment</span></label>
@@ -1128,18 +1128,18 @@
 <label class="opt"><input type="checkbox" name="q72[]" value="Verify Before Verdict"><span>Verify Before Verdict</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q72_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our Pivot protocol <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our Pivot protocol <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q73" value="Signal → pause → return at agreed time → acknowledge first"><span>Signal → pause → return at agreed time → acknowledge first</span></label>
 <label class="opt"><input type="radio" name="q73" value="Signal → name the lens → try a new move right away"><span>Signal → name the lens → try a new move right away</span></label>
 <label class="opt"><input type="radio" name="q73" value="Signal → separate breathing break → reconnect with a touch"><span>Signal → separate breathing break → reconnect with a touch</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q73_other" placeholder="In your own words"></label>
-</fieldset>
-<fieldset class="q" data-max="0">
-<legend>Our first small agreement, starting tonight <span class="hint">Pick one</span></legend>
+</div>
+<div class="q" role="group" data-max="0">
+<p class="qlabel">Our first small agreement, starting tonight <span class="hint">Pick one</span></p>
 <div class="opts">
 <label class="opt"><input type="radio" name="q74" value="A goodnight ritual (kiss, prayer, or appreciation)"><span>A goodnight ritual (kiss, prayer, or appreciation)</span></label>
 <label class="opt"><input type="radio" name="q74" value="One appreciation each before bed"><span>One appreciation each before bed</span></label>
@@ -1148,7 +1148,7 @@
 <label class="opt"><input type="radio" name="q74" value="A daily 10-minute check-in"><span>A daily 10-minute check-in</span></label>
 </div>
 <label class="other"><span>Other</span><input type="text" name="q74_other" placeholder="In your own words"></label>
-</fieldset>
+</div>
 </section>
 
       <p class="err" id="formErr" hidden></p>
