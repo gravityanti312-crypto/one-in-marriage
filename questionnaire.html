@@ -74,6 +74,12 @@
     <form id="qform" action="submit-questionnaire.php" method="POST" novalidate>
       <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
       <div class="top-fields">
+        <div class="field field-full"><label for="course">Which course are you in?</label>
+          <select id="course" name="course" required>
+            <option value="">Choose your course</option>
+            <option>November 5&ndash;7, 2026 &mdash; Sandy, Utah</option>
+          </select>
+        </div>
         <div class="field"><label for="first_name">First name</label><input id="first_name" name="first_name" type="text" required></div>
         <div class="field"><label for="last_name">Last name</label><input id="last_name" name="last_name" type="text" required></div>
         <div class="field"><label for="email">Your email</label><input id="email" name="email" type="email" required></div>
@@ -1181,7 +1187,7 @@
     document.getElementById('qform').addEventListener('submit', function (e) {
       var err = document.getElementById('formErr');
       var missing = [];
-      ['first_name','last_name','email','partner_email','date','partner'].forEach(function (id) {
+      ['course','first_name','last_name','email','partner_email','date','partner'].forEach(function (id) {
         var el = document.getElementById(id);
         if (!el.value.trim()) missing.push(el.previousElementSibling.textContent);
       });

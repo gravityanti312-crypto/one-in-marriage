@@ -9,7 +9,7 @@
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Method not allowed.'); }
 if (!empty($_POST['company'])) { header('Location: questionnaire-thanks.html'); exit; }   // honeypot
 
-$required = array('first_name','last_name','email','partner_email','date','partner');
+$required = array('course','first_name','last_name','email','partner_email','date','partner');
 foreach ($required as $r) {
     if (empty(trim((string)($_POST[$r] ?? '')))) {
         http_response_code(400);
