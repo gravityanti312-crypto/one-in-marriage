@@ -83,6 +83,8 @@
         <div class="field"><label for="first_name">First name</label><input id="first_name" name="first_name" type="text" required></div>
         <div class="field"><label for="last_name">Last name</label><input id="last_name" name="last_name" type="text" required></div>
         <div class="field"><label for="email">Your email</label><input id="email" name="email" type="email" required></div>
+        <div class="field"><label for="partner_first_name">Partner&rsquo;s first name</label><input id="partner_first_name" name="partner_first_name" type="text" required></div>
+        <div class="field"><label for="partner_last_name">Partner&rsquo;s last name</label><input id="partner_last_name" name="partner_last_name" type="text" required></div>
         <div class="field"><label for="partner_email">Your partner&rsquo;s email</label><input id="partner_email" name="partner_email" type="email" required></div>
         <div class="field"><label for="date">Today&rsquo;s date</label><input id="date" name="date" type="date" required></div>
         <div class="field"><label for="partner">You are partner</label><select id="partner" name="partner" required><option value="">Choose</option><option>A</option><option>B</option></select></div>
@@ -1187,7 +1189,7 @@
     document.getElementById('qform').addEventListener('submit', function (e) {
       var err = document.getElementById('formErr');
       var missing = [];
-      ['course','first_name','last_name','email','partner_email','date','partner'].forEach(function (id) {
+      ['course','first_name','last_name','email','partner_first_name','partner_last_name','partner_email','date','partner'].forEach(function (id) {
         var el = document.getElementById(id);
         if (!el.value.trim()) missing.push(el.previousElementSibling.textContent);
       });
