@@ -10,10 +10,19 @@ require __DIR__ . '/payment-config.php';
 
 $PASSWORD = 'CHANGE_THIS_PASSWORD';          // <-- set before uploading
 $LOG      = dirname(__DIR__) . '/survey-sends.csv';
+$EXTRA    = dirname(__DIR__) . '/survey-people.json';   // manually added people + hidden ones
 $SURVEY   = base_url() . '/questionnaire.html';
 
 $pw = $_POST['pw'] ?? '';
 $ok = ($pw !== '' && hash_equals($PASSWORD, $pw));
+
+/** Manually added people and hidden emails. */
+function extra_load($path) {
+    $d = file_exists($path) ? json_decode((string)file_get_contents($path), true) : null;
+    if (!is_array($d)) { $d = []; }
+    return ['added' => $d['added'] ?? [], 'hidden' => $d['hidden'] ?? []];
+}
+function extra_save($path, $data) { @file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT)); @chmod($path, 0600); }
 
 /** Everyone who paid, one row per person (both partners). */
 function paid_people($secret) {
@@ -82,6 +91,30 @@ function survey_email($first, $survey_url) {
       . '<tr><td style="background:#f6efe0;padding:16px 28px;color:#8a8d84;font-size:12px;text-align:center;line-height:1.5;">ONE in Marriage &middot; A Pattern-Aware Marriage Experience</td></tr>';
 }
 
+$extra = extra_load($EXTRA);
+
+if ($ok && isset($_POST['add_person'])) {
+    $n = trim((string)($_POST['new_name'] ?? ''));
+    $e = trim((string)($_POST['new_email'] ?? ''));
+    if (filter_var($e, FILTER_VALIDATE_EMAIL)) {
+        $extra['added'][strtolower($e)] = ['name' => $n, 'email' => $e];
+        $extra['hidden'] = array_values(array_diff($extra['hidden'], [strtolower($e)]));
+        extra_save($EXTRA, $extra);
+    } else {
+        $addError = 'That email address doesn\'t look right.';
+    }
+}
+if ($ok && !empty($_POST['hide'])) {
+    $h = strtolower(trim((string)$_POST['hide']));
+    if (!in_array($h, $extra['hidden'], true)) { $extra['hidden'][] = $h; }
+    unset($extra['added'][$h]);
+    extra_save($EXTRA, $extra);
+}
+if ($ok && !empty($_POST['unhide'])) {
+    $extra['hidden'] = array_values(array_diff($extra['hidden'], [strtolower(trim((string)$_POST['unhide']))]));
+    extra_save($EXTRA, $extra);
+}
+
 $results = [];
 if ($ok && isset($_POST['send']) && !empty($_POST['to']) && is_array($_POST['to'])) {
     $fh = fopen($LOG, 'a+');
@@ -98,6 +131,14 @@ if ($ok && isset($_POST['send']) && !empty($_POST['to']) && is_array($_POST['to'
 }
 
 $people = $ok ? paid_people($STRIPE_SECRET_KEY) : [];
+foreach ($extra['added'] as $a) {
+    $people[] = ['name' => $a['name'], 'email' => $a['email'], 'couple' => 'Added by hand', 'course' => ''];
+}
+$hiddenPeople = [];
+$people = array_values(array_filter($people, function ($p) use ($extra, &$hiddenPeople) {
+    if (in_array(strtolower($p['email']), $extra['hidden'], true)) { $hiddenPeople[] = $p; return false; }
+    return true;
+}));
 $sentLog = already_sent($LOG);
 ?><!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -121,6 +162,18 @@ $sentLog = already_sent($LOG);
  .tag{flex:none;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sage-deep);background:var(--sage-soft);padding:4px 9px;border-radius:999px}
  button{min-height:52px;padding:0 26px;border:0;border-radius:999px;background:var(--sage);color:#fff;font:inherit;font-weight:600;cursor:pointer}
  button:hover{background:var(--sage-deep)}
+ .pwrow{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+ .pwrow input{margin-bottom:0}
+ .reveal{min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--sage-deep);font:inherit;font-weight:600;cursor:pointer}
+ .reveal:hover{border-color:var(--sage);background:var(--sage-soft)}
+ .addrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+ .addrow input{flex:1;min-width:150px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit}
+ .addrow button{min-height:46px;padding:0 20px}
+ .hidebtn{flex:none;background:none;border:0;color:var(--muted);font:inherit;font-size:.8rem;font-weight:600;text-decoration:underline;cursor:pointer;min-height:0;padding:0}
+ .hidebtn:hover{color:#9c4a34;background:none}
+ .hiddenlist{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+ .hiddenlist p{margin:0 0 8px;font-size:.84rem;color:var(--muted)}
+ .hiddenlist .row{display:flex;justify-content:space-between;gap:10px;font-size:.85rem;color:var(--muted);padding:4px 0}
  .bad{color:#9c4a34;font-weight:600}
  .ok{color:var(--sage-deep);font-weight:600}
  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;flex-wrap:wrap}
@@ -135,9 +188,22 @@ $sentLog = already_sent($LOG);
   <div class="card">
     <?php if ($pw !== ''): ?><p class="bad">Wrong password.</p><?php endif; ?>
     <form method="POST">
-      <input type="password" name="pw" placeholder="Password" autofocus>
+      <div class="pwrow">
+        <input type="password" name="pw" id="pw" placeholder="Password" autofocus>
+        <button type="button" class="reveal" id="revealBtn" aria-label="Show password">Show</button>
+      </div>
       <button type="submit">Continue</button>
     </form>
+    <script>
+      var pw = document.getElementById('pw'), rb = document.getElementById('revealBtn');
+      rb.addEventListener('click', function () {
+        var showing = pw.type === 'text';
+        pw.type = showing ? 'password' : 'text';
+        rb.textContent = showing ? 'Show' : 'Hide';
+        rb.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+        pw.focus();
+      });
+    </script>
   </div>
 <?php else: ?>
 
@@ -172,6 +238,7 @@ $sentLog = already_sent($LOG);
             </span>
             <?php if ($done): ?><span class="tag">sent <?php echo esc(substr($done, 0, 10)); ?></span><?php endif; ?>
           </label>
+          <div style="margin:-6px 0 10px 14px"><button type="submit" form="hideform" class="hidebtn" name="hide" value="<?php echo esc($p['email']); ?>">Remove from this list</button></div>
         <?php endforeach; ?>
         <div class="bar">
           <button type="submit" name="send" value="1">Send the survey</button>
@@ -180,6 +247,33 @@ $sentLog = already_sent($LOG);
       <?php endif; ?>
     </div>
   </form>
+
+  <form method="POST" id="hideform">
+    <input type="hidden" name="pw" value="<?php echo esc($pw); ?>">
+  </form>
+
+  <div class="card">
+    <p style="margin-top:0"><strong>Someone not on the list?</strong> Add anyone who didn&rsquo;t register through the website.</p>
+    <?php if (!empty($addError)): ?><p class="bad"><?php echo esc($addError); ?></p><?php endif; ?>
+    <form method="POST" class="addrow">
+      <input type="hidden" name="pw" value="<?php echo esc($pw); ?>">
+      <input type="text" name="new_name" placeholder="First and last name">
+      <input type="email" name="new_email" placeholder="their@email.com">
+      <button type="submit" name="add_person" value="1">Add</button>
+    </form>
+
+    <?php if (!empty($hiddenPeople) || !empty($extra['hidden'])): ?>
+      <div class="hiddenlist">
+        <p>Removed from the list &mdash; they won&rsquo;t be emailed:</p>
+        <?php foreach ($extra['hidden'] as $h): ?>
+          <div class="row">
+            <span><?php echo esc($h); ?></span>
+            <button type="submit" form="hideform" class="hidebtn" name="unhide" value="<?php echo esc($h); ?>">Put back</button>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+  </div>
 <?php endif; ?>
 </div>
 </body></html>

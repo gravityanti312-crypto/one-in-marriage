@@ -28,6 +28,9 @@ $count = file_exists($csv) ? max(0, count(file($csv)) - 1) : 0;
  p{color:#5f635b;font-size:.95rem}
  input,button{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #e7e0d1;font:inherit;margin-top:10px}
  button{background:#7d9068;color:#fff;border:0;font-weight:600;cursor:pointer}
+ .pwrow{display:flex;gap:8px;align-items:center}
+ .pwrow input{margin-top:10px}
+ .reveal{width:auto;min-height:44px;margin-top:10px;padding:0 16px;border:1px solid #e7e0d1;border-radius:12px;background:#fff;color:#5f7350;font:inherit;font-weight:600;cursor:pointer}
  .bad{color:#9c4a34;font-size:.9rem}
 </style></head><body>
 <div class="card">
@@ -35,8 +38,21 @@ $count = file_exists($csv) ? max(0, count(file($csv)) - 1) : 0;
   <p><?php echo $count; ?> submission<?php echo $count === 1 ? '' : 's'; ?> so far. Opens in Excel or Google Sheets.</p>
   <?php if ($given !== '' && !$ok) { echo '<p class="bad">Wrong password.</p>'; } ?>
   <form method="POST">
-    <input type="password" name="pw" placeholder="Password" autofocus>
+    <div class="pwrow">
+      <input type="password" name="pw" id="pw" placeholder="Password" autofocus>
+      <button type="button" class="reveal" id="revealBtn" aria-label="Show password">Show</button>
+    </div>
     <button type="submit" name="download" value="1">Download spreadsheet</button>
   </form>
+  <script>
+    var pw = document.getElementById('pw'), rb = document.getElementById('revealBtn');
+    rb.addEventListener('click', function () {
+      var showing = pw.type === 'text';
+      pw.type = showing ? 'password' : 'text';
+      rb.textContent = showing ? 'Show' : 'Hide';
+      rb.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+      pw.focus();
+    });
+  </script>
 </div>
 </body></html>
