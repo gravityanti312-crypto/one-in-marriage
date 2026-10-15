@@ -64,14 +64,12 @@
     .nav-right{display:flex;align-items:center;gap:14px;margin-left:auto}
     .nav-back{min-height:48px;padding:0 20px;border:1.5px solid var(--sage);border-radius:999px;background:#fff;color:var(--sage-deep);font:inherit;font-weight:600;cursor:pointer}
     .nav-back:hover{border-color:var(--sage-deep);background:var(--sage-soft)}
-    .nav-skip{min-height:48px;padding:0 10px;border:0;background:none;color:var(--muted);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline}
-    .nav-skip:hover{color:var(--body)}
     .nav-next{min-height:48px;padding:0 26px;border:0;border-radius:999px;background:var(--sage);color:#fff;font:inherit;font-weight:600;cursor:pointer;box-shadow:0 14px 28px rgba(125,144,104,.28)}
     .nav-next:hover{background:var(--sage-deep)}
     @media(max-width:560px){
       .pagenav{flex-direction:column-reverse;align-items:stretch}
       .nav-right{flex-direction:column-reverse;margin-left:0}
-      .nav-back,.nav-skip,.nav-next{width:100%}
+      .nav-back,.nav-next{width:100%}
     }
     .foot{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
     @media(max-width:560px){.top-fields{grid-template-columns:1fr}.ymn-row{align-items:flex-start;flex-direction:column}}
@@ -701,7 +699,6 @@
       <div class="pagenav">
         <button type="button" class="nav-back" id="navBack" hidden>&larr; Back</button>
         <div class="nav-right">
-          <button type="button" class="nav-skip" id="navSkip">Skip</button>
           <button type="button" class="nav-next" id="navNext">Next &rarr;</button>
           <button type="submit" class="nav-next" id="navSubmit" hidden>Submit my answers</button>
         </div>
@@ -741,7 +738,6 @@
     var stepNum   = document.getElementById('stepNum');
     var stepTitle = document.getElementById('stepTitle');
     var back      = document.getElementById('navBack');
-    var skip      = document.getElementById('navSkip');
     var next      = document.getElementById('navNext');
     var submitBtn = document.getElementById('navSubmit');
     var err       = document.getElementById('formErr');
@@ -756,7 +752,6 @@
       var t = pages[cur - 1].querySelector('.pagetitle');
       stepTitle.textContent = t ? t.textContent : '';
       back.hidden = (cur === 1);
-      skip.hidden = (cur === total);
       next.hidden = (cur === total);
       submitBtn.hidden = (cur !== total);
       err.hidden = true;
@@ -783,7 +778,6 @@
     function go(n) { cur = Math.min(Math.max(n, 1), total); render(); save(); }
 
     next.addEventListener('click', function () { if (cur === 1 && !page1Valid()) return; go(cur + 1); });
-    skip.addEventListener('click', function () { if (cur === 1 && !page1Valid()) return; go(cur + 1); });
     back.addEventListener('click', function () { go(cur - 1); });
     form.addEventListener('submit', function (e) {
       if (!page1Valid()) { e.preventDefault(); cur = 1; render(); return; }
