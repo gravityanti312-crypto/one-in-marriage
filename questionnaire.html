@@ -60,6 +60,8 @@
     .pagetitle{margin:30px 0 4px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.5rem}
     .page{animation:fade .25s ease}
     @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    .q.unanswered{border-color:#c98b76;background:#fdf4f0}
+    .q.unanswered .qlabel::after{content:" — please answer";color:#9c4a34;font-weight:700;font-size:.82rem}
     .pagenav{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
     .nav-right{display:flex;align-items:center;gap:14px;margin-left:auto}
     .nav-back{min-height:48px;padding:0 20px;border:1.5px solid var(--sage);border-radius:999px;background:#fff;color:var(--sage-deep);font:inherit;font-weight:600;cursor:pointer}
@@ -86,7 +88,7 @@
       <ul>
         <li>Every question is answered privately by each partner &mdash; your answers are not shown to your partner.</li>
         <li>Most answers are things you already worked out during Days 1 and 2 &mdash; you&rsquo;re simply recording them here so your 90-day game can be built around them.</li>
-        <li>Follow the instruction under each question (Pick one, Pick up to 3, and so on). Write in your own answer wherever you see an &ldquo;Other&rdquo; box.</li>
+        <li>Every question needs an answer before you can move to the next page. Follow the instruction under each one (Pick one, Pick up to 3, and so on), and write in your own answer wherever you see an &ldquo;Other&rdquo; box.</li>
       </ul>
       <div class="agreement">Remember the training agreement: <strong>I own my lens. I do not assign yours.</strong> These answers are for self-awareness and shared understanding, not for diagnosing each other.</div>
     </div>
@@ -758,6 +760,41 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    /** Every question on a page must be answered. Returns the number unanswered. */
+    function checkPage(pageEl, mark) {
+      var bad = 0;
+      pageEl.querySelectorAll('.q').forEach(function (q) {
+        var ok = true;
+        if (q.classList.contains('ymn')) {
+          q.querySelectorAll('.ymn-row').forEach(function (row) {
+            if (!row.querySelector('input[type=radio]:checked')) ok = false;
+          });
+        } else if (q.querySelector('input[type=checkbox]')) {
+          ok = !!q.querySelector('input[type=checkbox]:checked');
+        } else if (q.querySelector('input[type=radio]')) {
+          ok = !!q.querySelector('input[type=radio]:checked');
+        }
+        if (mark) q.classList.toggle('unanswered', !ok);
+        if (!ok) bad++;
+      });
+      return bad;
+    }
+
+    function pageValid() {
+      if (cur === 1) return page1Valid();
+      var bad = checkPage(pages[cur - 1], true);
+      if (bad) {
+        err.textContent = bad === 1
+          ? 'Please answer the remaining question before continuing.'
+          : 'Please answer all ' + bad + ' remaining questions before continuing.';
+        err.hidden = false;
+        var first = pages[cur - 1].querySelector('.q.unanswered');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+      }
+      return true;
+    }
+
     function page1Valid() {
       var missing = [];
       REQUIRED.forEach(function (id) {
@@ -777,10 +814,21 @@
 
     function go(n) { cur = Math.min(Math.max(n, 1), total); render(); save(); }
 
-    next.addEventListener('click', function () { if (cur === 1 && !page1Valid()) return; go(cur + 1); });
+    next.addEventListener('click', function () { if (!pageValid()) return; go(cur + 1); });
     back.addEventListener('click', function () { go(cur - 1); });
     form.addEventListener('submit', function (e) {
       if (!page1Valid()) { e.preventDefault(); cur = 1; render(); return; }
+      for (var i = 2; i <= total; i++) {
+        if (checkPage(pages[i - 1], true) > 0) {
+          e.preventDefault();
+          cur = i; render();
+          err.textContent = 'Some questions on this page still need an answer.';
+          err.hidden = false;
+          var first = pages[i - 1].querySelector('.q.unanswered');
+          if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+      }
       try { localStorage.removeItem(KEY); } catch (x) {}
     });
 
@@ -822,7 +870,18 @@
       savedNote.hidden = false;
     }
 
-    form.addEventListener('change', save);
+    form.addEventListener('change', function (e) {
+      var q = e.target.closest('.q');
+      if (q && q.classList.contains('unanswered') && checkPage(q.parentElement, false) >= 0) {
+        if (q.classList.contains('ymn')) {
+          var incomplete = [].some.call(q.querySelectorAll('.ymn-row'), function (r) { return !r.querySelector('input:checked'); });
+          if (!incomplete) q.classList.remove('unanswered');
+        } else if (q.querySelector('input:checked')) {
+          q.classList.remove('unanswered');
+        }
+      }
+      save();
+    });
     form.addEventListener('input', function (e) { if (e.target.type === 'text' || e.target.type === 'email') save(); });
 
     restore();
