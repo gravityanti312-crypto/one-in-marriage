@@ -774,6 +774,11 @@
         } else if (q.querySelector('input[type=radio]')) {
           ok = !!q.querySelector('input[type=radio]:checked');
         }
+        // writing your own answer in the Other box counts as answering
+        if (!ok) {
+          var other = q.querySelector('.other input[type=text]');
+          if (other && other.value.trim() !== '') ok = true;
+        }
         if (mark) q.classList.toggle('unanswered', !ok);
         if (!ok) bad++;
       });
@@ -869,6 +874,14 @@
       if (data.page) cur = Math.min(Math.max(data.page, 1), total);
       savedNote.hidden = false;
     }
+
+    form.addEventListener('input', function (e) {
+      if (e.target.type !== 'text') return;
+      var q = e.target.closest('.q');
+      if (q && q.classList.contains('unanswered') && e.target.value.trim() !== '') {
+        q.classList.remove('unanswered');
+      }
+    });
 
     form.addEventListener('change', function (e) {
       var q = e.target.closest('.q');

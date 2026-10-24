@@ -5,3 +5,4 @@ payment-config.php
 questionnaire-responses.csv
 survey-sends.csv
 survey-people.json
+survey-data/

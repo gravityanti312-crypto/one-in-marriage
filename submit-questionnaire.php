@@ -7,7 +7,10 @@
  */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Method not allowed.'); }
-if (!empty($_POST['company'])) { header('Location: questionnaire-thanks.html'); exit; }   // honeypot
+if (!empty($_POST['company'])) { // readable files for the team: one per person, one per couple
+sf_save($_POST);
+
+header('Location: questionnaire-thanks.html'); exit; }   // honeypot
 
 $required = array('course','first_name','last_name','email','partner_first_name','partner_last_name','partner_email','date','partner');
 foreach ($required as $r) {
@@ -16,6 +19,8 @@ foreach ($required as $r) {
         exit('Please go back and complete the name, email and date fields.');
     }
 }
+
+require __DIR__ . '/survey-files.php';
 
 // Lives one level above public_html so it can never be downloaded directly.
 $csv = dirname(__DIR__) . '/questionnaire-responses.csv';
@@ -38,6 +43,9 @@ if ($fh) {
     fclose($fh);
     @chmod($csv, 0600);
 }
+
+// readable files for the team: one per person, one per couple
+sf_save($_POST);
 
 header('Location: questionnaire-thanks.html');
 exit;

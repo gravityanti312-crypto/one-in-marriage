@@ -171,6 +171,14 @@
     label{font-size:.83rem;font-weight:600}
     input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
     textarea{min-height:110px;resize:vertical}
+    .pricepick{margin-top:18px}
+    .priceopt{display:flex;align-items:flex-start;gap:11px;padding:14px 15px;margin-bottom:9px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;transition:150ms ease}
+    .priceopt:hover{border-color:#d8cfba}
+    .priceopt input{margin:3px 0 0;accent-color:var(--sage);flex:none}
+    .priceopt:has(input:checked){border-color:var(--sage);background:var(--sage-soft)}
+    .pricebody b{display:block;font-size:1.02rem}
+    .pricebody b em{font-style:normal;font-weight:600;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--tan)}
+    .pricebody small{display:block;margin-top:3px;font-size:.88rem;color:var(--muted);line-height:1.5}
     .form-note{margin-top:14px;font-size:.78rem;color:var(--muted)}
     /* quote builder wizard */
     .modal-card.qb{width:min(660px,100%)}
@@ -553,7 +561,24 @@
             <div class="field"><label for="partnerPhone">Phone</label><input id="partnerPhone" name="partner_phone" type="tel" required /></div>
             <div class="field field-full"><label for="contactPref">Best way to reach you</label><select id="contactPref" name="contact_preference"><option>Email</option><option>Phone call</option><option>Text message</option></select></div>
           </div>
-          <p class="form-note">Next, you&rsquo;ll go to secure Stripe checkout to complete your registration. <strong>All registrations are final &mdash; payment is non-refundable.</strong> After payment, our team reaches out with the schedule, the venue, and everything you need.</p>
+          <div class="pricepick">
+            <span class="qb-legend">Choose your price</span>
+            <label class="priceopt">
+              <input type="radio" name="price_option" value="feedback" required>
+              <span class="pricebody">
+                <b>$1,500 <em>&mdash; first program only</em></b>
+                <small>Half price. In return, you agree to give us written feedback and a review after the program.</small>
+              </span>
+            </label>
+            <label class="priceopt">
+              <input type="radio" name="price_option" value="standard" required>
+              <span class="pricebody">
+                <b>$3,000</b>
+                <small>Standard registration, no feedback required.</small>
+              </span>
+            </label>
+          </div>
+          <p class="form-note">Next, you&rsquo;ll go to secure Stripe checkout to pay the price you chose above. <strong>All registrations are final &mdash; payment is non-refundable.</strong> After payment, our team reaches out with the schedule, the venue, and everything you need.</p>
         </div>
 
         <!-- NOT THE RIGHT FIT: one screen, with the reason(s) that match their answers -->

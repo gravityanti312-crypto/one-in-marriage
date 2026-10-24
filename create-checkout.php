@@ -5,6 +5,11 @@
  */
 require __DIR__ . '/payment-config.php';
 
+// ---- feedback pricing (first program only) ----
+$FEEDBACK_OFFER        = true;      // set false once the first program is done
+$FEEDBACK_PRICE_CENTS  = 150000;    // $1,500.00
+$FEEDBACK_PRODUCT_NAME = 'Weekend Marriage Experience — Nov 5-7, Sandy UT (per couple, feedback rate)';
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Method not allowed.'); }
 if (!empty($_POST['company'])) { header('Location: ' . $THANK_YOU); exit; } // honeypot
 
@@ -27,6 +32,13 @@ if ($paid !== null && $paid >= $MAX_COUPLES) {
     exit;
 }
 
+// which price did they choose?
+$wantsFeedbackRate = ($FEEDBACK_OFFER && ($_POST['price_option'] ?? '') === 'feedback');
+$amount      = $wantsFeedbackRate ? $FEEDBACK_PRICE_CENTS : $PRICE_CENTS;
+$productName = $wantsFeedbackRate ? $FEEDBACK_PRODUCT_NAME : $PRODUCT_NAME;
+$metadata['feedback_agreed'] = $wantsFeedbackRate ? 'YES — owes feedback + review' : 'no';
+$metadata['price_paid']      = '$' . number_format($amount / 100, 2);
+
 $base = base_url();
 $params = array(
     'mode'        => 'payment',
@@ -37,14 +49,15 @@ $params = array(
             'quantity'   => 1,
             'price_data' => array(
                 'currency'     => 'usd',
-                'unit_amount'  => $PRICE_CENTS,
-                'product_data' => array('name' => $PRODUCT_NAME),
+                'unit_amount'  => $amount,
+                'product_data' => array('name' => $productName),
             ),
         ),
     ),
     'metadata' => $metadata,
     'custom_text' => array(
-        'submit' => array('message' => $REFUND_POLICY),
+        'submit' => array('message' => $REFUND_POLICY
+            . ($wantsFeedbackRate ? ' At this rate you agree to give written feedback and a review after the program.' : '')),
     ),
 );
 if ($customer_email !== '') { $params['customer_email'] = $customer_email; }
