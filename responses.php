@@ -7,13 +7,17 @@
  * Nothing here is reachable without the password, and the files themselves
  * live above public_html.
  */
-$PASSWORD = 'CHANGE_THIS_PASSWORD';          // <-- set this before uploading
-
-// Fail shut, never open. If this file is ever re-uploaded with the placeholder
-// still in it, the page locks instead of handing out everyone's answers.
-if ($PASSWORD === 'CHANGE_THIS_PASSWORD') {
+// The password lives in team-password.php, which is git-ignored because this
+// repository is public. Fail shut: if that file is missing or still holds the
+// placeholder, lock the page rather than hand out everyone's answers.
+$PASSWORD = '';
+if (is_file(__DIR__ . '/team-password.php')) {
+    require __DIR__ . '/team-password.php';
+    $PASSWORD = isset($TEAM_PASSWORD) ? (string)$TEAM_PASSWORD : '';
+}
+if ($PASSWORD === '' || $PASSWORD === 'CHANGE_THIS_PASSWORD') {
     http_response_code(503);
-    exit('This page is not set up yet: open responses.php and set $PASSWORD on line 10.');
+    exit('This page is not set up yet: upload team-password.php with the team password in it.');
 }
 
 $csv      = dirname(__DIR__) . '/questionnaire-responses.csv';

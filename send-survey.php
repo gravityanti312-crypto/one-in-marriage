@@ -8,7 +8,18 @@
  */
 require __DIR__ . '/payment-config.php';
 
-$PASSWORD = 'CHANGE_THIS_PASSWORD';          // <-- set before uploading
+// The password lives in team-password.php, which is git-ignored because this
+// repository is public. Fail shut: if that file is missing or still holds the
+// placeholder, lock the page rather than hand out everyone's answers.
+$PASSWORD = '';
+if (is_file(__DIR__ . '/team-password.php')) {
+    require __DIR__ . '/team-password.php';
+    $PASSWORD = isset($TEAM_PASSWORD) ? (string)$TEAM_PASSWORD : '';
+}
+if ($PASSWORD === '' || $PASSWORD === 'CHANGE_THIS_PASSWORD') {
+    http_response_code(503);
+    exit('This page is not set up yet: upload team-password.php with the team password in it.');
+}
 $LOG      = dirname(__DIR__) . '/survey-sends.csv';
 $EXTRA    = dirname(__DIR__) . '/survey-people.json';   // manually added people + hidden ones
 $SURVEY   = base_url() . '/questionnaire.html';
