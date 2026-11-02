@@ -60,7 +60,10 @@ function sf_person_markdown($post) {
     $md .= "- **Email:** " . ($post['email'] ?? '—') . "\n";
     $md .= "- **Partner's name:** " . trim(($post['partner_first_name'] ?? '') . ' ' . ($post['partner_last_name'] ?? '')) . "\n";
     $md .= "- **Partner's email:** " . ($post['partner_email'] ?? '—') . "\n";
-    $md .= "- **Submitted:** " . date('j F Y, g:ia') . "\n\n---\n\n";
+    // Use the real submission time when we have it (a rebuild from the
+    // spreadsheet passes it through); otherwise this is a live submission.
+    $when = !empty($post['submitted_at']) ? strtotime((string)$post['submitted_at']) : false;
+    $md .= "- **Submitted:** " . date('j F Y, g:ia', $when ?: time()) . "\n\n---\n\n";
 
     $intimacy = sf_intimacy($post);
     foreach ($post as $k => $v) {
