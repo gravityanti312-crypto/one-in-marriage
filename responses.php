@@ -9,6 +9,13 @@
  */
 $PASSWORD = 'CHANGE_THIS_PASSWORD';          // <-- set this before uploading
 
+// Fail shut, never open. If this file is ever re-uploaded with the placeholder
+// still in it, the page locks instead of handing out everyone's answers.
+if ($PASSWORD === 'CHANGE_THIS_PASSWORD') {
+    http_response_code(503);
+    exit('This page is not set up yet: open responses.php and set $PASSWORD on line 10.');
+}
+
 $csv      = dirname(__DIR__) . '/questionnaire-responses.csv';
 $coupleD  = dirname(__DIR__) . '/survey-data/couples';
 $peopleD  = dirname(__DIR__) . '/survey-data/people';
