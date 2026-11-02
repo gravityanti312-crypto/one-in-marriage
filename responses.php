@@ -13,6 +13,18 @@ $csv      = dirname(__DIR__) . '/questionnaire-responses.csv';
 $coupleD  = dirname(__DIR__) . '/survey-data/couples';
 $peopleD  = dirname(__DIR__) . '/survey-data/people';
 
+// The Houdini Lens Assessment keeps its own spreadsheet and its own files.
+$hdCsv     = dirname(__DIR__) . '/houdini-responses.csv';
+$hdCoupleD = dirname(__DIR__) . '/survey-data/houdini-couples';
+$hdPeopleD = dirname(__DIR__) . '/survey-data/houdini';
+
+$DIRS = [
+    'couples'         => $coupleD,
+    'people'          => $peopleD,
+    'houdini-couples' => $hdCoupleD,
+    'houdini'         => $hdPeopleD,
+];
+
 $pw = $_POST['pw'] ?? '';
 $ok = ($pw !== '' && hash_equals($PASSWORD, $pw));
 
@@ -32,8 +44,15 @@ if ($ok && isset($_POST['download'])) {
     header('Content-Disposition: attachment; filename="one-in-marriage-responses.csv"');
     readfile($csv); exit;
 }
+if ($ok && isset($_POST['download_houdini'])) {
+    if (!file_exists($hdCsv)) { exit('No Houdini responses yet.'); }
+    header('Content-Type: text/csv; charset=UTF-8');
+    header('Content-Disposition: attachment; filename="houdini-lens-responses.csv"');
+    readfile($hdCsv); exit;
+}
 if ($ok && !empty($_POST['file'])) {
-    $which = ($_POST['kind'] ?? '') === 'people' ? $peopleD : $coupleD;
+    $kind  = (string)($_POST['kind'] ?? '');
+    $which = $DIRS[$kind] ?? $coupleD;
     $path  = $which . '/' . basename((string)$_POST['file']);
     if (is_file($path)) {
         header('Content-Type: text/markdown; charset=UTF-8');
@@ -45,10 +64,11 @@ if ($ok && isset($_POST['zip'])) {
     $zipPath = tempnam(sys_get_temp_dir(), 'oim') . '.zip';
     $zip = new ZipArchive();
     if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
-        foreach (['couples' => $coupleD, 'people' => $peopleD] as $label => $dir) {
+        foreach ($DIRS as $label => $dir) {
             foreach (glob($dir . '/*.md') as $f) { $zip->addFile($f, $label . '/' . basename($f)); }
         }
-        if (file_exists($csv)) { $zip->addFile($csv, 'all-answers.csv'); }
+        if (file_exists($csv))   { $zip->addFile($csv, 'all-answers.csv'); }
+        if (file_exists($hdCsv)) { $zip->addFile($hdCsv, 'houdini-lens-answers.csv'); }
         $zip->close();
         header('Content-Type: application/zip');
         header('Content-Disposition: attachment; filename="one-in-marriage-survey.zip"');
@@ -60,6 +80,11 @@ $count   = file_exists($csv) ? max(0, count(file($csv)) - 1) : 0;
 $couples = $ok ? listing($coupleD) : [];
 $people  = $ok ? listing($peopleD) : [];
 $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($coupleD . '/' . $c['file']), 'both partners have completed'));
+
+$hdCount   = file_exists($hdCsv) ? max(0, count(file($hdCsv)) - 1) : 0;
+$hdCouples = $ok ? listing($hdCoupleD) : [];
+$hdPeople  = $ok ? listing($hdPeopleD) : [];
+$hdDone    = array_filter($hdCouples, fn($c) => str_contains(@file_get_contents($hdCoupleD . '/' . $c['file']), 'both partners have finished'));
 ?><!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>Survey responses &mdash; ONE in Marriage</title>
@@ -89,6 +114,7 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
  .stat b{display:block;font-size:1.6rem;font-family:'Lora',Georgia,serif}
  .stat span{font-size:.82rem;color:var(--muted)}
  .bad{color:#9c4a34;font-size:.9rem}
+ .sectionhead{margin:38px 0 0;padding-bottom:8px;border-bottom:1px solid var(--line);font-size:1.05rem;letter-spacing:.02em;color:var(--sage-deep)}
 </style></head><body>
 <div class="wrap">
   <div class="eyebrow">Team only</div>
@@ -110,6 +136,8 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
     rb.addEventListener('click',function(){var s=pw.type==='text';pw.type=s?'password':'text';rb.textContent=s?'Show':'Hide';pw.focus();});
   </script>
 <?php else: ?>
+
+  <h2 class="sectionhead">THE 90 &mdash; Game Profile Survey</h2>
 
   <div class="card">
     <div class="stat">
@@ -148,6 +176,49 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
         <input type="hidden" name="pw" value="<?php echo htmlspecialchars($pw, ENT_QUOTES); ?>">
         <input type="hidden" name="kind" value="people">
         <b><?php echo htmlspecialchars(str_replace(' — Game Profile', '', $p['title']), ENT_QUOTES); ?></b>
+        <button type="submit" name="file" value="<?php echo htmlspecialchars($p['file'], ENT_QUOTES); ?>" class="ghost">Download</button>
+      </form>
+    <?php endforeach; ?>
+  </div>
+
+  <h2 class="sectionhead">The Houdini Lens Assessment</h2>
+
+  <div class="card">
+    <div class="stat">
+      <div><b><?php echo $hdCount; ?></b><span>people finished</span></div>
+      <div><b><?php echo count($hdDone); ?></b><span>couples complete</span></div>
+      <div><b><?php echo max(0, count($hdCouples) - count($hdDone)); ?></b><span>waiting on a partner</span></div>
+    </div>
+    <form method="POST" style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <input type="hidden" name="pw" value="<?php echo htmlspecialchars($pw, ENT_QUOTES); ?>">
+      <button type="submit" name="download_houdini" value="1">Download spreadsheet</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>By couple</h2>
+    <p style="margin-top:0;font-size:.9rem">Both partners&rsquo; lenses side by side, with the lenses they share.</p>
+    <?php if (!$hdCouples): ?><p>Nothing yet.</p><?php endif; ?>
+    <?php foreach ($hdCouples as $c):
+      $complete = str_contains(@file_get_contents($hdCoupleD . '/' . $c['file']), 'both partners have finished'); ?>
+      <form method="POST" class="row">
+        <input type="hidden" name="pw" value="<?php echo htmlspecialchars($pw, ENT_QUOTES); ?>">
+        <input type="hidden" name="kind" value="houdini-couples">
+        <b><?php echo htmlspecialchars(str_replace(' — Houdini Lenses', '', $c['title']), ENT_QUOTES); ?></b>
+        <span class="tag <?php echo $complete ? '' : 'wait'; ?>"><?php echo $complete ? 'complete' : 'waiting'; ?></span>
+        <button type="submit" name="file" value="<?php echo htmlspecialchars($c['file'], ENT_QUOTES); ?>" class="ghost">Download</button>
+      </form>
+    <?php endforeach; ?>
+  </div>
+
+  <div class="card">
+    <h2>By person</h2>
+    <?php if (!$hdPeople): ?><p>Nothing yet.</p><?php endif; ?>
+    <?php foreach ($hdPeople as $p): ?>
+      <form method="POST" class="row">
+        <input type="hidden" name="pw" value="<?php echo htmlspecialchars($pw, ENT_QUOTES); ?>">
+        <input type="hidden" name="kind" value="houdini">
+        <b><?php echo htmlspecialchars(str_replace(' — Houdini Lens Assessment', '', $p['title']), ENT_QUOTES); ?></b>
         <button type="submit" name="file" value="<?php echo htmlspecialchars($p['file'], ENT_QUOTES); ?>" class="ghost">Download</button>
       </form>
     <?php endforeach; ?>

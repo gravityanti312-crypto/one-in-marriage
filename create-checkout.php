@@ -5,10 +5,16 @@
  */
 require __DIR__ . '/payment-config.php';
 
+// ---- the weekend being sold ----
+// Both names live here, not in payment-config.php, because that file holds the
+// live Stripe key and is never re-uploaded. Change the dates in one place:
+// this is the wording the couple sees on the Stripe page and on their receipt.
+$PRODUCT_NAME          = 'Weekend Marriage Experience — Dec 3-5, Alpine UT (per couple)';
+
 // ---- feedback pricing (first program only) ----
 $FEEDBACK_OFFER        = true;      // set false once the first program is done
 $FEEDBACK_PRICE_CENTS  = 150000;    // $1,500.00
-$FEEDBACK_PRODUCT_NAME = 'Weekend Marriage Experience — Nov 5-7, Sandy UT (per couple, feedback rate)';
+$FEEDBACK_PRODUCT_NAME = 'Weekend Marriage Experience — Dec 3-5, Alpine UT (per couple, feedback rate)';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Method not allowed.'); }
 if (!empty($_POST['company'])) { header('Location: ' . $THANK_YOU); exit; } // honeypot
@@ -25,7 +31,7 @@ foreach ($_POST as $k => $v) {
     $metadata[$k] = function_exists('mb_substr') ? mb_substr($v, 0, 480) : substr($v, 0, 480); // Stripe metadata value limit
 }
 
-// ---- capacity check: stop selling once November is full ----
+// ---- capacity check: stop selling once the weekend is full ----
 $paid = count_paid_registrations($STRIPE_SECRET_KEY);
 if ($paid !== null && $paid >= $MAX_COUPLES) {
     header('Location: sold-out.html');

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>The Houdini Lens Assessment &mdash; ONE in Marriage</title>
+  <meta name="description" content="Notice the pattern. Choose the response. A twenty-question reflection tool for couples in the ONE in Marriage weekend." />
+  <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/lora-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <style>
+    @font-face{font-family:'Lora';font-style:normal;font-weight:500 600;font-display:swap;src:url(assets/fonts/lora-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'Lora';font-style:normal;font-weight:500 600;font-display:swap;src:url(assets/fonts/lora-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:'Lora';font-style:italic;font-weight:500;font-display:swap;src:url(assets/fonts/lora-italic-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'Outfit';font-style:normal;font-weight:400 800;font-display:swap;src:url(assets/fonts/outfit-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'Outfit';font-style:normal;font-weight:400 800;font-display:swap;src:url(assets/fonts/outfit-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+    :root{--cream:#faf6ee;--paper:#fffdf8;--ink:#2b2c26;--body:#5f635b;--muted:#7a7d74;--sage:#7d9068;--sage-deep:#5f7350;--sage-soft:#e9efe1;--tan:#a9824f;--gold:#c6a765;--line:#e7e0d1;--rose:#9c4a34}
+    *{box-sizing:border-box}
+    html{-webkit-text-size-adjust:100%}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:'Outfit',system-ui,Arial,sans-serif;line-height:1.65}
+    .wrap{width:min(780px,calc(100% - 36px));margin-inline:auto;padding:48px 0 90px}
+    a{color:var(--sage-deep)}
+    .back{display:inline-block;margin-bottom:26px;font-weight:600;font-size:.95rem;text-decoration:none}
+    .back:hover{text-decoration:underline}
+    .eyebrow{margin:0 0 12px;color:var(--tan);font-size:.72rem;font-weight:700;letter-spacing:.19em;text-transform:uppercase}
+    h1{margin:0 0 14px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:clamp(2rem,4.2vw,2.8rem);line-height:1.1;letter-spacing:-.01em}
+    h2{margin:0 0 10px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.45rem;line-height:1.25}
+    h3{margin:0 0 4px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.5rem}
+    p{margin:0 0 12px}
+    .lead{color:var(--body);font-size:1.08rem}
+    .intro p,.intro li{color:var(--body)}
+    .intro ul{margin:0 0 12px;padding-left:20px}
+    .agreement{margin:22px 0 6px;padding:16px 18px;border-left:3px solid var(--gold);border-radius:0 14px 14px 0;background:#f6efe0;color:#5a5347;font-size:.95rem}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 26px}
+    .chip{padding:6px 14px;border-radius:999px;background:var(--sage-soft);color:var(--sage-deep);font-size:.84rem;font-weight:600}
+
+    .card{margin:0 0 22px;padding:24px 26px;border:1px solid var(--line);border-radius:18px;background:var(--paper)}
+    @media(max-width:560px){.card{padding:20px 17px}}
+
+    .progress{height:8px;margin:26px 0 10px;border-radius:999px;background:var(--line);overflow:hidden}
+    .progress-fill{height:100%;width:0;border-radius:999px;background:var(--sage);transition:width .3s ease}
+    .steplabel{margin:0 0 4px;font-size:.78rem;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase}
+    .steplabel b{color:var(--sage-deep)}
+    .saved{margin:6px 0 0;font-size:.82rem;color:var(--sage-deep)}
+    .pagetitle{margin:30px 0 4px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.5rem}
+    .page{animation:fade .25s ease}
+    @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+    .qlabel{margin:0;font-family:'Lora',Georgia,serif;font-weight:600;font-size:clamp(1.3rem,3.2vw,1.65rem);line-height:1.3;color:var(--ink)}
+    .qhint{margin:10px 0 0;color:var(--muted);font-size:.88rem}
+    .opts{display:grid;gap:9px;margin-top:18px}
+    .opt{display:flex;align-items:flex-start;gap:11px;padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font-size:.97rem;line-height:1.5;transition:140ms ease}
+    .opt:hover{border-color:#d8cfba}
+    .opt input{width:auto;min-width:0;margin:4px 0 0;accent-color:var(--sage);flex:none}
+    .opt:has(input:checked){border-color:var(--sage);background:var(--sage-soft)}
+    .opt .letter{flex:none;font-weight:700;color:var(--tan);font-size:.86rem;margin-top:2px}
+    .opt .choice{flex:1;min-width:0}
+
+    .top-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+    .field{display:grid;gap:6px}
+    .field label{font-size:.85rem;font-weight:600}
+    .field-full{grid-column:1/-1}
+    .field input,.field select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit}
+    @media(max-width:560px){.top-fields{grid-template-columns:1fr}}
+
+    .pagenav{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
+    .nav-right{display:flex;align-items:center;gap:14px;margin-left:auto}
+    .nav-back{min-height:48px;padding:0 20px;border:1.5px solid var(--sage);border-radius:999px;background:#fff;color:var(--sage-deep);font:inherit;font-weight:600;cursor:pointer}
+    .nav-back:hover{border-color:var(--sage-deep);background:var(--sage-soft)}
+    .nav-next{min-height:48px;padding:0 26px;border:0;border-radius:999px;background:var(--sage);color:#fff;font:inherit;font-weight:600;cursor:pointer;box-shadow:0 14px 28px rgba(125,144,104,.28)}
+    .nav-next:hover{background:var(--sage-deep)}
+    .nav-next:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+    .start{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 30px;margin-top:6px;border:0;border-radius:999px;background:var(--sage);color:#fff;font:inherit;font-weight:600;font-size:1rem;cursor:pointer;box-shadow:0 14px 28px rgba(125,144,104,.28)}
+    .start:hover{background:var(--sage-deep)}
+    @media(max-width:560px){
+      .pagenav{flex-direction:column-reverse;align-items:stretch}
+      .nav-right{flex-direction:column-reverse;margin-left:0}
+      .nav-back,.nav-next,.start{width:100%}
+    }
+    .err{margin-top:14px;color:var(--rose);font-weight:600;font-size:.92rem}
+    .card.unanswered{border-color:#c98b76;background:#fdf4f0}
+
+    .lenscard{margin:0 0 18px;padding:26px;border:1px solid var(--line);border-radius:18px;background:var(--paper)}
+    .lenscard .rank{margin:0 0 10px;color:var(--tan);font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+    .signal{font-family:'Lora',Georgia,serif;font-size:2.6rem;font-weight:600;line-height:1;color:var(--sage-deep)}
+    .signal-label{color:var(--muted);font-size:.82rem}
+    .bar{height:9px;margin:14px 0 18px;border-radius:999px;background:var(--line);overflow:hidden}
+    .bar span{display:block;height:100%;border-radius:999px;background:var(--sage)}
+    .rule{margin:4px 0 0;padding:13px 16px;border-left:3px solid var(--gold);border-radius:0 12px 12px 0;background:#f6efe0;font-family:'Lora',Georgia,serif;font-size:1.05rem;color:#5a5347}
+    .minilabel{margin:18px 0 2px;color:var(--tan);font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+    details{margin-top:16px;font-size:.92rem}
+    summary{cursor:pointer;color:var(--sage-deep);font-weight:600}
+    .evidence{margin:12px 0 0;padding-left:20px;color:var(--body)}
+    .evidence li{margin-bottom:10px}
+    .evidence b{display:block;color:var(--ink);font-size:.86rem}
+    .evidence small{display:block;color:var(--muted);font-size:.84rem;margin-bottom:2px}
+    .tablescroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    table{width:100%;border-collapse:collapse;font-size:.93rem}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
+    th{font-weight:600}
+    thead th{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+    td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+    tbody tr.top th{color:var(--sage-deep)}
+    .foot{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
+    .savednote{margin:18px 0 0;padding:13px 16px;border-left:3px solid var(--sage);border-radius:0 12px 12px 0;background:var(--sage-soft);color:#4b5742;font-size:.92rem}
+    .savednote.warn{border-color:#c98b76;background:#fdf4f0;color:#7c4330}
+    .savednote button{margin-top:8px;min-height:40px;padding:0 16px;border:1.5px solid var(--sage);border-radius:999px;background:#fff;color:var(--sage-deep);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer}
+    .noprint{display:block}
+    @media print{
+      .noprint,.back,.progress,.steplabel,.saved{display:none!important}
+      body{background:#fff}
+      .wrap{width:auto;padding:0}
+      .lenscard,.card{break-inside:avoid;border-color:#ccc}
+      details{display:none}
+    }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="wrap"><div class="card"><h2>This assessment needs JavaScript.</h2><p>Please open this page in a normal browser window with JavaScript enabled, or let us know and we will send you a paper copy.</p></div></div>
+  </noscript>
+  <div class="wrap">
+    <a class="back noprint" href="index.html">&larr; Back to ONE in Marriage</a>
+
+    <!-- ============ INTRO ============ -->
+    <section id="introView">
+      <div class="eyebrow">The Houdini Lens Assessment</div>
+      <h1>Notice the pattern.<br />Choose the response.</h1>
+      <p class="lead">When life gets personal, what do you feel you have to do to be okay? This walks you through the familiar thoughts and impulses you reach for first &mdash; the ones that run before you decide anything.</p>
+
+      <div class="chips">
+        <span class="chip">20 questions</span>
+        <span class="chip">About 10 minutes</span>
+        <span class="chip">Answered on your own</span>
+      </div>
+
+      <div class="card intro">
+        <h2>Answer for the real moments.</h2>
+        <p>Think about the past six months &mdash; especially the times you felt pressured, misunderstood, disappointed, or emotionally exposed.</p>
+        <p>Choose your <strong>first familiar thought or impulse</strong>, even if you went on to handle the situation differently. Choose what you recognise, not what you wish you did.</p>
+        <p>None of the four answers will fit perfectly. Choose the closest one. When two fit, choose the one that happens more often &mdash; especially when the moment feels personal.</p>
+        <div class="agreement"><strong>Familiar is more useful than flattering.</strong> There is no good result and no bad result. This is a starting point for a conversation, not a verdict about who you are.</div>
+      </div>
+
+      <div class="card">
+        <h2>Your details</h2>
+        <p style="color:var(--body);font-size:.95rem">So your facilitator knows whose answers these are, and can sit your results beside your partner&rsquo;s.</p>
+        <div class="top-fields">
+          <div class="field field-full">
+            <label for="course">Which course are you in?</label>
+            <select id="course" name="course" required>
+              <option value="">Choose your course</option>
+              <option>December 3&ndash;5, 2026 &mdash; Alpine, Utah</option>
+            </select>
+          </div>
+          <div class="field"><label for="first_name">First name</label><input id="first_name" name="first_name" type="text" autocomplete="given-name" required /></div>
+          <div class="field"><label for="last_name">Last name</label><input id="last_name" name="last_name" type="text" autocomplete="family-name" required /></div>
+          <div class="field field-full"><label for="email">Your email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+          <div class="field"><label for="partner_first_name">Partner&rsquo;s first name</label><input id="partner_first_name" name="partner_first_name" type="text" required /></div>
+          <div class="field"><label for="partner_last_name">Partner&rsquo;s last name</label><input id="partner_last_name" name="partner_last_name" type="text" required /></div>
+          <div class="field field-full"><label for="partner_email">Partner&rsquo;s email</label><input id="partner_email" name="partner_email" type="email" required /></div>
+        </div>
+        <p id="detailsErr" class="err" hidden></p>
+        <div class="pagenav" style="justify-content:flex-end">
+          <button type="button" class="start" id="beginBtn">Begin the assessment &rarr;</button>
+        </div>
+      </div>
+
+      <p class="foot">Your answers are yours. They go to the ONE in Marriage team so your facilitator can prepare, and they are never shown to your partner. Based on <em>Never Buy a Horse Named Houdini</em> by Brett Harward. This is a reflection tool for the weekend &mdash; not a diagnosis and not a validated psychological test.</p>
+    </section>
+
+    <!-- ============ QUESTIONS ============ -->
+    <section id="quizView" hidden>
+      <div class="eyebrow">The Houdini Lens Assessment</div>
+      <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+      <p class="steplabel"><b id="stepNum">Question 1 of 20</b> &middot; <span id="stepCount">0 answered</span></p>
+      <p class="saved" id="savedNote" hidden>Your answers are saved on this device &mdash; you can close this and come back.</p>
+
+      <div class="card" id="qCard">
+        <p class="qlabel" id="qText" tabindex="-1"></p>
+        <p class="qhint">Choose the answer closest to your first familiar response. One answer is required.</p>
+        <div class="opts" id="qOpts"></div>
+        <p id="quizErr" class="err" hidden>Choose an answer to continue.</p>
+      </div>
+
+      <div class="pagenav">
+        <button type="button" class="nav-back" id="backBtn">&larr; Back</button>
+        <div class="nav-right">
+          <button type="button" class="nav-next" id="nextBtn">Continue &rarr;</button>
+        </div>
+      </div>
+
+      <p class="foot">Answer for what actually happens &mdash; not the response you believe you should have.</p>
+    </section>
+
+    <!-- ============ RESULTS ============ -->
+    <section id="resultsView" hidden>
+      <div class="eyebrow">Your lens signals</div>
+      <h1 id="resultsHeading" tabindex="-1">A starting point.<br />Not a label.</h1>
+      <p class="lead" id="resultsLead"></p>
+
+      <div id="saveStatus"></div>
+      <div id="lensCards"></div>
+
+      <div class="card">
+        <h2>Check the signal against your story.</h2>
+        <p style="color:var(--body)">Think of a recent moment when one of these showed up. What happened? What did you tell yourself it meant? What were you afraid would happen if you did not respond that way?</p>
+        <p style="color:var(--body)">A higher number means more of the points assigned to that lens showed up in your answers. It is not a percentage of who you are, a probability, or a comparison with anyone else.</p>
+        <p style="color:var(--muted);font-size:.93rem;margin-bottom:0">Small differences can move with a single answer. Your third lens may be a much weaker signal than your first. Bring this to the weekend as a question, not a conclusion.</p>
+      </div>
+
+      <div class="card">
+        <h2>All eight signals</h2>
+        <div class="tablescroll">
+          <table>
+            <thead><tr><th>Rank</th><th>Lens</th><th class="num">Signal</th><th class="num">Your points</th><th class="num">Possible</th></tr></thead>
+            <tbody id="allRows"></tbody>
+          </table>
+        </div>
+        <details>
+          <summary>How these numbers are worked out</summary>
+          <p style="margin-top:10px"><strong>100 &times; the points your answers earned for a lens &divide; every point assigned to that lens.</strong> The denominator counts every answer option in all twenty questions, including the ones you did not choose.</p>
+          <p>The eight scores are independent &mdash; they are not meant to add up to 100. Where two competing answers in the same question both carry points for one lens, that lens cannot reach 100.</p>
+          <p style="color:var(--muted);margin-bottom:0">Rankings use the unrounded values and exact ties share a rank.</p>
+        </details>
+      </div>
+
+      <div class="card noprint">
+        <h2>Keep a copy</h2>
+        <p style="color:var(--body)">Print this or save it as a PDF to bring with you.</p>
+        <div class="pagenav" style="border:0;margin-top:6px;padding-top:0">
+          <button type="button" class="nav-back" id="reviewBtn">Review my answers</button>
+          <div class="nav-right"><button type="button" class="nav-next" id="printBtn">Print / save as PDF</button></div>
+        </div>
+      </div>
+
+      <p class="foot">Based on <em>Never Buy a Horse Named Houdini</em> by Brett Harward. A reflection tool for the ONE in Marriage weekend &mdash; not a diagnosis, and not a validated psychological test. Your score is a starting point for a conversation.</p>
+    </section>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+  var LENSES = ["Savior","Survivor","Prover","Martyr","Analyst","Endurer","Ghost","Chameleon"];
+  var LENS_INFO = {
+    Savior: {
+      rule: "I need to help or put things right to feel valuable.",
+      description: "You may move toward other people’s problems and feel responsible for how things turn out.",
+      reflection: "Am I being asked to help, or am I making myself responsible?"
+    },
+    Survivor: {
+      rule: "I need to protect myself and remain someone I can count on.",
+      description: "You may stay alert to risk, protect your independence, and find it difficult to depend on others.",
+      reflection: "What evidence says I’m unsafe right now, and what am I assuming?"
+    },
+    Prover: {
+      rule: "I need to perform well enough to know I’m enough.",
+      description: "You may look to achievement, competence, or demanding personal standards for reassurance about your worth.",
+      reflection: "What would I choose here if my worth were not being tested?"
+    },
+    Martyr: {
+      rule: "I need to put others first to remain loving and lovable.",
+      description: "You may give more than you can spare, feel uneasy naming your needs, or hope your effort will communicate them.",
+      reflection: "What do I need to say directly instead of hoping my sacrifice will communicate it?"
+    },
+    Analyst: {
+      rule: "I need to understand it and make it make sense before I can settle.",
+      description: "You may turn toward logic, structure, or problem-solving when emotion or uncertainty feels difficult.",
+      reflection: "What feeling needs acknowledgment before this problem needs a solution?"
+    },
+    Endurer: {
+      rule: "I need to keep carrying the hard things without asking for relief.",
+      description: "You may find meaning in persistence and feel more comfortable bearing difficulty than expecting things to improve.",
+      reflection: "Just because I can carry this, does that mean I need to keep carrying it?"
+    },
+    Ghost: {
+      rule: "I’m safer staying in the background than taking up space.",
+      description: "You may leave needs unspoken, withdraw from attention, or question whether your contribution matters.",
+      reflection: "What would I say or ask for if I believed my presence mattered?"
+    },
+    Chameleon: {
+      rule: "I need to adjust to what others want to stay connected.",
+      description: "You may read people closely and change your approach before checking what is true for you.",
+      reflection: "What is true for me before I adjust to what someone else wants?"
+    }
+  };
+
+  // Weight order: Savior, Survivor, Prover, Martyr, Analyst, Endurer, Ghost, Chameleon.
+  // Brett Harward’s editorial pilot weights, carried over unchanged.
+  var QUESTIONS = [
+    ["When someone I care about is in pain, my first impulse is to…", [
+      ["Look for a practical solution and step in; helping them through it feels like my responsibility.", [3,0,1,0,2,0,0,0]],
+      ["Hang back; getting emotionally involved feels risky, and I worry my presence might make things worse.", [0,1,0,0,1,0,3,0]],
+      ["Work out what would make them feel better, then respond accordingly.", [0,0,0,0,0,0,0,3]],
+      ["Put my needs aside and carry some of their burden, even when I’m already stretched.", [0,0,0,3,0,1,0,0]]
+    ]],
+    ["When I feel misunderstood, I tend to…", [
+      ["Explain myself more carefully; it bothers me if people are unhappy with me.", [0,0,3,0,0,0,0,1]],
+      ["Shut down, withdraw, or go passive-aggressive — I shouldn’t have to explain myself.", [0,0,0,1,0,1,3,0]],
+      ["Push back; I feel judged or cornered and need to protect myself.", [0,3,0,0,0,0,0,0]],
+      ["Replay the details and look for where the reasoning or communication broke down.", [1,0,0,0,3,0,0,0]]
+    ]],
+    ["In a group, the role I most naturally take is…", [
+      ["Protecting the underdogs and looking for ways to add value.", [3,0,0,1,0,0,0,0]],
+      ["Reading the room and adjusting my approach to fit the people around me.", [0,0,0,0,0,0,1,3]],
+      ["Saying little and keeping things positive, even when something is hard.", [0,1,0,0,0,3,0,0]],
+      ["Bringing structure and careful thinking so our work is accurate and meets a high standard.", [0,0,1,0,3,0,0,0]]
+    ]],
+    ["I feel most frustrated when…", [
+      ["People reject help that I believe would solve their problem.", [3,0,1,0,0,0,0,0]],
+      ["I do things for others and I don’t feel like they appreciate what I do.", [0,0,0,3,0,0,0,1]],
+      ["People are making emotional decisions that aren’t rational.", [0,0,0,0,3,1,0,0]],
+      ["Someone I trusted lets me down or uses my openness against me.", [0,3,0,0,0,0,1,0]]
+    ]],
+    ["When I’m overwhelmed, I usually…", [
+      ["Keep pushing; getting through without complaining feels like the right thing to do.", [0,0,0,0,0,3,0,0]],
+      ["Reduce contact and draw as little attention to myself as possible; that feels safer.", [0,1,0,0,0,0,3,0]],
+      ["Set aside what I want and become more accommodating so other people stay happy.", [0,0,0,2,0,0,0,3]],
+      ["Retreat into thinking, lists, or planning so I can make sense of things and regain control.", [1,1,0,0,3,0,0,0]]
+    ]],
+    ["In a difficult conversation, I often…", [
+      ["Try to guide us toward a solution; I have trouble relaxing until I’ve helped put things right.", [3,0,0,0,1,1,0,0]],
+      ["Soften or change my position to keep the other person comfortable and connected to me.", [0,0,0,1,0,0,1,3]],
+      ["Prepare to defend myself because disagreement can feel like an attack.", [0,3,0,0,0,0,0,0]],
+      ["Worry about appearing incompetent, unsuccessful, or less capable than they thought.", [0,0,3,0,0,0,0,0]]
+    ]],
+    ["Deep down, I often feel responsible for…", [
+      ["Preventing other people’s pain, mistakes, or disappointing outcomes.", [3,0,0,0,1,0,0,0]],
+      ["Keeping others comfortable, so they appreciate me and won’t be disappointed in me.", [0,0,0,3,0,0,1,2]],
+      ["Staying the course and playing the long game; dealing with life’s curveballs.", [0,0,0,0,0,3,0,0]],
+      ["Demonstrating that I’m good enough through what I accomplish.", [0,1,3,0,0,0,0,0]]
+    ]],
+    ["People close to me sometimes say I…", [
+      ["Give more than I can spare and take on responsibilities other people could handle themselves.", [2,0,0,3,0,0,0,0]],
+      ["Change depending on who I’m with and rarely let people know what I really think.", [0,0,0,0,0,0,1,3]],
+      ["Seem guarded or react strongly when I feel questioned.", [0,3,1,0,1,0,0,0]],
+      ["Work past my limits and act as though rest is something I still haven’t earned.", [1,0,2,0,0,3,0,0]]
+    ]],
+    ["A recurring pattern in my relationships is…", [
+      ["Giving too much time and energy to other people while not receiving much in return.", [1,0,1,3,1,0,0,0]],
+      ["Keeping people at a distance because trusting them gives them the ability to hurt me.", [0,3,0,0,0,0,0,0]],
+      ["Becoming what someone else wants and gradually losing track of what I want.", [0,0,0,0,0,0,0,3]],
+      ["Leaving my needs unspoken and gradually fading into the background because I assume speaking up won’t matter.", [0,0,0,0,0,1,3,0]]
+    ]],
+    ["Deep down, I feel more secure in a relationship when…", [
+      ["I have demonstrated that I’m capable, successful, or impressive.", [0,0,3,0,1,0,0,0]],
+      ["I don’t have to depend on the other person enough for them to hurt me.", [0,3,0,0,0,1,0,0]],
+      ["I can keep parts of myself hidden and avoid taking up much space.", [0,0,0,0,0,1,3,1]],
+      ["I’m useful to the other person and can solve a problem they couldn’t solve on their own.", [3,0,0,1,1,0,0,0]]
+    ]],
+    ["When something important is not going the way I hoped, which thought is most familiar?", [
+      ["I need to put more into this and get it right. I have to make it work.", [1,0,3,0,0,0,0,0]],
+      ["I need to understand what is happening before I can feel comfortable with my next move.", [0,0,0,0,3,0,0,1]],
+      ["Sometimes things don’t work out. I shouldn’t expect it to get easier.", [0,0,0,0,0,3,1,0]],
+      ["I’ll probably be blamed for this, and the other person will probably leave.", [0,3,0,0,0,0,0,0]]
+    ]],
+    ["When a relationship feels uncertain, I’m most likely to believe…", [
+      ["Presenting the version of me that the other person approves of can keep the relationship secure.", [0,0,1,0,0,0,0,3]],
+      ["Staying involved and doing enough can keep someone I love from getting hurt or making painful mistakes.", [3,1,0,0,1,0,0,0]],
+      ["Giving more is my best chance of keeping their love.", [0,0,2,3,0,0,0,0]],
+      ["What I want probably won’t change much; carrying the difficulty is part of my role.", [0,0,0,0,0,3,1,0]]
+    ]],
+    ["When I’m not feeling good about myself, which thought tends to show up?", [
+      ["I need to accomplish something so others can see my value.", [0,0,3,0,0,0,0,1]],
+      ["I should stay out of the way until I have something worthwhile to contribute.", [0,0,0,0,0,0,3,0]],
+      ["I need to handle this myself so I know I can count on me.", [0,3,0,0,0,1,0,0]],
+      ["I should be doing more for the people who count on me.", [1,0,0,3,0,0,0,0]]
+    ]],
+    ["When I have an opportunity to rest, enjoy myself, or do something just for me, the thought most likely to interfere is…", [
+      ["Getting comfortable can make people weak; I shouldn’t expect life to be easy.", [0,0,0,0,0,3,0,0]],
+      ["I need to know what everyone else is comfortable with before I decide what I want.", [1,0,0,1,0,0,0,3]],
+      ["I have too much to do to justify stopping yet.", [0,1,3,0,0,0,0,0]],
+      ["Joining in might draw attention to me; it feels safer to stay in the background.", [0,1,0,0,0,0,3,0]]
+    ]],
+    ["When I’ve put a lot into something and no one acknowledges it, what bothers me most?", [
+      ["I wonder whether they think I did a good enough job.", [0,0,3,0,0,0,1,0]],
+      ["I wonder whether they realize what I gave up to make it happen.", [0,0,0,3,0,1,0,0]],
+      ["I feel betrayed by the person I invested in.", [3,1,0,0,0,0,0,0]],
+      ["I wonder whether I misread what they wanted from me.", [0,0,0,0,1,0,0,3]]
+    ]],
+    ["Someone tells me, “You’ve done enough.” What most often keeps me from feeling that way?", [
+      ["I can still see ways the result falls short of what I expected from myself.", [0,0,3,0,0,0,1,0]],
+      ["There are still unanswered questions. I can’t settle until it makes sense.", [0,1,0,0,3,0,0,0]],
+      ["There are still people struggling who might need something from me.", [3,0,0,1,0,0,0,1]],
+      ["Stopping because this is hard doesn’t feel like a good enough reason.", [0,1,0,0,0,3,0,0]]
+    ]],
+    ["When someone offers to take care of me or help with something difficult, my first hesitation is…", [
+      ["Will accepting this make me dependent on them or give them leverage over me?", [0,3,0,0,0,0,0,0]],
+      ["I’m not sure my situation is worth taking up their time.", [0,0,0,2,0,1,3,0]],
+      ["Will they handle it correctly? I feel more comfortable when I understand and control the process.", [1,0,1,0,3,0,0,0]],
+      ["What response are they hoping for? I may accept or decline based on what will please them.", [0,0,0,0,0,0,0,3]]
+    ]],
+    ["After something goes wrong, the voice in my head most often says…", [
+      ["Work out what you missed so you understand it and won’t get caught off guard again.", [0,1,0,0,3,1,0,1]],
+      ["You should have stepped in sooner. Someone got hurt because you didn’t do enough.", [3,0,0,1,0,0,0,0]],
+      ["You should have stayed quiet. Getting involved only showed that you don’t belong.", [0,0,0,0,0,0,3,0]],
+      ["You should have done better. Now you need to prove that you’re still capable.", [0,0,3,0,0,0,0,0]]
+    ]],
+    ["When a painful situation keeps repeating, my instinct is to…", [
+      ["Stop expecting it to change and quietly accept that this is something I have to bear.", [0,0,0,0,0,3,1,0]],
+      ["Double my effort so I can finally succeed and prove that I’m not failing.", [0,0,3,0,0,0,0,1]],
+      ["Keep analyzing the variables until I can explain what is happening and prevent another bad surprise.", [0,1,0,0,3,0,0,0]],
+      ["Increase my efforts to help, even when it takes more time and energy than I can spare.", [3,0,0,2,0,0,0,0]]
+    ]],
+    ["When I need to say no to someone I care about, the thought most likely to stop me is…", [
+      ["They might not like the real me. It’s safer to keep my preference hidden and adjust.", [0,1,0,0,0,0,1,3]],
+      ["This is hard, but I’m supposed to be able to carry hard things without asking for relief.", [0,0,1,1,0,3,0,0]],
+      ["Their needs should come first. Letting them down would feel selfish.", [1,0,0,3,0,0,0,0]],
+      ["I need a solid logical reason. My discomfort alone doesn’t seem like enough.", [0,0,0,0,3,0,0,0]]
+    ]]
+  ];
+
+    var TOTAL = QUESTIONS.length;
+    var STORAGE = 'oim-houdini-v1';
+    var LETTERS = ['A', 'B', 'C', 'D'];
+
+    var DETAIL_FIELDS = ['course', 'first_name', 'last_name', 'email',
+                         'partner_first_name', 'partner_last_name', 'partner_email'];
+
+    // ---- elements ----
+    var el = function (id) { return document.getElementById(id); };
+    var introView   = el('introView');
+    var quizView    = el('quizView');
+    var resultsView = el('resultsView');
+
+    // ---- state ----
+    var state = {
+      details: {},
+      answers: new Array(TOTAL),
+      current: 0,
+      done: false
+    };
+    for (var i = 0; i < TOTAL; i++) { state.answers[i] = null; }
+
+    var storageWorks = true;
+    function save() {
+      if (!storageWorks) { return; }
+      try {
+        localStorage.setItem(STORAGE, JSON.stringify({
+          v: 1, details: state.details, answers: state.answers,
+          current: state.current, done: state.done
+        }));
+      } catch (e) { storageWorks = false; }
+    }
+    function load() {
+      try {
+        var raw = localStorage.getItem(STORAGE);
+        if (!raw) { return null; }
+        var data = JSON.parse(raw);
+        if (!data || data.v !== 1 || !Array.isArray(data.answers) ||
+            data.answers.length !== TOTAL) { return null; }
+        for (var j = 0; j < TOTAL; j++) {
+          var a = data.answers[j];
+          if (a !== null && !(a === 0 || a === 1 || a === 2 || a === 3)) { return null; }
+        }
+        return data;
+      } catch (e) { storageWorks = false; return null; }
+    }
+    function clearSaved() {
+      try { localStorage.removeItem(STORAGE); } catch (e) {}
+    }
+
+    // ---- scoring (carried over from Brett's rubric, unchanged) ----
+    // assigned = every point the rubric hands out for that lens, across all
+    // four options of all twenty questions, chosen or not.
+    var ASSIGNED = LENSES.map(function (name, li) {
+      var total = 0;
+      QUESTIONS.forEach(function (q) {
+        q[1].forEach(function (opt) { total += opt[1][li]; });
+      });
+      return total;
+    });
+
+    function scoreRows() {
+      var rows = LENSES.map(function (name, li) {
+        var earned = 0;
+        QUESTIONS.forEach(function (q, qi) {
+          earned += q[1][state.answers[qi]][1][li];
+        });
+        return {
+          name: name, index: li, earned: earned,
+          assigned: ASSIGNED[li], score: 100 * earned / ASSIGNED[li]
+        };
+      });
+
+      // Integer cross-multiplication so ties are exact, never float-fuzzy.
+      rows.sort(function (a, b) {
+        return (b.earned * a.assigned - a.earned * b.assigned) || (a.index - b.index);
+      });
+      rows.forEach(function (row, idx) {
+        var prev = rows[idx - 1];
+        var tied = prev && (row.earned * prev.assigned === prev.earned * row.assigned);
+        row.rank = tied ? prev.rank : idx + 1;
+      });
+      return rows;
+    }
+
+    // Top three, plus anything exactly tied with the third.
+    function topRows(rows) {
+      var cut = rows[Math.min(2, rows.length - 1)];
+      return rows.filter(function (row) {
+        return row.earned * cut.assigned >= cut.earned * row.assigned;
+      });
+    }
+
+    var fmt = function (n) { return String(Number(n.toFixed(1))); };
+
+    function esc(value) {
+      return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    // ---- details page ----
+    function readDetails() {
+      var out = {};
+      DETAIL_FIELDS.forEach(function (name) {
+        var node = el(name);
+        out[name] = node ? node.value.trim() : '';
+      });
+      return out;
+    }
+
+    function fillDetails(details) {
+      DETAIL_FIELDS.forEach(function (name) {
+        var node = el(name);
+        if (node && details && details[name]) { node.value = details[name]; }
+      });
+    }
+
+    function detailsProblem(details) {
+      for (var k = 0; k < DETAIL_FIELDS.length; k++) {
+        if (!details[DETAIL_FIELDS[k]]) {
+          return 'Please fill in every field above before you begin.';
+        }
+      }
+      var mail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      if (!mail.test(details.email)) { return 'Please check your own email address.'; }
+      if (!mail.test(details.partner_email)) { return 'Please check your partner’s email address.'; }
+      if (details.email.toLowerCase() === details.partner_email.toLowerCase()) {
+        return 'You and your partner each need your own email address, so your answers stay separate.';
+      }
+      return null;
+    }
+
+    // ---- views ----
+    function show(which) {
+      introView.hidden   = which !== 'intro';
+      quizView.hidden    = which !== 'quiz';
+      resultsView.hidden = which !== 'results';
+    }
+
+    function answeredCount() {
+      return state.answers.filter(function (a) { return a !== null; }).length;
+    }
+
+    function renderQuestion() {
+      var qi = state.current;
+      var q = QUESTIONS[qi];
+
+      el('stepNum').textContent = 'Question ' + (qi + 1) + ' of ' + TOTAL;
+      el('stepCount').textContent = answeredCount() + ' answered';
+      el('progressFill').style.width = (100 * (qi) / TOTAL) + '%';
+      el('savedNote').hidden = !storageWorks;
+
+      el('qText').textContent = q[0];
+      el('qOpts').innerHTML = q[1].map(function (opt, oi) {
+        return '<label class="opt">' +
+                 '<input type="radio" name="answer" value="' + oi + '"' +
+                   (state.answers[qi] === oi ? ' checked' : '') + ' />' +
+                 '<span class="letter">' + LETTERS[oi] + '.</span>' +
+                 '<span class="choice">' + esc(opt[0]) + '</span>' +
+               '</label>';
+      }).join('');
+
+      el('quizErr').hidden = true;
+      el('qCard').classList.remove('unanswered');
+      el('backBtn').textContent = qi === 0 ? '← Back to the start' : '← Back';
+      el('nextBtn').textContent = qi === TOTAL - 1 ? 'See my lens signals →' : 'Continue →';
+
+      el('qText').focus();
+    }
+
+    function selectedOption() {
+      var picked = document.querySelector('#qOpts input[name=answer]:checked');
+      return picked ? Number(picked.value) : null;
+    }
+
+    // ---- results ----
+    function renderResults() {
+      var rows = scoreRows();
+      var top = topRows(rows);
+      var name = state.details.first_name || '';
+
+      el('resultsLead').textContent = (name ? name + ', these' : 'These') +
+        ' are the strongest signals in the answers you chose' +
+        (top.length > 3 ? ' — four are shown because of an exact tie' : '') +
+        '. Hold them against what actually happens in your life.';
+
+      el('lensCards').innerHTML = top.map(function (row) {
+        var info = LENS_INFO[row.name];
+        var shared = rows.filter(function (other) {
+          return other.earned * row.assigned === row.earned * other.assigned;
+        }).length > 1;
+
+        var body;
+        if (row.earned > 0) {
+          body =
+            '<p style="color:var(--body)">' + esc(info.description) + '</p>' +
+            '<p class="minilabel">A rule worth testing</p>' +
+            '<p class="rule">“' + esc(info.rule) + '”</p>' +
+            '<p class="minilabel">A question to sit with</p>' +
+            '<p style="color:var(--body);margin-bottom:0">' + esc(info.reflection) + '</p>';
+        } else {
+          body = '<p style="color:var(--body);margin-bottom:0">None of your answers earned points for this lens. It appears here because of a tie, not because of anything you chose.</p>';
+        }
+
+        var evidence = [];
+        QUESTIONS.forEach(function (q, qi) {
+          var opt = q[1][state.answers[qi]];
+          var points = opt[1][row.index];
+          if (points > 0) {
+            evidence.push(
+              '<li><b>Question ' + (qi + 1) + LETTERS[state.answers[qi]] +
+              ' · +' + points + '</b>' +
+              '<small>' + esc(q[0]) + '</small>' + esc(opt[0]) + '</li>'
+            );
+          }
+        });
+
+        return '<article class="lenscard">' +
+                 '<p class="rank">' + (shared ? 'Shared rank ' : 'Rank ') + row.rank + '</p>' +
+                 '<h3>' + esc(row.name) + '</h3>' +
+                 '<div class="signal">' + fmt(row.score) + '</div>' +
+                 '<span class="signal-label">Lens signal score</span>' +
+                 '<div class="bar" aria-hidden="true"><span style="width:' +
+                   Math.max(0, Math.min(100, row.score)) + '%"></span></div>' +
+                 body +
+                 (evidence.length
+                   ? '<details><summary>The answers behind this signal (' + evidence.length +
+                     ')</summary><ol class="evidence">' + evidence.join('') + '</ol></details>'
+                   : '') +
+               '</article>';
+      }).join('');
+
+      var cutRank = top[top.length - 1].rank;
+      el('allRows').innerHTML = rows.map(function (row) {
+        return '<tr' + (row.rank <= cutRank ? ' class="top"' : '') + '>' +
+                 '<td class="num">' + row.rank + '</td>' +
+                 '<th>' + esc(row.name) + '</th>' +
+                 '<td class="num"><strong>' + fmt(row.score) + '</strong></td>' +
+                 '<td class="num">' + row.earned + '</td>' +
+                 '<td class="num">' + row.assigned + '</td>' +
+               '</tr>';
+      }).join('');
+
+      return rows;
+    }
+
+    // ---- sending to the team ----
+    var sent = false;
+
+    function buildPayload(rows) {
+      var top = topRows(rows);
+      return {
+        v: 1,
+        submitted_at: new Date().toISOString(),
+        details: state.details,
+        top_lenses: top.map(function (r) { return r.name; }),
+        scores: rows.map(function (r) {
+          return { lens: r.name, rank: r.rank, signal: Number(r.score.toFixed(1)),
+                   earned: r.earned, assigned: r.assigned };
+        }),
+        answers: QUESTIONS.map(function (q, qi) {
+          var oi = state.answers[qi];
+          return { n: qi + 1, question: q[0], letter: LETTERS[oi], answer: q[1][oi][0] };
+        })
+      };
+    }
+
+    function sendResults(rows) {
+      var status = el('saveStatus');
+      status.innerHTML = '<div class="savednote">Sending your answers to the team…</div>';
+
+      var body = new URLSearchParams();
+      body.set('payload', JSON.stringify(buildPayload(rows)));
+
+      fetch('submit-houdini.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: body.toString()
+      }).then(function (res) {
+        if (!res.ok) { throw new Error('status ' + res.status); }
+        return res.text();
+      }).then(function (text) {
+        if (text.indexOf('OK') !== 0) { throw new Error(text.slice(0, 120)); }
+        sent = true;
+        status.innerHTML = '<div class="savednote">Your answers are in. Your facilitator will have them before the weekend.</div>';
+        clearSaved();
+      }).catch(function () {
+        status.innerHTML =
+          '<div class="savednote warn">Your results are below, but we could not send them to the team just now. ' +
+          'Your answers are still saved on this device, so you can try again.' +
+          '<br /><button type="button" id="retrySend">Try sending again</button></div>';
+        var retry = el('retrySend');
+        if (retry) { retry.addEventListener('click', function () { sendResults(rows); }); }
+      });
+    }
+
+    function finish() {
+      state.done = true;
+      save();
+      show('results');
+      var rows = renderResults();
+      el('resultsHeading').focus();
+      window.scrollTo(0, 0);
+      if (!sent) { sendResults(rows); }
+    }
+
+    // ---- wiring ----
+    el('beginBtn').addEventListener('click', function () {
+      var details = readDetails();
+      var problem = detailsProblem(details);
+      var errNode = el('detailsErr');
+      if (problem) {
+        errNode.textContent = problem;
+        errNode.hidden = false;
+        return;
+      }
+      errNode.hidden = true;
+      state.details = details;
+      save();
+      show('quiz');
+      renderQuestion();
+      window.scrollTo(0, 0);
+    });
+
+    el('qOpts').addEventListener('change', function () {
+      var picked = selectedOption();
+      if (picked === null) { return; }
+      state.answers[state.current] = picked;
+      el('stepCount').textContent = answeredCount() + ' answered';
+      el('quizErr').hidden = true;
+      el('qCard').classList.remove('unanswered');
+      save();
+    });
+
+    el('nextBtn').addEventListener('click', function () {
+      if (state.answers[state.current] === null) {
+        el('quizErr').hidden = false;
+        el('qCard').classList.add('unanswered');
+        el('qCard').scrollIntoView({ block: 'center' });
+        return;
+      }
+      if (state.current === TOTAL - 1) { finish(); return; }
+      state.current++;
+      save();
+      renderQuestion();
+      window.scrollTo(0, 0);
+    });
+
+    el('backBtn').addEventListener('click', function () {
+      if (state.current === 0) {
+        show('intro');
+        window.scrollTo(0, 0);
+        return;
+      }
+      state.current--;
+      save();
+      renderQuestion();
+      window.scrollTo(0, 0);
+    });
+
+    el('reviewBtn').addEventListener('click', function () {
+      state.current = 0;
+      show('quiz');
+      renderQuestion();
+      window.scrollTo(0, 0);
+    });
+
+    el('printBtn').addEventListener('click', function () { window.print(); });
+
+    // ---- restore a part-finished session ----
+    var saved = load();
+    if (saved) {
+      state.details = saved.details || {};
+      state.answers = saved.answers;
+      state.current = Math.min(Math.max(0, saved.current | 0), TOTAL - 1);
+      fillDetails(state.details);
+
+      if (saved.done && answeredCount() === TOTAL) {
+        state.done = true;
+        show('results');
+        renderResults();
+        el('saveStatus').innerHTML =
+          '<div class="savednote">These are the results you finished earlier on this device.' +
+          '<br /><button type="button" id="resendBtn">Send them to the team again</button></div>';
+        el('resendBtn').addEventListener('click', function () { sendResults(scoreRows()); });
+      } else if (answeredCount() > 0 && !detailsProblem(state.details)) {
+        show('quiz');
+        renderQuestion();
+        el('savedNote').textContent =
+          'We kept your place — you are back at question ' + (state.current + 1) +
+          ' of ' + TOTAL + '.';
+        el('savedNote').hidden = false;
+      }
+    }
+  })();
+  </script>
+</body>
+</html>

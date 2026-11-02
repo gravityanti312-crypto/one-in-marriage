@@ -7,10 +7,12 @@
  */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Method not allowed.'); }
-if (!empty($_POST['company'])) { // readable files for the team: one per person, one per couple
-sf_save($_POST);
-
-header('Location: questionnaire-thanks.html'); exit; }   // honeypot
+// Honeypot: a real person never fills this field in, so drop the submission
+// quietly and send the bot to the same thank-you page.
+if (!empty($_POST['company'])) {
+    header('Location: questionnaire-thanks.html');
+    exit;
+}
 
 $required = array('course','first_name','last_name','email','partner_first_name','partner_last_name','partner_email','date','partner');
 foreach ($required as $r) {
