@@ -50,10 +50,6 @@
     .brand-mark{flex:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--teal);border-radius:50%;font-family:'Lora',Georgia,serif;font-size:1.5rem;color:var(--teal)}
     .brand strong{display:block;font-size:.95rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase}
     .brand small{display:block;color:var(--muted);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
-    nav{display:flex;gap:8px;flex-wrap:wrap}
-    nav button{min-height:44px;padding:10px 17px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:.86rem;font-weight:650;cursor:pointer}
-    nav button:hover{background:var(--teal-soft);border-color:var(--teal)}
-    nav button[aria-current="page"]{background:var(--teal-soft);border-color:var(--teal)}
 
     /* ---- shell ---- */
     main{max-width:1050px;min-height:60vh;margin:24px auto 60px;padding:0 24px}
@@ -169,10 +165,6 @@
         <small>Notice the pattern. Choose the response.</small>
       </span>
     </a>
-    <nav aria-label="Assessment sections">
-      <button type="button" id="assessmentNav" aria-current="page">Assessment</button>
-      <button type="button" id="resultsNav" hidden>Results</button>
-    </nav>
   </header>
 
   <main id="app" tabindex="-1">
@@ -274,11 +266,10 @@
         <label class="field" for="resultNotes">Testing notes &mdash; optional and not scored
           <textarea id="resultNotes" maxlength="10000" placeholder="What felt accurate? Which question or answer needs refinement?"></textarea>
         </label>
-        <p class="small muted">Notes stay in this page until you export the result. The JSON export includes answers, notes, scores, and the rubric used. Share it only deliberately.</p>
+        <p class="small muted">Notes stay in this page until you save the result.</p>
         <div class="actions">
-          <button type="button" class="btn primary" id="exportJsonBtn">Export full result JSON</button>
+          <button type="button" class="btn primary" id="pdfBtn">Save as PDF</button>
           <button type="button" class="btn" id="exportCsvBtn">Export scores CSV</button>
-          <button type="button" class="btn" id="printBtn">Print results</button>
           <button type="button" class="btn" id="reviewBtn">Review answers</button>
           <button type="button" class="btn danger" id="newBtn">New assessment</button>
         </div>
@@ -286,8 +277,6 @@
 
       <div class="print-only"><strong>Testing notes</strong>
 <span id="notesPrint"></span></div>
-
-      <p class="small muted">Rubric revision: Initial web prototype. All 20 questions answered.</p>
     </section>
   </main>
 
@@ -479,8 +468,6 @@
     var introView     = el('introView');
     var quizView      = el('quizView');
     var resultsView   = el('resultsView');
-    var assessmentNav = el('assessmentNav');
-    var resultsNav    = el('resultsNav');
 
     // ---- state ----
     // No name, no email, nothing identifying: the only person who sees this is
@@ -583,21 +570,10 @@
     });
 
     // ---- views ----
-    function setCurrent(node, on) {
-      if (on) { node.setAttribute('aria-current', 'page'); }
-      else { node.removeAttribute('aria-current'); }
-    }
-
     function show(which) {
       introView.hidden   = which !== 'intro';
       quizView.hidden    = which !== 'quiz';
       resultsView.hidden = which !== 'results';
-
-      // The Results pill only appears once there is something to go back to.
-      var onResults = which === 'results';
-      if (onResults) { resultsNav.hidden = false; }
-      setCurrent(assessmentNav, !onResults);
-      setCurrent(resultsNav, onResults);
     }
 
     function answeredCount() {
@@ -871,13 +847,7 @@
       save();
     });
 
-    el('printBtn').addEventListener('click', function () { window.print(); });
-
-    el('exportJsonBtn').addEventListener('click', function () {
-      downloadFile('houdini-result-' + stamp() + '.json',
-                   JSON.stringify(resultPayload(), null, 2),
-                   'application/json');
-    });
+    el('pdfBtn').addEventListener('click', function () { window.print(); });
 
     el('exportCsvBtn').addEventListener('click', exportCSV);
 
@@ -891,25 +861,7 @@
       state.done = false;
       state.startedAt = new Date().toISOString();
       state.completedAt = null;
-      resultsNav.hidden = true;
       show('intro');
-      window.scrollTo(0, 0);
-    });
-
-    assessmentNav.addEventListener('click', function () {
-      if (answeredCount() > 0) {
-        show('quiz');
-        renderQuestion();
-      } else {
-        show('intro');
-      }
-      window.scrollTo(0, 0);
-    });
-
-    resultsNav.addEventListener('click', function () {
-      if (!state.done || answeredCount() !== TOTAL) { return; }
-      show('results');
-      renderResults();
       window.scrollTo(0, 0);
     });
 
