@@ -10,3 +10,27 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
+
+# The payment log is written beside the pages, so it would otherwise be
+# downloadable by anyone. The code that writes it lives in payment-config.php,
+# which holds the live Stripe key and is never re-uploaded, so it is blocked
+# here instead. Written both ways so it works whichever Apache GoDaddy runs.
+<Files "paylog.txt">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</Files>
+
+<FilesMatch "\.(log|bak|sql|zip)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
