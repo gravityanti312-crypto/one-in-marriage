@@ -15,230 +15,304 @@
     @font-face{font-family:'Outfit';font-style:normal;font-weight:400 800;font-display:swap;src:url(assets/fonts/outfit-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
     @font-face{font-family:'Outfit';font-style:normal;font-weight:400 800;font-display:swap;src:url(assets/fonts/outfit-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
 
-    :root{--cream:#faf6ee;--paper:#fffdf8;--ink:#2b2c26;--body:#5f635b;--muted:#7a7d74;--sage:#7d9068;--sage-deep:#5f7350;--sage-soft:#e9efe1;--tan:#a9824f;--gold:#c6a765;--line:#e7e0d1;--rose:#9c4a34}
-    *{box-sizing:border-box}
-    html{-webkit-text-size-adjust:100%}
-    body{margin:0;background:var(--cream);color:var(--ink);font-family:'Outfit',system-ui,Arial,sans-serif;line-height:1.65}
-    .wrap{width:min(780px,calc(100% - 36px));margin-inline:auto;padding:48px 0 90px}
-    a{color:var(--sage-deep)}
-    .back{display:inline-block;margin-bottom:26px;font-weight:600;font-size:.95rem;text-decoration:none}
-    .back:hover{text-decoration:underline}
-    .eyebrow{margin:0 0 12px;color:var(--tan);font-size:.72rem;font-weight:700;letter-spacing:.19em;text-transform:uppercase}
-    h1{margin:0 0 14px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:clamp(2rem,4.2vw,2.8rem);line-height:1.1;letter-spacing:-.01em}
-    h2{margin:0 0 10px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.45rem;line-height:1.25}
-    h3{margin:0 0 4px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.5rem}
-    p{margin:0 0 12px}
-    .lead{color:var(--body);font-size:1.08rem}
-    .intro p,.intro li{color:var(--body)}
-    .intro ul{margin:0 0 12px;padding-left:20px}
-    .agreement{margin:22px 0 6px;padding:16px 18px;border-left:3px solid var(--gold);border-radius:0 14px 14px 0;background:#f6efe0;color:#5a5347;font-size:.95rem}
-    .chips{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 26px}
-    .chip{padding:6px 14px;border-radius:999px;background:var(--sage-soft);color:var(--sage-deep);font-size:.84rem;font-weight:600}
-
-    .card{margin:0 0 22px;padding:24px 26px;border:1px solid var(--line);border-radius:18px;background:var(--paper)}
-    @media(max-width:560px){.card{padding:20px 17px}}
-
-    .progress{height:8px;margin:26px 0 10px;border-radius:999px;background:var(--line);overflow:hidden}
-    .progress-fill{height:100%;width:0;border-radius:999px;background:var(--sage);transition:width .3s ease}
-    .steplabel{margin:0 0 4px;font-size:.78rem;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase}
-    .steplabel b{color:var(--sage-deep)}
-    .saved{margin:6px 0 0;font-size:.82rem;color:var(--sage-deep)}
-    .pagetitle{margin:30px 0 4px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.5rem}
-    .page{animation:fade .25s ease}
-    @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-    .qlabel{margin:0;font-family:'Lora',Georgia,serif;font-weight:600;font-size:clamp(1.3rem,3.2vw,1.65rem);line-height:1.3;color:var(--ink)}
-    .qhint{margin:10px 0 0;color:var(--muted);font-size:.88rem}
-    .opts{display:grid;gap:9px;margin-top:18px}
-    .opt{display:flex;align-items:flex-start;gap:11px;padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font-size:.97rem;line-height:1.5;transition:140ms ease}
-    .opt:hover{border-color:#d8cfba}
-    .opt input{width:auto;min-width:0;margin:4px 0 0;accent-color:var(--sage);flex:none}
-    .opt:has(input:checked){border-color:var(--sage);background:var(--sage-soft)}
-    .opt .letter{flex:none;font-weight:700;color:var(--tan);font-size:.86rem;margin-top:2px}
-    .opt .choice{flex:1;min-width:0}
-
-    .top-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
-    .field{display:grid;gap:6px}
-    .field label{font-size:.85rem;font-weight:600}
-    .field-full{grid-column:1/-1}
-    .field input,.field select{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit}
-    @media(max-width:560px){.top-fields{grid-template-columns:1fr}}
-
-    .pagenav{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
-    .nav-right{display:flex;align-items:center;gap:14px;margin-left:auto}
-    .nav-back{min-height:48px;padding:0 20px;border:1.5px solid var(--sage);border-radius:999px;background:#fff;color:var(--sage-deep);font:inherit;font-weight:600;cursor:pointer}
-    .nav-back:hover{border-color:var(--sage-deep);background:var(--sage-soft)}
-    .nav-next{min-height:48px;padding:0 26px;border:0;border-radius:999px;background:var(--sage);color:#fff;font:inherit;font-weight:600;cursor:pointer;box-shadow:0 14px 28px rgba(125,144,104,.28)}
-    .nav-next:hover{background:var(--sage-deep)}
-    .nav-next:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
-    .start{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 30px;margin-top:6px;border:0;border-radius:999px;background:var(--sage);color:#fff;font:inherit;font-weight:600;font-size:1rem;cursor:pointer;box-shadow:0 14px 28px rgba(125,144,104,.28)}
-    .start:hover{background:var(--sage-deep)}
-    @media(max-width:560px){
-      .pagenav{flex-direction:column-reverse;align-items:stretch}
-      .nav-right{flex-direction:column-reverse;margin-left:0}
-      .nav-back,.nav-next,.start{width:100%}
+    /* Brett's assessment palette: deep teal on cream, which also sits with the
+       ONE in Marriage site. Headings stay in the site's Lora, body in Outfit. */
+    :root{
+      --paper:#f6f3ec;--card:#fffefa;--ink:#203c38;--body:#47584f;--muted:#586963;
+      --line:#d6ded5;--teal:#235c50;--teal-deep:#174638;--teal-soft:#e8f0e9;
+      --gold:#98642d;--gold-soft:#f7edda;--danger:#983b32;
+      --radius:18px;--shadow:0 12px 32px rgba(29,57,46,.06)
     }
-    .err{margin-top:14px;color:var(--rose);font-weight:600;font-size:.92rem}
-    .card.unanswered{border-color:#c98b76;background:#fdf4f0}
+    *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    html{-webkit-text-size-adjust:100%}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:'Outfit',system-ui,Arial,sans-serif;line-height:1.6}
+    a{color:var(--teal)}
+    button,input,select,textarea{font:inherit}
+    :focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 
-    .lenscard{margin:0 0 18px;padding:26px;border:1px solid var(--line);border-radius:18px;background:var(--paper)}
-    .lenscard .rank{margin:0 0 10px;color:var(--tan);font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
-    .signal{font-family:'Lora',Georgia,serif;font-size:2.6rem;font-weight:600;line-height:1;color:var(--sage-deep)}
-    .signal-label{color:var(--muted);font-size:.82rem}
-    .bar{height:9px;margin:14px 0 18px;border-radius:999px;background:var(--line);overflow:hidden}
-    .bar span{display:block;height:100%;border-radius:999px;background:var(--sage)}
-    .rule{margin:4px 0 0;padding:13px 16px;border-left:3px solid var(--gold);border-radius:0 12px 12px 0;background:#f6efe0;font-family:'Lora',Georgia,serif;font-size:1.05rem;color:#5a5347}
-    .minilabel{margin:18px 0 2px;color:var(--tan);font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-    details{margin-top:16px;font-size:.92rem}
-    summary{cursor:pointer;color:var(--sage-deep);font-weight:600}
-    .evidence{margin:12px 0 0;padding-left:20px;color:var(--body)}
-    .evidence li{margin-bottom:10px}
-    .evidence b{display:block;color:var(--ink);font-size:.86rem}
-    .evidence small{display:block;color:var(--muted);font-size:.84rem;margin-bottom:2px}
-    .tablescroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-    table{width:100%;border-collapse:collapse;font-size:.93rem}
-    th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
-    th{font-weight:600}
-    thead th{color:var(--muted);font-size:.78rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
-    td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-    tbody tr.top th{color:var(--sage-deep)}
-    .foot{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
-    .savednote{margin:18px 0 0;padding:13px 16px;border-left:3px solid var(--sage);border-radius:0 12px 12px 0;background:var(--sage-soft);color:#4b5742;font-size:.92rem}
-    .savednote.warn{border-color:#c98b76;background:#fdf4f0;color:#7c4330}
-    .savednote button{margin-top:8px;min-height:40px;padding:0 16px;border:1.5px solid var(--sage);border-radius:999px;background:#fff;color:var(--sage-deep);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer}
-    .noprint{display:block}
+    h1,h2,h3,p{margin-top:0}
+    h1,h2{font-family:'Lora',Georgia,serif;font-weight:600;line-height:1.16;letter-spacing:-.02em}
+    h1{font-size:clamp(2.4rem,5.6vw,4.1rem);margin-bottom:22px}
+    h2{font-size:clamp(1.7rem,3.4vw,2.4rem);margin-bottom:18px}
+    h3{margin:0;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.85rem;line-height:1.25}
+    p{margin-bottom:14px}
+    p:last-child{margin-bottom:0}
+    small,.small{font-size:.88rem}
+    .muted{color:var(--muted)}
+    .lead{max-width:670px;color:var(--muted);font-size:1.12rem}
+
+    .kicker{margin-bottom:14px;color:var(--teal);font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+
+    /* ---- header ---- */
+    .site-header{max-width:1180px;margin:auto;padding:24px 24px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+    .brand-mark{flex:none;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--teal);border-radius:50%;font-family:'Lora',Georgia,serif;font-size:1.5rem;color:var(--teal)}
+    .brand strong{display:block;font-size:.95rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase}
+    .brand small{display:block;color:var(--muted);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+    nav{display:flex;gap:8px;flex-wrap:wrap}
+    nav button{min-height:44px;padding:10px 17px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:.86rem;font-weight:650;cursor:pointer}
+    nav button:hover{background:var(--teal-soft);border-color:var(--teal)}
+    nav button[aria-current="page"]{background:var(--teal-soft);border-color:var(--teal)}
+
+    /* ---- shell ---- */
+    main{max-width:1050px;min-height:60vh;margin:24px auto 60px;padding:0 24px}
+    .narrow{max-width:800px}
+    .hero{padding:34px 0 10px}
+
+    .panel{margin-bottom:22px;padding:clamp(20px,4vw,34px);border:1px solid var(--line);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow)}
+    .notice{margin-bottom:22px;padding:16px 20px;border-left:3px solid var(--teal);border-radius:0 10px 10px 0;background:var(--teal-soft)}
+    .notice.warm{background:var(--gold-soft);border-color:var(--gold)}
+    .notice.bad{background:#fbeeec;border-color:var(--danger)}
+
+    .chips,.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .chips{margin:24px 0}
+    .chip{padding:7px 13px;border-radius:999px;background:var(--teal-soft);color:var(--teal-deep);font-size:.85rem;font-weight:650}
+    .actions{margin-top:20px}
+    .actions.between{justify-content:space-between}
+    .divider{margin:25px 0;border:0;border-top:1px solid var(--line)}
+
+    /* ---- buttons ---- */
+    .btn{min-height:44px;padding:10px 17px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-weight:650;cursor:pointer}
+    .btn:hover:not(:disabled){background:var(--teal-soft);border-color:var(--teal)}
+    .btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+    .btn.primary:hover:not(:disabled){background:var(--teal-deep)}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+
+    /* ---- questions ---- */
+    .progress-meta{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;color:var(--muted);font-size:.9rem}
+    .progress{height:9px;margin-bottom:28px;border-radius:99px;background:#dce5dc;overflow:hidden}
+    .progress-fill{height:100%;width:0;border-radius:99px;background:var(--teal);transition:width .3s ease}
+    .qlabel{margin:0 0 6px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:clamp(1.65rem,3.8vw,2.2rem);line-height:1.25;letter-spacing:-.015em}
+    .qhint{margin:0 0 18px;color:var(--muted);font-size:.9rem}
+    .opts{display:grid;gap:12px}
+    .opt{display:flex;align-items:flex-start;gap:12px;padding:17px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;line-height:1.5}
+    .opt:hover{border-color:var(--teal)}
+    .opt input{width:auto;min-width:0;flex:none;margin:5px 0 0;accent-color:var(--teal)}
+    .opt:has(input:checked){background:var(--teal-soft);border-color:var(--teal)}
+    .opt .letter{flex:none;color:var(--teal);font-weight:800}
+    .opt .choice{flex:1;min-width:0}
+    .err{margin:16px 0 0;color:var(--danger);font-weight:650;font-size:.92rem}
+    .panel.unanswered{border-color:var(--danger)}
+    .saved{margin:14px 0 0;color:var(--muted);font-size:.85rem}
+
+    /* ---- details form ---- */
+    .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    label.field{display:block;margin:0;font-size:.9rem;font-weight:650}
+    label.field.full{grid-column:1/-1}
+    label.field input,label.field select{display:block;width:100%;margin-top:7px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+
+    /* ---- results ---- */
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px;margin:25px 0}
+    .result-card{min-width:0;padding:24px;border:1px solid var(--line);border-top:4px solid var(--teal);border-radius:14px;background:var(--card)}
+    .signal{margin:8px 0 0;font-family:'Lora',Georgia,serif;font-size:3rem;font-weight:600;line-height:1.1;color:var(--teal)}
+    .bar{height:7px;margin:14px 0 20px;border-radius:99px;background:#e1e7de;overflow:hidden}
+    .bar span{display:block;height:100%;border-radius:inherit;background:var(--teal)}
+    .rule{font-family:'Lora',Georgia,serif;font-size:1.16rem;color:var(--ink)}
+    details{margin-top:18px}
+    summary{color:var(--teal);font-weight:650;cursor:pointer}
+    details>p,details>ol{margin-top:14px}
+    .evidence{padding-left:22px;font-size:.88rem;color:var(--body)}
+    .evidence li{margin-bottom:12px}
+    .evidence strong{display:block;color:var(--ink)}
+    .evidence small{display:block;color:var(--muted)}
+    .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0}
+    table{width:100%;border-collapse:collapse;text-align:left;font-size:.9rem}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+    thead th{color:var(--muted);font-size:.8rem}
+    tbody th{font-weight:650}
+    tbody tr.top th{color:var(--teal)}
+    .numeric{text-align:right;font-variant-numeric:tabular-nums}
+    .savednote{margin:0 0 22px;padding:16px 20px;border-left:3px solid var(--teal);border-radius:0 10px 10px 0;background:var(--teal-soft);font-size:.95rem}
+    .savednote.warn{border-color:var(--gold);background:var(--gold-soft)}
+    .savednote button{margin-top:10px;min-height:40px;padding:0 16px;border:1px solid var(--teal);border-radius:10px;background:#fff;color:var(--teal);font-weight:650;font-size:.9rem;cursor:pointer}
+
+    footer{max-width:1050px;margin:auto;padding:24px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem}
+    footer a{color:var(--teal)}
+
+    @media (max-width:650px){
+      main{margin-top:15px;padding:0 16px}
+      .site-header{padding:18px 16px}
+      .grid-two,.cards{grid-template-columns:1fr}
+      .hero{padding-top:18px}
+      .opt{padding:15px 12px}
+      .actions .btn{flex-grow:1}
+      .progress-meta{font-size:.8rem}
+    }
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
     @media print{
-      .noprint,.back,.progress,.steplabel,.saved{display:none!important}
+      .site-header,footer,.no-print{display:none!important}
       body{background:#fff}
-      .wrap{width:auto;padding:0}
-      .lenscard,.card{break-inside:avoid;border-color:#ccc}
+      main{max-width:none;margin:0;padding:0}
+      .panel,.result-card{box-shadow:none;break-inside:avoid;border-color:#ccc}
+      .cards{display:block}
+      .result-card{margin-bottom:15px}
+      .table-scroll{overflow:visible}
       details{display:none}
     }
   </style>
 </head>
 <body>
   <noscript>
-    <div class="wrap"><div class="card"><h2>This assessment needs JavaScript.</h2><p>Please open this page in a normal browser window with JavaScript enabled, or let us know and we will send you a paper copy.</p></div></div>
+    <main><div class="panel"><h2>This assessment needs JavaScript.</h2><p>Please open this page in a normal browser window with JavaScript turned on, or let us know and we will send you a paper copy.</p></div></main>
   </noscript>
-  <div class="wrap">
-    <a class="back noprint" href="index.html">&larr; Back to ONE in Marriage</a>
+
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true">1</span>
+      <span>
+        <strong>ONE in Marriage</strong>
+        <small>Notice the pattern. Choose the response.</small>
+      </span>
+    </a>
+    <nav aria-label="Assessment sections">
+      <button type="button" id="assessmentNav" aria-current="page">Assessment</button>
+      <button type="button" id="resultsNav" hidden>Results</button>
+    </nav>
+  </header>
+
+  <main id="app" tabindex="-1">
 
     <!-- ============ INTRO ============ -->
-    <section id="introView">
-      <div class="eyebrow">The Houdini Lens Assessment</div>
-      <h1>Notice the pattern.<br />Choose the response.</h1>
-      <p class="lead">When life gets personal, what do you feel you have to do to be okay? This walks you through the familiar thoughts and impulses you reach for first &mdash; the ones that run before you decide anything.</p>
-
-      <div class="chips">
-        <span class="chip">20 questions</span>
-        <span class="chip">About 10 minutes</span>
-        <span class="chip">Answered on your own</span>
+    <section id="introView" class="narrow">
+      <div class="hero">
+        <p class="kicker">The Houdini Lens Assessment</p>
+        <h1>Notice the rules.<br />Find a little more choice.</h1>
+        <p class="lead">When life gets personal, what do you feel you have to do to be okay? Explore the familiar thoughts and patterns you reach for first.</p>
+        <div class="chips">
+          <span class="chip">20 questions</span>
+          <span class="chip">One closest-fit answer</span>
+          <span class="chip">Eight possible lens signals</span>
+        </div>
       </div>
 
-      <div class="card intro">
+      <div class="panel">
         <h2>Answer for the real moments.</h2>
-        <p>Think about the past six months &mdash; especially the times you felt pressured, misunderstood, disappointed, or emotionally exposed.</p>
-        <p>Choose your <strong>first familiar thought or impulse</strong>, even if you went on to handle the situation differently. Choose what you recognise, not what you wish you did.</p>
-        <p>None of the four answers will fit perfectly. Choose the closest one. When two fit, choose the one that happens more often &mdash; especially when the moment feels personal.</p>
-        <div class="agreement"><strong>Familiar is more useful than flattering.</strong> There is no good result and no bad result. This is a starting point for a conversation, not a verdict about who you are.</div>
+        <p>Think about the past six months, especially times you felt pressured, misunderstood, disappointed, or emotionally exposed.</p>
+        <p>Choose your <strong>first familiar thought or impulse</strong>, even when you later handle the situation differently. Choose what you recognise &mdash; not what you wish you did.</p>
+        <p>Every question needs one answer. None may fit perfectly. Choose the closest. When two fit, choose the one that happens more often, especially when the situation feels personal.</p>
+        <div class="notice" style="margin:22px 0 0">
+          <strong>Familiar is more useful than flattering.</strong> There is no preferred result. This is a starting point for reflection, not a verdict about who you are.
+        </div>
       </div>
 
-      <div class="card">
+      <div class="panel">
         <h2>Your details</h2>
-        <p style="color:var(--body);font-size:.95rem">So your facilitator knows whose answers these are, and can sit your results beside your partner&rsquo;s.</p>
-        <div class="top-fields">
-          <div class="field field-full">
-            <label for="course">Which course are you in?</label>
+        <p class="muted small" style="margin-bottom:18px">So your facilitator knows whose answers these are, and can sit your results beside your partner&rsquo;s.</p>
+        <div class="grid-two">
+          <label class="field full" for="course">Which course are you in?
             <select id="course" name="course" required>
               <option value="">Choose your course</option>
               <option>December 3&ndash;5, 2026 &mdash; Alpine, Utah</option>
             </select>
-          </div>
-          <div class="field"><label for="first_name">First name</label><input id="first_name" name="first_name" type="text" autocomplete="given-name" required /></div>
-          <div class="field"><label for="last_name">Last name</label><input id="last_name" name="last_name" type="text" autocomplete="family-name" required /></div>
-          <div class="field field-full"><label for="email">Your email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
-          <div class="field"><label for="partner_first_name">Partner&rsquo;s first name</label><input id="partner_first_name" name="partner_first_name" type="text" required /></div>
-          <div class="field"><label for="partner_last_name">Partner&rsquo;s last name</label><input id="partner_last_name" name="partner_last_name" type="text" required /></div>
-          <div class="field field-full"><label for="partner_email">Partner&rsquo;s email</label><input id="partner_email" name="partner_email" type="email" required /></div>
+          </label>
+          <label class="field" for="first_name">First name
+            <input id="first_name" name="first_name" type="text" autocomplete="given-name" required />
+          </label>
+          <label class="field" for="last_name">Last name
+            <input id="last_name" name="last_name" type="text" autocomplete="family-name" required />
+          </label>
+          <label class="field full" for="email">Your email
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </label>
+          <label class="field" for="partner_first_name">Partner&rsquo;s first name
+            <input id="partner_first_name" name="partner_first_name" type="text" required />
+          </label>
+          <label class="field" for="partner_last_name">Partner&rsquo;s last name
+            <input id="partner_last_name" name="partner_last_name" type="text" required />
+          </label>
+          <label class="field full" for="partner_email">Partner&rsquo;s email
+            <input id="partner_email" name="partner_email" type="email" required />
+          </label>
         </div>
         <p id="detailsErr" class="err" hidden></p>
-        <div class="pagenav" style="justify-content:flex-end">
-          <button type="button" class="start" id="beginBtn">Begin the assessment &rarr;</button>
+        <div class="actions">
+          <button type="button" class="btn primary" id="beginBtn">Begin the assessment &rarr;</button>
         </div>
       </div>
 
-      <p class="foot">Your answers are yours. They go to the ONE in Marriage team so your facilitator can prepare, and they are never shown to your partner. Based on <em>Never Buy a Horse Named Houdini</em> by Brett Harward. This is a reflection tool for the weekend &mdash; not a diagnosis and not a validated psychological test.</p>
+      <p class="small muted">Your answers go to the ONE in Marriage team so your facilitator can prepare. They are never shown to your partner. Based on <em>Never Buy a Horse Named Houdini</em> by Brett Harward. A reflection tool &mdash; not a diagnosis or a validated psychological test. Scores are starting points for a conversation.</p>
     </section>
 
     <!-- ============ QUESTIONS ============ -->
-    <section id="quizView" hidden>
-      <div class="eyebrow">The Houdini Lens Assessment</div>
-      <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
-      <p class="steplabel"><b id="stepNum">Question 1 of 20</b> &middot; <span id="stepCount">0 answered</span></p>
-      <p class="saved" id="savedNote" hidden>Your answers are saved on this device &mdash; you can close this and come back.</p>
+    <section id="quizView" class="narrow" hidden>
+      <div class="panel" id="qCard">
+        <p class="kicker">The Houdini Lens Assessment</p>
+        <div class="progress-meta">
+          <span id="stepNum">Question 1 of 20</span>
+          <span id="stepCount">0 answered</span>
+        </div>
+        <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
 
-      <div class="card" id="qCard">
-        <p class="qlabel" id="qText" tabindex="-1"></p>
-        <p class="qhint">Choose the answer closest to your first familiar response. One answer is required.</p>
+        <h2 class="qlabel" id="qText" tabindex="-1"></h2>
+        <p class="qhint">Choose the closest answer to your first familiar response. One answer is required.</p>
         <div class="opts" id="qOpts"></div>
         <p id="quizErr" class="err" hidden>Choose an answer to continue.</p>
-      </div>
 
-      <div class="pagenav">
-        <button type="button" class="nav-back" id="backBtn">&larr; Back</button>
-        <div class="nav-right">
-          <button type="button" class="nav-next" id="nextBtn">Continue &rarr;</button>
+        <div class="actions between">
+          <button type="button" class="btn" id="backBtn">&larr; Back</button>
+          <button type="button" class="btn primary" id="nextBtn">Continue &rarr;</button>
         </div>
       </div>
-
-      <p class="foot">Answer for what actually happens &mdash; not the response you believe you should have.</p>
+      <p class="small muted" id="savedNote" hidden>Your answers are saved on this device &mdash; you can close this and come back.</p>
+      <p class="small muted">Think about what actually happens &mdash; not the response you believe you should have.</p>
     </section>
 
     <!-- ============ RESULTS ============ -->
     <section id="resultsView" hidden>
-      <div class="eyebrow">Your lens signals</div>
+      <p class="kicker">Your lens signals</p>
       <h1 id="resultsHeading" tabindex="-1">A starting point.<br />Not a label.</h1>
       <p class="lead" id="resultsLead"></p>
 
-      <div id="saveStatus"></div>
-      <div id="lensCards"></div>
+      <div id="saveStatus" style="margin-top:26px"></div>
+      <div id="resultNotices"></div>
+      <div class="cards" id="lensCards"></div>
 
-      <div class="card">
+      <div class="panel">
         <h2>Check the signal against your story.</h2>
-        <p style="color:var(--body)">Think of a recent moment when one of these showed up. What happened? What did you tell yourself it meant? What were you afraid would happen if you did not respond that way?</p>
-        <p style="color:var(--body)">A higher number means more of the points assigned to that lens showed up in your answers. It is not a percentage of who you are, a probability, or a comparison with anyone else.</p>
-        <p style="color:var(--muted);font-size:.93rem;margin-bottom:0">Small differences can move with a single answer. Your third lens may be a much weaker signal than your first. Bring this to the weekend as a question, not a conclusion.</p>
+        <p>Think of a recent moment when one of these patterns showed up. What happened? What did you tell yourself it meant? What were you afraid would happen if you did not respond that way?</p>
+        <p>A higher score means more weighted support relative to the points assigned to that lens. It is not a percentage of your identity, a probability, or a comparison with other people.</p>
+        <p class="muted">Small differences can move with a single answer. The third-ranked lens may be a much weaker signal than the first two. Bring this to the weekend as a question, not a conclusion.</p>
       </div>
 
-      <div class="card">
+      <div class="panel">
         <h2>All eight signals</h2>
-        <div class="tablescroll">
+        <div class="table-scroll">
           <table>
-            <thead><tr><th>Rank</th><th>Lens</th><th class="num">Signal</th><th class="num">Your points</th><th class="num">Possible</th></tr></thead>
+            <thead>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Lens</th>
+                <th scope="col" class="numeric">Signal score</th>
+                <th scope="col" class="numeric">Selected points</th>
+                <th scope="col" class="numeric">Assigned points</th>
+              </tr>
+            </thead>
             <tbody id="allRows"></tbody>
           </table>
         </div>
         <details>
-          <summary>How these numbers are worked out</summary>
-          <p style="margin-top:10px"><strong>100 &times; the points your answers earned for a lens &divide; every point assigned to that lens.</strong> The denominator counts every answer option in all twenty questions, including the ones you did not choose.</p>
-          <p>The eight scores are independent &mdash; they are not meant to add up to 100. Where two competing answers in the same question both carry points for one lens, that lens cannot reach 100.</p>
-          <p style="color:var(--muted);margin-bottom:0">Rankings use the unrounded values and exact ties share a rank.</p>
+          <summary>How these numbers are calculated</summary>
+          <p><strong>100 &times; selected lens points &divide; all assigned lens points.</strong> Assigned points include every answer option in every question, including choices you did not select.</p>
+          <p>The eight scores are independent indices and are not constrained to add to 100. Where competing answers carry points for the same lens, its highest attainable signal score may be below 100. No attainable-ceiling adjustment is applied.</p>
+          <p class="small muted">Rankings use unrounded values. Displays are rounded to one decimal when needed. Exact ties share a rank.</p>
         </details>
       </div>
 
-      <div class="card noprint">
+      <div class="panel no-print">
         <h2>Keep a copy</h2>
-        <p style="color:var(--body)">Print this or save it as a PDF to bring with you.</p>
-        <div class="pagenav" style="border:0;margin-top:6px;padding-top:0">
-          <button type="button" class="nav-back" id="reviewBtn">Review my answers</button>
-          <div class="nav-right"><button type="button" class="nav-next" id="printBtn">Print / save as PDF</button></div>
+        <p>Print this page or save it as a PDF to bring with you to the weekend.</p>
+        <div class="actions">
+          <button type="button" class="btn primary" id="printBtn">Print / save as PDF</button>
+          <button type="button" class="btn" id="reviewBtn">Review my answers</button>
         </div>
       </div>
-
-      <p class="foot">Based on <em>Never Buy a Horse Named Houdini</em> by Brett Harward. A reflection tool for the ONE in Marriage weekend &mdash; not a diagnosis, and not a validated psychological test. Your score is a starting point for a conversation.</p>
     </section>
-  </div>
+  </main>
+
+  <footer>
+    Based on <em>Never Buy a Horse Named Houdini</em> by Brett Harward. Pilot reflection tool &mdash; not a diagnosis or a validated psychological test. Scores are starting points for a conversation. &nbsp;&middot;&nbsp; <a href="index.html">Back to ONE in Marriage</a>
+  </footer>
 
   <script>
   (function () {
@@ -425,6 +499,8 @@
     var introView   = el('introView');
     var quizView    = el('quizView');
     var resultsView = el('resultsView');
+    var assessmentNav = el('assessmentNav');
+    var resultsNav    = el('resultsNav');
 
     // ---- state ----
     var state = {
@@ -547,10 +623,21 @@
     }
 
     // ---- views ----
+    function setCurrent(node, on) {
+      if (on) { node.setAttribute('aria-current', 'page'); }
+      else { node.removeAttribute('aria-current'); }
+    }
+
     function show(which) {
       introView.hidden   = which !== 'intro';
       quizView.hidden    = which !== 'quiz';
       resultsView.hidden = which !== 'results';
+
+      // The Results pill only appears once there is something to go back to.
+      var onResults = which === 'results';
+      if (onResults) { resultsNav.hidden = false; }
+      setCurrent(assessmentNav, !onResults);
+      setCurrent(resultsNav, onResults);
     }
 
     function answeredCount() {
@@ -593,12 +680,25 @@
     function renderResults() {
       var rows = scoreRows();
       var top = topRows(rows);
+      var highest = rows[0].score;
       var name = state.details.first_name || '';
 
       el('resultsLead').textContent = (name ? name + ', these' : 'These') +
-        ' are the strongest signals in the answers you chose' +
-        (top.length > 3 ? ' — four are shown because of an exact tie' : '') +
-        '. Hold them against what actually happens in your life.';
+        ' are the three strongest signals in your selected answers, with any' +
+        ' exact ties included. Explore them against your actual experience.';
+
+      var notices = '';
+      if (top.length > 3) {
+        notices +=
+          '<div class="notice">An exact tie crosses the third-result boundary, so ' +
+          top.length + ' lenses are shown rather than breaking the tie arbitrarily.</div>';
+      }
+      if (highest === 0) {
+        notices +=
+          '<div class="notice bad">None of these selections earned points under this rubric. ' +
+          'The tied rankings do not identify a supported lens.</div>';
+      }
+      el('resultNotices').innerHTML = notices;
 
       el('lensCards').innerHTML = top.map(function (row) {
         var info = LENS_INFO[row.name];
@@ -609,13 +709,14 @@
         var body;
         if (row.earned > 0) {
           body =
-            '<p style="color:var(--body)">' + esc(info.description) + '</p>' +
-            '<p class="minilabel">A rule worth testing</p>' +
-            '<p class="rule">“' + esc(info.rule) + '”</p>' +
-            '<p class="minilabel">A question to sit with</p>' +
-            '<p style="color:var(--body);margin-bottom:0">' + esc(info.reflection) + '</p>';
+            '<p>' + esc(info.description) + '</p>' +
+            '<p class="small muted">A possible rule to explore</p>' +
+            '<p class="rule">&ldquo;' + esc(info.rule) + '&rdquo;</p>' +
+            '<hr class="divider" />' +
+            '<p class="small"><strong>A Creator Mode question</strong></p>' +
+            '<p>' + esc(info.reflection) + '</p>';
         } else {
-          body = '<p style="color:var(--body);margin-bottom:0">None of your answers earned points for this lens. It appears here because of a tie, not because of anything you chose.</p>';
+          body = '<p>No selected answer supported this lens. Its appearance here reflects a tie, not evidence of a pattern.</p>';
         }
 
         var evidence = [];
@@ -624,36 +725,36 @@
           var points = opt[1][row.index];
           if (points > 0) {
             evidence.push(
-              '<li><b>Question ' + (qi + 1) + LETTERS[state.answers[qi]] +
-              ' · +' + points + '</b>' +
+              '<li><strong>Q' + (qi + 1) + LETTERS[state.answers[qi]] +
+              ' &middot; +' + points + '</strong>' +
               '<small>' + esc(q[0]) + '</small>' + esc(opt[0]) + '</li>'
             );
           }
         });
 
-        return '<article class="lenscard">' +
-                 '<p class="rank">' + (shared ? 'Shared rank ' : 'Rank ') + row.rank + '</p>' +
+        return '<article class="result-card">' +
+                 '<p class="kicker">' + (shared ? 'Shared rank ' : 'Rank ') + row.rank + '</p>' +
                  '<h3>' + esc(row.name) + '</h3>' +
                  '<div class="signal">' + fmt(row.score) + '</div>' +
-                 '<span class="signal-label">Lens signal score</span>' +
+                 '<span class="small muted">Lens Signal Score</span>' +
                  '<div class="bar" aria-hidden="true"><span style="width:' +
                    Math.max(0, Math.min(100, row.score)) + '%"></span></div>' +
                  body +
                  (evidence.length
-                   ? '<details><summary>The answers behind this signal (' + evidence.length +
+                   ? '<details><summary>Selections behind this signal (' + evidence.length +
                      ')</summary><ol class="evidence">' + evidence.join('') + '</ol></details>'
-                   : '') +
+                   : '<p class="small muted" style="margin-top:18px">No selected answers added points to this lens.</p>') +
                '</article>';
       }).join('');
 
       var cutRank = top[top.length - 1].rank;
       el('allRows').innerHTML = rows.map(function (row) {
         return '<tr' + (row.rank <= cutRank ? ' class="top"' : '') + '>' +
-                 '<td class="num">' + row.rank + '</td>' +
-                 '<th>' + esc(row.name) + '</th>' +
-                 '<td class="num"><strong>' + fmt(row.score) + '</strong></td>' +
-                 '<td class="num">' + row.earned + '</td>' +
-                 '<td class="num">' + row.assigned + '</td>' +
+                 '<td>' + row.rank + '</td>' +
+                 '<th scope="row">' + esc(row.name) + '</th>' +
+                 '<td class="numeric"><strong>' + fmt(row.score) + '</strong></td>' +
+                 '<td class="numeric">' + row.earned + '</td>' +
+                 '<td class="numeric">' + row.assigned + '</td>' +
                '</tr>';
       }).join('');
 
@@ -782,6 +883,23 @@
     });
 
     el('printBtn').addEventListener('click', function () { window.print(); });
+
+    assessmentNav.addEventListener('click', function () {
+      if (answeredCount() > 0 && !detailsProblem(state.details)) {
+        show('quiz');
+        renderQuestion();
+      } else {
+        show('intro');
+      }
+      window.scrollTo(0, 0);
+    });
+
+    resultsNav.addEventListener('click', function () {
+      if (!state.done || answeredCount() !== TOTAL) { return; }
+      show('results');
+      renderResults();
+      window.scrollTo(0, 0);
+    });
 
     // ---- restore a part-finished session ----
     var saved = load();
