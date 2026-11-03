@@ -20,6 +20,9 @@ if ($PASSWORD === '' || $PASSWORD === 'CHANGE_THIS_PASSWORD') {
     exit('This page is not set up yet: upload team-password.php with the team password in it.');
 }
 
+// Everything the team reads is in Utah time, whatever the server is set to.
+date_default_timezone_set('America/Denver');
+
 $csv      = dirname(__DIR__) . '/questionnaire-responses.csv';
 $coupleD  = dirname(__DIR__) . '/survey-data/couples';
 $peopleD  = dirname(__DIR__) . '/survey-data/people';
@@ -36,7 +39,26 @@ function listing($dir) {
     if (!is_dir($dir)) { return []; }
     $out = [];
     foreach (glob($dir . '/*.md') as $f) {
-        $out[] = ['file' => basename($f), 'title' => trim(ltrim(strtok(file_get_contents($f), "\n"), '# ')), 'time' => filemtime($f)];
+        $head = (string)@file_get_contents($f, false, null, 0, 800);
+
+        // When it was actually taken, read out of the file itself. A person
+        // file carries one "Submitted" date; a couple file carries a "Taken"
+        // line naming both partners, and the couple is only really done on
+        // the later of the two. filemtime would just say when the file was
+        // last rebuilt, which is a different thing entirely.
+        $stamp = 0;
+        if (preg_match('/^- \*\*(?:Submitted|Taken):\*\* (.+)$/m', $head, $m)) {
+            if (preg_match_all('/\d{1,2} [A-Z][a-z]+ \d{4}(?:, \d{1,2}:\d{2}[ap]m)?/', $m[1], $dates)) {
+                foreach ($dates[0] as $d) { $stamp = max($stamp, (int)strtotime($d)); }
+            }
+        }
+
+        $out[] = [
+            'file'  => basename($f),
+            'title' => trim(ltrim(strtok($head, "\n"), '# ')),
+            'time'  => $stamp ?: filemtime($f),
+            'taken' => $stamp ? date('j M Y', $stamp) : '',
+        ];
     }
     usort($out, fn($a, $b) => $b['time'] <=> $a['time']);
     return $out;
@@ -102,6 +124,7 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
  .row button{min-height:38px;padding:0 15px;font-size:.85rem}
  .tag{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--sage-soft);color:var(--sage-deep)}
  .tag.wait{background:#f6efe0;color:#8a6c3d}
+ .when{margin-left:auto;font-size:.82rem;color:var(--muted);white-space:nowrap}
  .stat{display:flex;gap:22px;flex-wrap:wrap;margin:0 0 4px}
  .stat b{display:block;font-size:1.6rem;font-family:'Lora',Georgia,serif}
  .stat span{font-size:.82rem;color:var(--muted)}
@@ -155,6 +178,7 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
         <input type="hidden" name="kind" value="couples">
         <b><?php echo htmlspecialchars(str_replace(' — Couple Profile', '', $c['title']), ENT_QUOTES); ?></b>
         <span class="tag <?php echo $complete ? '' : 'wait'; ?>"><?php echo $complete ? 'complete' : 'waiting'; ?></span>
+        <span class="when"><?php echo $c['taken'] ? 'taken ' . htmlspecialchars($c['taken'], ENT_QUOTES) : ''; ?></span>
         <button type="submit" name="file" value="<?php echo htmlspecialchars($c['file'], ENT_QUOTES); ?>" class="ghost">Download</button>
       </form>
     <?php endforeach; ?>
@@ -168,6 +192,7 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
         <input type="hidden" name="pw" value="<?php echo htmlspecialchars($pw, ENT_QUOTES); ?>">
         <input type="hidden" name="kind" value="people">
         <b><?php echo htmlspecialchars(str_replace(' — Game Profile', '', $p['title']), ENT_QUOTES); ?></b>
+        <span class="when"><?php echo $p['taken'] ? 'taken ' . htmlspecialchars($p['taken'], ENT_QUOTES) : ''; ?></span>
         <button type="submit" name="file" value="<?php echo htmlspecialchars($p['file'], ENT_QUOTES); ?>" class="ghost">Download</button>
       </form>
     <?php endforeach; ?>

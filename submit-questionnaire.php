@@ -6,6 +6,9 @@
  * downloadable from responses.php.
  */
 
+// Everything the team reads is in Utah time, whatever the server is set to.
+date_default_timezone_set('America/Denver');
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit('Method not allowed.'); }
 // Honeypot: a real person never fills this field in, so drop the submission
 // quietly and send the bot to the same thank-you page.
@@ -27,8 +30,12 @@ require __DIR__ . '/survey-files.php';
 // Lives one level above public_html so it can never be downloaded directly.
 $csv = dirname(__DIR__) . '/questionnaire-responses.csv';
 
-$row = array('submitted_at' => date('c'));
+$takenAt = date('c');
+$_POST['submitted_at'] = $takenAt;
+
+$row = array('submitted_at' => $takenAt);
 foreach ($_POST as $k => $v) {
+    if ($k === 'submitted_at') { continue; }                // already the first column
     if ($k === 'company') { continue; }
     if (substr($k, -5) === '_item') { continue; }          // hidden labels from the yes/no/maybe grid
     $row[$k] = is_array($v) ? implode(' | ', $v) : trim((string)$v);

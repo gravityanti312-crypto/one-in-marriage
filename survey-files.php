@@ -8,6 +8,9 @@
  * Everything lives above public_html so none of it is reachable from the web.
  */
 
+// Everything the team reads is in Utah time, whatever the server is set to.
+date_default_timezone_set('America/Denver');
+
 function sf_dir($sub = '') {
     $base = dirname(__DIR__) . '/survey-data';
     $path = $sub ? $base . '/' . $sub : $base;
@@ -100,6 +103,7 @@ function sf_couple_key($a, $b) {
 }
 
 function sf_save($post) {
+    if (empty($post['submitted_at'])) { $post['submitted_at'] = date('c'); }
     $name  = trim(($post['first_name'] ?? '') . ' ' . ($post['last_name'] ?? ''));
     $email = strtolower(trim((string)($post['email'] ?? '')));
     $pemail = strtolower(trim((string)($post['partner_email'] ?? '')));
@@ -130,7 +134,14 @@ function sf_write_couple($key, $all) {
     $md  = "# $title — Couple Profile\n\n";
     $md .= "- **Course:** " . ($people[0]['course'] ?? '—') . "\n";
     $md .= "- **Status:** " . (count($people) >= 2 ? "both partners have completed the survey" : "waiting on the second partner") . "\n";
-    $md .= "- **Generated:** " . date('j F Y, g:ia') . "\n\n";
+
+    $taken = [];
+    foreach ($people as $i => $p) {
+        $when = !empty($p['submitted_at']) ? strtotime((string)$p['submitted_at']) : false;
+        $taken[] = ($names[$i] ?: 'Partner ' . ($i + 1)) . ' ' . ($when ? date('j F Y', $when) : 'date unknown');
+    }
+    $md .= "- **Taken:** " . implode(' · ', $taken) . "\n";
+    $md .= "- **This file generated:** " . date('j F Y, g:ia') . "\n\n";
 
     if (count($people) >= 2) {
         $a = sf_intimacy($people[0]);

@@ -227,6 +227,7 @@
       <p class="kicker">Your lens signals &middot; Pilot 1.0</p>
       <h1 id="resultsHeading" tabindex="-1">A starting point.<br />Not a label.</h1>
       <p class="lead">These are the three strongest signals in your selected answers, with any exact ties included. Explore them against your actual experience.</p>
+      <p class="small muted" id="takenOn"></p>
 
       <div id="resultNotices"></div>
       <div class="cards" id="lensCards"></div>
@@ -689,6 +690,7 @@
                '</tr>';
       }).join('');
 
+      el('takenOn').textContent = whenTaken(state.completedAt);
       el('resultNotes').value = state.notes;
       el('notesPrint').textContent = state.notes || 'No notes recorded.';
 
@@ -696,6 +698,22 @@
     }
 
     // ---- exports: the only way a result leaves this page ----
+    // Printed results are the copy people keep, so they need to say when the
+    // assessment was taken.
+    function whenTaken(iso) {
+      if (!iso) { return ''; }
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) { return ''; }
+      try {
+        return 'Taken ' + d.toLocaleString(undefined, {
+          day: 'numeric', month: 'long', year: 'numeric',
+          hour: 'numeric', minute: '2-digit'
+        });
+      } catch (e) {
+        return 'Taken ' + d.toDateString();
+      }
+    }
+
     function stamp() {
       return new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
     }
