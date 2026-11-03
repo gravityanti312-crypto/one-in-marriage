@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>The Houdini Lens Assessment &mdash; ONE in Marriage</title>
-  <meta name="description" content="Notice the pattern. Choose the response. A twenty-question reflection tool for couples in the ONE in Marriage weekend." />
+  <meta name="description" content="Notice the pattern. Choose the response. A twenty-question reflection tool from Never Buy a Horse Named Houdini." />
   <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/lora-latin.woff2" as="font" type="font/woff2" crossorigin />
   <style>
@@ -77,6 +77,7 @@
     .btn:hover:not(:disabled){background:var(--teal-soft);border-color:var(--teal)}
     .btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
     .btn.primary:hover:not(:disabled){background:var(--teal-deep)}
+    .btn.danger{color:var(--danger)}
     .btn:disabled{opacity:.45;cursor:not-allowed}
 
     /* ---- questions ---- */
@@ -154,7 +155,7 @@
 </head>
 <body>
   <noscript>
-    <main><div class="panel"><h2>This assessment needs JavaScript.</h2><p>Please open this page in a normal browser window with JavaScript turned on, or let us know and we will send you a paper copy.</p></div></main>
+    <main><div class="panel"><h2>This assessment needs JavaScript.</h2><p>Please open this page in a normal browser window with JavaScript turned on.</p></div></main>
   </noscript>
 
   <header class="site-header">
@@ -176,7 +177,7 @@
     <!-- ============ INTRO ============ -->
     <section id="introView" class="narrow">
       <div class="hero">
-        <p class="kicker">The Houdini Lens Assessment</p>
+        <p class="kicker">The Houdini Lens Assessment &middot; Pilot 1.0</p>
         <h1>Notice the rules.<br />Find a little more choice.</h1>
         <p class="lead">When life gets personal, what do you feel you have to do to be okay? Explore the familiar thoughts and patterns you reach for first.</p>
         <div class="chips">
@@ -194,44 +195,12 @@
         <div class="notice" style="margin:22px 0 0">
           <strong>Familiar is more useful than flattering.</strong> There is no preferred result. This is a starting point for reflection, not a verdict about who you are.
         </div>
-      </div>
-
-      <div class="panel">
-        <h2>Your details</h2>
-        <p class="muted small" style="margin-bottom:18px">So your facilitator knows whose answers these are, and can sit your results beside your partner&rsquo;s.</p>
-        <div class="grid-two">
-          <label class="field full" for="course">Which course are you in?
-            <select id="course" name="course" required>
-              <option value="">Choose your course</option>
-              <option>December 3&ndash;5, 2026 &mdash; Alpine, Utah</option>
-            </select>
-          </label>
-          <label class="field" for="first_name">First name
-            <input id="first_name" name="first_name" type="text" autocomplete="given-name" required />
-          </label>
-          <label class="field" for="last_name">Last name
-            <input id="last_name" name="last_name" type="text" autocomplete="family-name" required />
-          </label>
-          <label class="field full" for="email">Your email
-            <input id="email" name="email" type="email" autocomplete="email" required />
-          </label>
-          <label class="field" for="partner_first_name">Partner&rsquo;s first name
-            <input id="partner_first_name" name="partner_first_name" type="text" required />
-          </label>
-          <label class="field" for="partner_last_name">Partner&rsquo;s last name
-            <input id="partner_last_name" name="partner_last_name" type="text" required />
-          </label>
-          <label class="field full" for="partner_email">Partner&rsquo;s email
-            <input id="partner_email" name="partner_email" type="email" required />
-          </label>
-        </div>
-        <p id="detailsErr" class="err" hidden></p>
         <div class="actions">
           <button type="button" class="btn primary" id="beginBtn">Begin the assessment &rarr;</button>
         </div>
       </div>
 
-      <p class="small muted">Your answers go to the ONE in Marriage team so your facilitator can prepare. They are never shown to your partner. Based on <em>Never Buy a Horse Named Houdini</em> by Brett Harward. A reflection tool &mdash; not a diagnosis or a validated psychological test. Scores are starting points for a conversation.</p>
+      <p class="small muted">Your answers stay in this browser. Nothing is sent to anyone and no name or email address is requested. Your place is kept on this device if you close the page, and clearing your browser data clears it. Export or print your result when you finish if you want to keep it.</p>
     </section>
 
     <!-- ============ QUESTIONS ============ -->
@@ -254,7 +223,7 @@
           <button type="button" class="btn primary" id="nextBtn">Continue &rarr;</button>
         </div>
       </div>
-      <p class="small muted" id="savedNote" hidden>Your answers are saved on this device &mdash; you can close this and come back.</p>
+      <p class="small muted" id="savedNote" hidden>Your place is saved on this device &mdash; you can close this and come back.</p>
       <p class="small muted">Think about what actually happens &mdash; not the response you believe you should have.</p>
     </section>
 
@@ -262,9 +231,8 @@
     <section id="resultsView" hidden>
       <p class="kicker">Your lens signals &middot; Pilot 1.0</p>
       <h1 id="resultsHeading" tabindex="-1">A starting point.<br />Not a label.</h1>
-      <p class="lead" id="resultsLead"></p>
+      <p class="lead">These are the three strongest signals in your selected answers, with any exact ties included. Explore them against your actual experience.</p>
 
-      <div id="saveStatus" style="margin-top:26px"></div>
       <div id="resultNotices"></div>
       <div class="cards" id="lensCards"></div>
 
@@ -300,13 +268,17 @@
       </div>
 
       <div class="panel no-print">
-        <h2>Keep a copy</h2>
-        <p>Print this page or save it as a PDF to bring with you to the weekend.</p>
+        <p class="small muted">Nothing is sent anywhere, so keep a copy if you want one.</p>
         <div class="actions">
-          <button type="button" class="btn primary" id="printBtn">Print / save as PDF</button>
-          <button type="button" class="btn" id="reviewBtn">Review my answers</button>
+          <button type="button" class="btn primary" id="exportJsonBtn">Export full result JSON</button>
+          <button type="button" class="btn" id="exportCsvBtn">Export scores CSV</button>
+          <button type="button" class="btn" id="printBtn">Print results</button>
+          <button type="button" class="btn" id="reviewBtn">Review answers</button>
+          <button type="button" class="btn danger" id="newBtn">New assessment</button>
         </div>
       </div>
+
+      <p class="small muted">Rubric revision: Initial web prototype. All 20 questions answered.</p>
     </section>
   </main>
 
@@ -488,26 +460,28 @@
   ];
 
     var TOTAL = QUESTIONS.length;
-    var STORAGE = 'oim-houdini-v1';
+    var STORAGE = 'oim-houdini-v2';
     var LETTERS = ['A', 'B', 'C', 'D'];
-
-    var DETAIL_FIELDS = ['course', 'first_name', 'last_name', 'email',
-                         'partner_first_name', 'partner_last_name', 'partner_email'];
+    var VERSION = 'Pilot 1.0';
+    var REVISION = 'Initial web prototype';
 
     // ---- elements ----
     var el = function (id) { return document.getElementById(id); };
-    var introView   = el('introView');
-    var quizView    = el('quizView');
-    var resultsView = el('resultsView');
+    var introView     = el('introView');
+    var quizView      = el('quizView');
+    var resultsView   = el('resultsView');
     var assessmentNav = el('assessmentNav');
     var resultsNav    = el('resultsNav');
 
     // ---- state ----
+    // No name, no email, nothing identifying: the only person who sees this is
+    // the person taking it.
     var state = {
-      details: {},
       answers: new Array(TOTAL),
       current: 0,
-      done: false
+      done: false,
+      startedAt: new Date().toISOString(),
+      completedAt: null
     };
     for (var i = 0; i < TOTAL; i++) { state.answers[i] = null; }
 
@@ -516,8 +490,9 @@
       if (!storageWorks) { return; }
       try {
         localStorage.setItem(STORAGE, JSON.stringify({
-          v: 1, details: state.details, answers: state.answers,
-          current: state.current, done: state.done
+          v: 2, answers: state.answers, current: state.current,
+          done: state.done, startedAt: state.startedAt,
+          completedAt: state.completedAt
         }));
       } catch (e) { storageWorks = false; }
     }
@@ -526,7 +501,7 @@
         var raw = localStorage.getItem(STORAGE);
         if (!raw) { return null; }
         var data = JSON.parse(raw);
-        if (!data || data.v !== 1 || !Array.isArray(data.answers) ||
+        if (!data || data.v !== 2 || !Array.isArray(data.answers) ||
             data.answers.length !== TOTAL) { return null; }
         for (var j = 0; j < TOTAL; j++) {
           var a = data.answers[j];
@@ -590,37 +565,12 @@
       });
     }
 
-    // ---- details page ----
-    function readDetails() {
-      var out = {};
-      DETAIL_FIELDS.forEach(function (name) {
-        var node = el(name);
-        out[name] = node ? node.value.trim() : '';
-      });
-      return out;
-    }
-
-    function fillDetails(details) {
-      DETAIL_FIELDS.forEach(function (name) {
-        var node = el(name);
-        if (node && details && details[name]) { node.value = details[name]; }
-      });
-    }
-
-    function detailsProblem(details) {
-      for (var k = 0; k < DETAIL_FIELDS.length; k++) {
-        if (!details[DETAIL_FIELDS[k]]) {
-          return 'Please fill in every field above before you begin.';
-        }
-      }
-      var mail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-      if (!mail.test(details.email)) { return 'Please check your own email address.'; }
-      if (!mail.test(details.partner_email)) { return 'Please check your partner’s email address.'; }
-      if (details.email.toLowerCase() === details.partner_email.toLowerCase()) {
-        return 'You and your partner each need your own email address, so your answers stay separate.';
-      }
-      return null;
-    }
+    // Most a lens could score: the best option for it in each question.
+    var ATTAINABLE = LENSES.map(function (name, li) {
+      return QUESTIONS.reduce(function (sum, q) {
+        return sum + Math.max.apply(null, q[1].map(function (opt) { return opt[1][li]; }));
+      }, 0);
+    });
 
     // ---- views ----
     function setCurrent(node, on) {
@@ -650,7 +600,7 @@
 
       el('stepNum').textContent = 'Question ' + (qi + 1) + ' of ' + TOTAL;
       el('stepCount').textContent = answeredCount() + ' answered';
-      el('progressFill').style.width = (100 * (qi) / TOTAL) + '%';
+      el('progressFill').style.width = (100 * qi / TOTAL) + '%';
       el('savedNote').hidden = !storageWorks;
 
       el('qText').textContent = q[0];
@@ -681,10 +631,6 @@
       var rows = scoreRows();
       var top = topRows(rows);
       var highest = rows[0].score;
-
-      el('resultsLead').textContent =
-        'These are the three strongest signals in your selected answers, with any' +
-        ' exact ties included. Explore them against your actual experience.';
 
       var notices = '';
       if (top.length > 3) {
@@ -760,79 +706,103 @@
       return rows;
     }
 
-    // ---- sending to the team ----
-    var sent = false;
+    // ---- exports: the only way a result leaves this page ----
+    function stamp() {
+      return new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    }
 
-    function buildPayload(rows) {
-      var top = topRows(rows);
+    function downloadFile(filename, text, type) {
+      var blob = new Blob([text], { type: type });
+      var url = URL.createObjectURL(blob);
+      var anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.parentNode.removeChild(anchor);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
+    }
+
+    function resultPayload() {
+      var rows = scoreRows();
       return {
-        v: 1,
-        submitted_at: new Date().toISOString(),
-        details: state.details,
-        top_lenses: top.map(function (r) { return r.name; }),
-        scores: rows.map(function (r) {
-          return { lens: r.name, rank: r.rank, signal: Number(r.score.toFixed(1)),
-                   earned: r.earned, assigned: r.assigned };
+        format: 'houdini-lens-result',
+        formatVersion: 1,
+        assessmentVersion: VERSION,
+        rubricRevision: REVISION,
+        startedAt: state.startedAt,
+        completedAt: state.completedAt,
+        exportedAt: new Date().toISOString(),
+        formula: '100 * selected lens points / sum of lens points across all answer choices',
+        scores: rows.map(function (row) {
+          return {
+            lens: row.name,
+            rank: row.rank,
+            signalScore: row.score,
+            displayedScore: Number(fmt(row.score)),
+            earnedPoints: row.earned,
+            assignedPoints: row.assigned,
+            attainablePoints: ATTAINABLE[row.index],
+            attainableSignalCeiling: 100 * ATTAINABLE[row.index] / row.assigned
+          };
         }),
-        answers: QUESTIONS.map(function (q, qi) {
+        topSignalsIncludingTies: topRows(rows).map(function (row) { return row.name; }),
+        responses: QUESTIONS.map(function (q, qi) {
           var oi = state.answers[qi];
-          return { n: qi + 1, question: q[0], letter: LETTERS[oi], answer: q[1][oi][0] };
+          var points = {};
+          LENSES.forEach(function (lens, li) { points[lens] = q[1][oi][1][li]; });
+          return {
+            questionNumber: qi + 1,
+            question: q[0],
+            selectedOption: LETTERS[oi],
+            selectedText: q[1][oi][0],
+            points: points
+          };
         })
       };
     }
 
-    function sendResults(rows) {
-      var status = el('saveStatus');
-      status.innerHTML = '<div class="savednote">Sending your answers to the team…</div>';
+    function exportCSV() {
+      var payload = resultPayload();
 
-      var body = new URLSearchParams();
-      body.set('payload', JSON.stringify(buildPayload(rows)));
+      // Quote everything, and defuse anything a spreadsheet would read as a formula.
+      var cell = function (value) {
+        var text = String(value == null ? '' : value);
+        if (/^[=+\-@\t\r]/.test(text)) { text = "'" + text; }
+        return '"' + text.replace(/"/g, '""') + '"';
+      };
 
-      fetch('submit-houdini.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: body.toString()
-      }).then(function (res) {
-        if (!res.ok) { throw new Error('status ' + res.status); }
-        return res.text();
-      }).then(function (text) {
-        if (text.indexOf('OK') !== 0) { throw new Error(text.slice(0, 120)); }
-        sent = true;
-        status.innerHTML = '<div class="savednote">Your answers are in. Your facilitator will have them before the weekend.</div>';
-        clearSaved();
-      }).catch(function () {
-        status.innerHTML =
-          '<div class="savednote warn">Your results are below, but we could not send them to the team just now. ' +
-          'Your answers are still saved on this device, so you can try again.' +
-          '<br /><button type="button" id="retrySend">Try sending again</button></div>';
-        var retry = el('retrySend');
-        if (retry) { retry.addEventListener('click', function () { sendResults(rows); }); }
+      var lines = [[
+        'Version', 'Revision', 'Completed', 'Rank', 'Lens', 'Signal score',
+        'Selected points', 'Assigned points', 'Attainable points', 'Signal ceiling'
+      ]];
+      payload.scores.forEach(function (row) {
+        lines.push([
+          payload.assessmentVersion, payload.rubricRevision, payload.completedAt,
+          row.rank, row.lens, row.signalScore, row.earnedPoints,
+          row.assignedPoints, row.attainablePoints, row.attainableSignalCeiling
+        ]);
       });
+
+      downloadFile(
+        'houdini-scores-' + stamp() + '.csv',
+        '﻿' + lines.map(function (row) { return row.map(cell).join(','); }).join('\r\n'),
+        'text/csv;charset=utf-8'
+      );
     }
 
     function finish() {
       state.done = true;
+      state.completedAt = new Date().toISOString();
       save();
       show('results');
-      var rows = renderResults();
+      renderResults();
       el('resultsHeading').focus();
       window.scrollTo(0, 0);
-      if (!sent) { sendResults(rows); }
     }
 
     // ---- wiring ----
     el('beginBtn').addEventListener('click', function () {
-      var details = readDetails();
-      var problem = detailsProblem(details);
-      var errNode = el('detailsErr');
-      if (problem) {
-        errNode.textContent = problem;
-        errNode.hidden = false;
-        return;
-      }
-      errNode.hidden = true;
-      state.details = details;
-      save();
       show('quiz');
       renderQuestion();
       window.scrollTo(0, 0);
@@ -883,8 +853,29 @@
 
     el('printBtn').addEventListener('click', function () { window.print(); });
 
+    el('exportJsonBtn').addEventListener('click', function () {
+      downloadFile('houdini-result-' + stamp() + '.json',
+                   JSON.stringify(resultPayload(), null, 2),
+                   'application/json');
+    });
+
+    el('exportCsvBtn').addEventListener('click', exportCSV);
+
+    el('newBtn').addEventListener('click', function () {
+      if (!window.confirm('Start again? This clears the answers on this device.')) { return; }
+      clearSaved();
+      for (var k = 0; k < TOTAL; k++) { state.answers[k] = null; }
+      state.current = 0;
+      state.done = false;
+      state.startedAt = new Date().toISOString();
+      state.completedAt = null;
+      resultsNav.hidden = true;
+      show('intro');
+      window.scrollTo(0, 0);
+    });
+
     assessmentNav.addEventListener('click', function () {
-      if (answeredCount() > 0 && !detailsProblem(state.details)) {
+      if (answeredCount() > 0) {
         show('quiz');
         renderQuestion();
       } else {
@@ -903,20 +894,16 @@
     // ---- restore a part-finished session ----
     var saved = load();
     if (saved) {
-      state.details = saved.details || {};
-      state.answers = saved.answers;
-      state.current = Math.min(Math.max(0, saved.current | 0), TOTAL - 1);
-      fillDetails(state.details);
+      state.answers     = saved.answers;
+      state.current     = Math.min(Math.max(0, saved.current | 0), TOTAL - 1);
+      state.startedAt   = saved.startedAt || state.startedAt;
+      state.completedAt = saved.completedAt || null;
 
       if (saved.done && answeredCount() === TOTAL) {
         state.done = true;
         show('results');
         renderResults();
-        el('saveStatus').innerHTML =
-          '<div class="savednote">These are the results you finished earlier on this device.' +
-          '<br /><button type="button" id="resendBtn">Send them to the team again</button></div>';
-        el('resendBtn').addEventListener('click', function () { sendResults(scoreRows()); });
-      } else if (answeredCount() > 0 && !detailsProblem(state.details)) {
+      } else if (answeredCount() > 0) {
         show('quiz');
         renderQuestion();
         el('savedNote').textContent =
