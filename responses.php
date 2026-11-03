@@ -39,23 +39,28 @@ function listing($dir) {
     if (!is_dir($dir)) { return []; }
     $out = [];
     foreach (glob($dir . '/*.md') as $f) {
-        $head = (string)@file_get_contents($f, false, null, 0, 800);
+        // Read the whole file, not just the top. In a completed couple file the
+        // partners' dates sit below the Section 7 block, a long way past the
+        // header, so a short peek at the start finds nothing.
+        $text = (string)@file_get_contents($f, false, null, 0, 262144);
 
-        // When it was actually taken, read out of the file itself. A person
-        // file carries one "Submitted" date; a couple file carries a "Taken"
-        // line naming both partners, and the couple is only really done on
-        // the later of the two. filemtime would just say when the file was
-        // last rebuilt, which is a different thing entirely.
+        // Every date the file states for when the survey was taken. A person
+        // file has one; a couple file has one per partner, and the couple is
+        // only really done on the later of them. "Generated" is deliberately
+        // not matched: that is when the file was last built, not when anyone
+        // answered anything. filemtime is the same trap.
         $stamp = 0;
-        if (preg_match('/^- \*\*(?:Submitted|Taken):\*\* (.+)$/m', $head, $m)) {
-            if (preg_match_all('/\d{1,2} [A-Z][a-z]+ \d{4}(?:, \d{1,2}:\d{2}[ap]m)?/', $m[1], $dates)) {
-                foreach ($dates[0] as $d) { $stamp = max($stamp, (int)strtotime($d)); }
+        if (preg_match_all('/^- \*\*(?:Submitted|Taken):\*\* (.+)$/m', $text, $lines)) {
+            foreach ($lines[1] as $line) {
+                if (preg_match_all('/\d{1,2} [A-Z][a-z]+ \d{4}(?:, \d{1,2}:\d{2}[ap]m)?/', $line, $dates)) {
+                    foreach ($dates[0] as $d) { $stamp = max($stamp, (int)strtotime($d)); }
+                }
             }
         }
 
         $out[] = [
             'file'  => basename($f),
-            'title' => trim(ltrim(strtok($head, "\n"), '# ')),
+            'title' => trim(ltrim(strtok($text, "\n"), '# ')),
             'time'  => $stamp ?: filemtime($f),
             'taken' => $stamp ? date('j M Y', $stamp) : '',
         ];
@@ -63,6 +68,7 @@ function listing($dir) {
     usort($out, fn($a, $b) => $b['time'] <=> $a['time']);
     return $out;
 }
+
 
 if ($ok && isset($_POST['download'])) {
     if (!file_exists($csv)) { exit('No responses yet.'); }
