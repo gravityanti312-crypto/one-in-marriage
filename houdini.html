@@ -101,7 +101,9 @@
     .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     label.field{display:block;margin:0;font-size:.9rem;font-weight:650}
     label.field.full{grid-column:1/-1}
-    label.field input,label.field select{display:block;width:100%;margin-top:7px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+    label.field input,label.field select,label.field textarea{display:block;width:100%;margin-top:7px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font:inherit}
+    label.field textarea{min-height:90px;line-height:1.5;resize:vertical}
+    .print-only{display:none}
 
     /* ---- results ---- */
     .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px;margin:25px 0}
@@ -143,6 +145,7 @@
     @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
     @media print{
       .site-header,footer,.no-print{display:none!important}
+      .print-only{display:block;white-space:pre-wrap}
       body{background:#fff}
       main{max-width:none;margin:0;padding:0}
       .panel,.result-card{box-shadow:none;break-inside:avoid;border-color:#ccc}
@@ -268,7 +271,10 @@
       </div>
 
       <div class="panel no-print">
-        <p class="small muted">Nothing is sent anywhere, so keep a copy if you want one.</p>
+        <label class="field" for="resultNotes">Testing notes &mdash; optional and not scored
+          <textarea id="resultNotes" maxlength="10000" placeholder="What felt accurate? Which question or answer needs refinement?"></textarea>
+        </label>
+        <p class="small muted">Notes stay in this page until you export the result. The JSON export includes answers, notes, scores, and the rubric used. Share it only deliberately.</p>
         <div class="actions">
           <button type="button" class="btn primary" id="exportJsonBtn">Export full result JSON</button>
           <button type="button" class="btn" id="exportCsvBtn">Export scores CSV</button>
@@ -277,6 +283,9 @@
           <button type="button" class="btn danger" id="newBtn">New assessment</button>
         </div>
       </div>
+
+      <div class="print-only"><strong>Testing notes</strong>
+<span id="notesPrint"></span></div>
 
       <p class="small muted">Rubric revision: Initial web prototype. All 20 questions answered.</p>
     </section>
@@ -480,6 +489,7 @@
       answers: new Array(TOTAL),
       current: 0,
       done: false,
+      notes: '',
       startedAt: new Date().toISOString(),
       completedAt: null
     };
@@ -491,7 +501,7 @@
       try {
         localStorage.setItem(STORAGE, JSON.stringify({
           v: 2, answers: state.answers, current: state.current,
-          done: state.done, startedAt: state.startedAt,
+          done: state.done, notes: state.notes, startedAt: state.startedAt,
           completedAt: state.completedAt
         }));
       } catch (e) { storageWorks = false; }
@@ -703,6 +713,9 @@
                '</tr>';
       }).join('');
 
+      el('resultNotes').value = state.notes;
+      el('notesPrint').textContent = state.notes || 'No notes recorded.';
+
       return rows;
     }
 
@@ -746,6 +759,7 @@
             attainableSignalCeiling: 100 * ATTAINABLE[row.index] / row.assigned
           };
         }),
+        notes: state.notes,
         topSignalsIncludingTies: topRows(rows).map(function (row) { return row.name; }),
         responses: QUESTIONS.map(function (q, qi) {
           var oi = state.answers[qi];
@@ -851,6 +865,12 @@
       window.scrollTo(0, 0);
     });
 
+    el('resultNotes').addEventListener('input', function () {
+      state.notes = this.value;
+      el('notesPrint').textContent = state.notes || 'No notes recorded.';
+      save();
+    });
+
     el('printBtn').addEventListener('click', function () { window.print(); });
 
     el('exportJsonBtn').addEventListener('click', function () {
@@ -862,8 +882,10 @@
     el('exportCsvBtn').addEventListener('click', exportCSV);
 
     el('newBtn').addEventListener('click', function () {
-      if (!window.confirm('Start again? This clears the answers on this device.')) { return; }
+      if (!window.confirm('Clear the current answers and notes on this device?')) { return; }
       clearSaved();
+      state.notes = '';
+      el('resultNotes').value = '';
       for (var k = 0; k < TOTAL; k++) { state.answers[k] = null; }
       state.current = 0;
       state.done = false;
@@ -896,6 +918,7 @@
     if (saved) {
       state.answers     = saved.answers;
       state.current     = Math.min(Math.max(0, saved.current | 0), TOTAL - 1);
+      state.notes       = typeof saved.notes === 'string' ? saved.notes : '';
       state.startedAt   = saved.startedAt || state.startedAt;
       state.completedAt = saved.completedAt || null;
 
