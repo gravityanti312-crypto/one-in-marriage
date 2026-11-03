@@ -138,7 +138,7 @@ function sf_write_couple($key, $all) {
     $taken = [];
     foreach ($people as $i => $p) {
         $when = !empty($p['submitted_at']) ? strtotime((string)$p['submitted_at']) : false;
-        $taken[] = ($names[$i] ?: 'Partner ' . ($i + 1)) . ' ' . ($when ? date('j F Y', $when) : 'date unknown');
+        $taken[] = ($names[$i] ?: 'Partner ' . ($i + 1)) . ' ' . ($when ? date('j F Y, g:ia', $when) : 'date unknown');
     }
     $md .= "- **Taken:** " . implode(' · ', $taken) . "\n";
     $md .= "- **This file generated:** " . date('j F Y, g:ia') . "\n\n";

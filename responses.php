@@ -49,11 +49,18 @@ function listing($dir) {
         // only really done on the later of them. "Generated" is deliberately
         // not matched: that is when the file was last built, not when anyone
         // answered anything. filemtime is the same trap.
+        // Keep track of whether the winning date actually stated a time. An
+        // older file that gives only a day would otherwise be shown as
+        // "12:00am", which looks like a real time and is not one.
         $stamp = 0;
+        $hasTime = false;
         if (preg_match_all('/^- \*\*(?:Submitted|Taken):\*\* (.+)$/m', $text, $lines)) {
             foreach ($lines[1] as $line) {
-                if (preg_match_all('/\d{1,2} [A-Z][a-z]+ \d{4}(?:, \d{1,2}:\d{2}[ap]m)?/', $line, $dates)) {
-                    foreach ($dates[0] as $d) { $stamp = max($stamp, (int)strtotime($d)); }
+                if (preg_match_all('/(\d{1,2} [A-Z][a-z]+ \d{4})(?:, (\d{1,2}:\d{2}[ap]m))?/', $line, $dates, PREG_SET_ORDER)) {
+                    foreach ($dates as $d) {
+                        $t = (int)strtotime($d[0]);
+                        if ($t > $stamp) { $stamp = $t; $hasTime = !empty($d[2]); }
+                    }
                 }
             }
         }
@@ -62,7 +69,7 @@ function listing($dir) {
             'file'  => basename($f),
             'title' => trim(ltrim(strtok($text, "\n"), '# ')),
             'time'  => $stamp ?: filemtime($f),
-            'taken' => $stamp ? date('j M Y', $stamp) : '',
+            'taken' => $stamp ? date($hasTime ? 'j M Y, g:ia' : 'j M Y', $stamp) : '',
         ];
     }
     usort($out, fn($a, $b) => $b['time'] <=> $a['time']);
@@ -131,6 +138,12 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
  .tag{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--sage-soft);color:var(--sage-deep)}
  .tag.wait{background:#f6efe0;color:#8a6c3d}
  .when{margin-left:auto;font-size:.82rem;color:var(--muted);white-space:nowrap}
+ /* On a phone the name, the date and the button cannot share one line. */
+ @media(max-width:620px){
+   .row{flex-wrap:wrap}
+   .row b{flex:1 0 100%}
+   .when{margin-left:0;margin-right:auto}
+ }
  .stat{display:flex;gap:22px;flex-wrap:wrap;margin:0 0 4px}
  .stat b{display:block;font-size:1.6rem;font-family:'Lora',Georgia,serif}
  .stat span{font-size:.82rem;color:var(--muted)}
