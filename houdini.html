@@ -148,7 +148,15 @@
       .cards{display:block}
       .result-card{margin-bottom:15px}
       .table-scroll{overflow:visible}
-      details{display:none}
+
+      /* The evidence behind each score is the substance of the report, so it
+         has to be in the PDF. The blocks are opened before printing; this
+         makes the opened state read as plain prose rather than a widget. */
+      details{margin-top:14px;break-inside:avoid}
+      summary{color:var(--ink);font-weight:700;list-style:none;margin-bottom:6px}
+      summary::-webkit-details-marker{display:none}
+      .evidence{font-size:.82rem}
+      .evidence li{break-inside:avoid;margin-bottom:8px}
     }
   </style>
 </head>
@@ -865,7 +873,32 @@
       save();
     });
 
-    el('pdfBtn').addEventListener('click', function () { window.print(); });
+    // A collapsed <details> prints its heading and nothing else, so the PDF
+    // would claim a score and omit the answers behind it. Open them all for
+    // the print, then restore whatever the reader had open on screen.
+    var reopen = null;
+    function expandForPrint() {
+      if (reopen) { return; }
+      var blocks = [].slice.call(document.querySelectorAll('#resultsView details'));
+      reopen = blocks.filter(function (d) { return !d.open; });
+      reopen.forEach(function (d) { d.open = true; });
+    }
+    function restoreAfterPrint() {
+      if (!reopen) { return; }
+      reopen.forEach(function (d) { d.open = false; });
+      reopen = null;
+    }
+
+    // Covers the button and the browser's own Cmd+P.
+    window.addEventListener('beforeprint', expandForPrint);
+    window.addEventListener('afterprint', restoreAfterPrint);
+
+    el('pdfBtn').addEventListener('click', function () {
+      expandForPrint();
+      window.print();
+      // Safari does not always fire afterprint; this is the safety net.
+      setTimeout(restoreAfterPrint, 1000);
+    });
 
     el('exportCsvBtn').addEventListener('click', exportCSV);
 
