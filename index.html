@@ -187,14 +187,15 @@
     .field{display:grid;gap:6px}
     .field-full{grid-column:1/-1}
     label{font-size:.83rem;font-weight:600}
+    html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
     textarea{min-height:110px;resize:vertical}
     .pricepick{margin-top:18px}
     .priceopt{display:flex;align-items:flex-start;gap:11px;padding:14px 15px;margin-bottom:9px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;transition:150ms ease}
     .priceopt:hover{border-color:#d8cfba}
-    .priceopt input{width:auto;min-width:0;margin:3px 0 0;accent-color:var(--sage);flex:none}
+    .priceopt input{width:20px;height:20px;min-width:0;margin:3px 0 0;accent-color:var(--sage);flex:0 0 20px}
     .priceopt:has(input:checked){border-color:var(--sage);background:var(--sage-soft)}
-    .pricebody{flex:1;min-width:0}
+    .pricebody{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
     .pricebody b{display:block;font-size:1.02rem}
     .pricebody b em{display:inline-block;font-style:normal;font-weight:600;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--tan)}
     .pricebody small{display:block;margin-top:3px;font-size:.88rem;color:var(--muted);line-height:1.5}
@@ -215,7 +216,7 @@
     .qb-checks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .qb-check{display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:.9rem;font-weight:500;transition:150ms ease}
     .qb-check:hover{border-color:#d8cfba}
-    .qb-check input{width:auto;margin:2px 0 0;accent-color:var(--sage)}
+    .qb-check input{width:20px;height:20px;flex:0 0 20px;margin:2px 0 0;accent-color:var(--sage)}
     .qb-check:has(input:checked){border-color:var(--sage);background:var(--sage-soft)}
     .qb-nav{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}
     /* quote builder · safety check */
@@ -249,7 +250,14 @@
     .fit-reason strong{display:block;margin-bottom:5px;font-family:'Lora',Georgia,serif;font-size:1.04rem;font-weight:600;color:var(--ink)}
     .fit-reason p{font-size:.93rem;color:#5a5347}
     .sf-device{margin-top:16px;padding:14px 16px;border-radius:14px;background:var(--sage-soft);color:#33473b;font-size:.86rem}
-    @media(max-width:560px){.qb-grid,.qb-checks{grid-template-columns:1fr}.sf-res{flex-direction:column;gap:4px}.sf-res div{text-align:left}}
+    @media(max-width:560px){
+      .qb-grid,.qb-checks{grid-template-columns:1fr}
+      .sf-res{flex-direction:column;gap:4px}
+      .sf-res div{text-align:left}
+      .modal{padding:10px}
+      .modal-card{padding:24px 18px;border-radius:18px}
+      .footer-links a{display:inline-block;padding:7px 0}
+    }
 
     .nav-links a{white-space:nowrap}
     @media(max-width:1120px){
