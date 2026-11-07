@@ -187,6 +187,7 @@
     .field{display:grid;gap:6px}
     .field-full{grid-column:1/-1}
     label{font-size:.83rem;font-weight:600}
+    .opt-note{margin-left:6px;font-weight:500;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
     html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
     textarea{min-height:110px;resize:vertical}
@@ -541,7 +542,7 @@
         <div class="qb-step" data-step="1">
           <div class="qb-grid">
             <div class="field field-full"><label for="date">Which date works for you?</label><select id="date" name="date" required><option value="" disabled selected>Choose a date</option><option>December 3rd-5th - Alpine Utah</option></select></div>
-            <div class="field field-full"><label for="message">Anything you'd like us to know?</label><textarea id="message" name="message" required placeholder="A sentence or two about what brings you here."></textarea></div>
+            <div class="field field-full"><label for="message">Anything you'd like us to know? <span class="opt-note">Optional</span></label><textarea id="message" name="message" placeholder="A sentence or two about what brings you here."></textarea></div>
           </div>
         </div>
         <!-- STEP 2 · Safety check (answers are never submitted) -->
