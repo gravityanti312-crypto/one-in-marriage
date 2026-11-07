@@ -15,6 +15,8 @@
     .mark{width:66px;height:66px;margin:0 auto 22px;display:grid;place-items:center;border-radius:50%;background:var(--tan-soft);color:var(--sage-deep)}
     .mark svg{width:32px;height:32px}
     .eyebrow{margin:0 0 12px;color:var(--tan);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+    .receipt{margin:18px 0 4px;padding:14px 16px;border-left:3px solid var(--sage,#7d9068);border-radius:0 12px 12px 0;background:#eef2e8;color:#4b5742;font-size:.93rem;line-height:1.55;text-align:left}
+    .receipt .ref{color:#7a7d74;font-size:.82rem}
     h1{margin:0;font-family:'Lora',Georgia,serif;font-weight:600;font-size:clamp(1.9rem,4vw,2.5rem)}
     p{margin:16px 0 0;color:var(--body)}
     .btn{display:inline-block;margin-top:26px;padding:14px 26px;border-radius:999px;background:var(--sage);color:#fff;font-weight:600;text-decoration:none}
@@ -27,8 +29,36 @@
     <p class="eyebrow">Answers received</p>
     <h1>Thank you.</h1>
     <p>Your answers are in. Your 90-day game will be built around what you shared &mdash; and your private answers stay private.</p>
+    <div id="receipt" class="receipt" hidden></div>
     <p>If your partner hasn&rsquo;t completed theirs yet, send them the link.</p>
     <a class="btn" href="index.html">Back to the site</a>
   </main>
+  <script>
+  // Proof of what actually arrived, so nobody has to take it on trust. The
+  // survey page stores this only after the server confirms it filed the
+  // answers, so an empty box here means something went wrong.
+  (function () {
+    var box = document.getElementById('receipt');
+    if (!box) { return; }
+    var raw = null;
+    try { raw = sessionStorage.getItem('oim-survey-receipt'); } catch (e) { return; }
+    if (!raw) { return; }
+    var d;
+    try { d = JSON.parse(raw); } catch (e) { return; }
+    if (!d || !d.ok || d.quiet) { return; }
+    var esc = function (v) {
+      return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    };
+    box.innerHTML =
+      '<strong>' + esc(d.name || 'You') + '</strong> &middot; ' +
+      esc(d.answered) + ' answers received' +
+      (d.when ? ' &middot; ' + esc(d.when) : '') +
+      (d.ref ? '<br /><span class="ref">Reference ' + esc(d.ref) + '</span>' : '');
+    box.hidden = false;
+    try { sessionStorage.removeItem('oim-survey-receipt'); } catch (e) {}
+  })();
+  </script>
 </body>
 </html>

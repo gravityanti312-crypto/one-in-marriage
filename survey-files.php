@@ -111,7 +111,19 @@ function sf_save($post) {
 
     // --- per person ---
     $pslug = sf_slug($name) . '-' . substr(md5($email), 0, 6);
-    @file_put_contents(sf_dir('people') . '/' . $pslug . '.md', sf_person_markdown($post));
+    $pfile = sf_dir('people') . '/' . $pslug . '.md';
+
+    // Jenn Garrett filled this in twice and the second run quietly replaced
+    // the first. Keep the old one before overwriting, so nothing a person
+    // wrote is ever lost just because they went round again.
+    if (is_file($pfile)) {
+        // Suffix keeps two archives made in the same second from colliding,
+        // which would defeat the point of archiving at all.
+        $stamp = date('Ymd-His', filemtime($pfile) ?: time())
+               . '-' . substr(md5_file($pfile) ?: uniqid('', true), 0, 4);
+        @copy($pfile, sf_dir('history') . '/' . $pslug . '-' . $stamp . '.md');
+    }
+    @file_put_contents($pfile, sf_person_markdown($post));
 
     // --- remember this person's answers for the couple file ---
     $key   = sf_couple_key($email, $pemail);

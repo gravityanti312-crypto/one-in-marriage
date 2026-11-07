@@ -834,8 +834,50 @@
           return;
         }
       }
-      try { localStorage.removeItem(KEY); } catch (x) {}
+      // Do NOT clear the saved answers here. This used to wipe them the
+      // instant you pressed the button, so when a submission was lost on the
+      // server the person had nothing left and had to start over. Send it
+      // ourselves, wait for the verdict, and only clear once the server has
+      // confirmed it filed them.
+      e.preventDefault();
+      submitAndConfirm();
     });
+
+    var sending = false;
+    function submitAndConfirm() {
+      if (sending) { return; }
+      sending = true;
+      var btn = form.querySelector('[type=submit]');
+      var label = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending\u2026'; }
+      err.hidden = true;
+
+      fetch(form.getAttribute('action') || 'submit-questionnaire.php', {
+        method: 'POST',
+        headers: { 'X-OIM-Ajax': '1' },
+        body: new FormData(form)
+      }).then(function (res) {
+        return res.json().catch(function () { return { ok: res.ok }; });
+      }).then(function (data) {
+        if (!data || !data.ok) { throw data || {}; }
+        // Only now is it safe to forget what they typed.
+        try { localStorage.removeItem(KEY); } catch (x) {}
+        try { sessionStorage.setItem('oim-survey-receipt', JSON.stringify(data)); } catch (x) {}
+        window.location.href = 'questionnaire-thanks.html';
+      }).catch(function (data) {
+        sending = false;
+        if (btn) { btn.disabled = false; btn.textContent = label; }
+        // Their answers are still saved in this browser, so they can simply
+        // press the button again rather than filling it all in once more.
+        err.innerHTML = (data && data.error)
+          ? String(data.error)
+          : ((data && data.kept)
+              ? 'We received your answers but could not file them. The team has them and will sort it out \u2014 you do not need to fill this in again.'
+              : 'Your answers could not be sent just now. They are still saved on this device, so please press the button again in a moment.');
+        err.hidden = false;
+        err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
 
     // ---- save as you go ----
     var KEY = 'oim-survey-v1';

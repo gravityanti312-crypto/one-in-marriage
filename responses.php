@@ -108,6 +108,47 @@ if ($ok && isset($_POST['zip'])) {
     }
 }
 
+/**
+ * Submissions that left a raw copy but never made it into the spreadsheet.
+ * This is the check that would have caught Marc Garrett on 5 November.
+ */
+function unfiled($inboxDir, $csvPath) {
+    if (!is_dir($inboxDir)) { return []; }
+    $filed = [];
+    if (is_file($csvPath) && ($fh = @fopen($csvPath, 'r'))) {
+        $head = fgetcsv($fh);
+        $iEm  = $head ? array_search('email', $head, true) : false;
+        $iAt  = $head ? array_search('submitted_at', $head, true) : false;
+        if ($iEm !== false && $iAt !== false) {
+            while (($r = fgetcsv($fh)) !== false) {
+                if (isset($r[$iEm], $r[$iAt])) { $filed[strtolower(trim($r[$iEm])) . '|' . trim($r[$iAt])] = true; }
+            }
+        }
+        fclose($fh);
+    }
+    $out = [];
+    foreach (glob($inboxDir . '/*.json') as $f) {
+        $d = json_decode((string)@file_get_contents($f), true);
+        if (!is_array($d) || empty($d['post'])) { continue; }
+        $em = strtolower(trim((string)($d['post']['email'] ?? '')));
+        $at = trim((string)($d['submitted_at'] ?? ''));
+        $spam = strpos(basename($f), 'flagged-spam') !== false;
+        if ($spam || !isset($filed[$em . '|' . $at])) {
+            $out[] = [
+                'file'  => basename($f),
+                'name'  => trim((string)($d['post']['first_name'] ?? '') . ' ' . (string)($d['post']['last_name'] ?? '')),
+                'email' => $em,
+                'when'  => $at ? date('j M Y, g:ia', strtotime($at)) : '',
+                'spam'  => $spam,
+            ];
+        }
+    }
+    return $out;
+}
+
+$inboxDir = dirname(__DIR__) . '/survey-inbox';
+$unfiled  = $ok ? unfiled($inboxDir, $csv) : [];
+
 $count   = file_exists($csv) ? max(0, count(file($csv)) - 1) : 0;
 $couples = $ok ? listing($coupleD) : [];
 $people  = $ok ? listing($peopleD) : [];
@@ -138,6 +179,10 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
  .tag{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--sage-soft);color:var(--sage-deep)}
  .tag.wait{background:#f6efe0;color:#8a6c3d}
  .when{margin-left:auto;font-size:.82rem;color:var(--muted);white-space:nowrap}
+ .alert{margin:18px 0 0;padding:16px 18px;border-left:4px solid #c08a2e;border-radius:0 12px 12px 0;background:#fdf4e3;color:#6b4e18;font-size:.92rem;line-height:1.55}
+ .alert ul{margin:10px 0 0;padding-left:20px}
+ .alert li{margin-bottom:8px}
+ .alert code{font-size:.82rem;color:#8a6c3d;overflow-wrap:anywhere}
  /* On a phone the name, the date and the button cannot share one line. */
  @media(max-width:620px){
    .row{flex-wrap:wrap}
@@ -170,6 +215,23 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
     rb.addEventListener('click',function(){var s=pw.type==='text';pw.type=s?'password':'text';rb.textContent=s?'Show':'Hide';pw.focus();});
   </script>
 <?php else: ?>
+
+  <?php if ($unfiled): ?>
+    <div class="alert">
+      <strong><?php echo count($unfiled); ?> submission<?php echo count($unfiled) === 1 ? '' : 's'; ?> did not reach the spreadsheet.</strong>
+      The answers were kept and are sitting in <code>survey-inbox</code> above <code>public_html</code>. Nothing is lost &mdash; they just need filing by hand.
+      <ul>
+        <?php foreach ($unfiled as $u): ?>
+          <li>
+            <?php echo htmlspecialchars($u['name'] ?: $u['email'], ENT_QUOTES); ?>
+            <?php if ($u['when']): ?> &middot; <?php echo htmlspecialchars($u['when'], ENT_QUOTES); ?><?php endif; ?>
+            <?php if ($u['spam']): ?> &middot; <em>caught by the spam check</em><?php endif; ?>
+            <br /><code><?php echo htmlspecialchars($u['file'], ENT_QUOTES); ?></code>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  <?php endif; ?>
 
   <h2 class="sectionhead">THE 90 &mdash; Game Profile Survey</h2>
 
