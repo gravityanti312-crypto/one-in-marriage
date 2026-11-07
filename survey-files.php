@@ -102,6 +102,32 @@ function sf_couple_key($a, $b) {
     return sf_slug($pair[0] . '--' . $pair[1]);
 }
 
+/**
+ * A and B are only labels — couples are paired on their two email addresses,
+ * never on this. Nobody should have to pick it, and both Garretts picked A.
+ * Whoever answers first is A and their partner becomes B; someone answering
+ * again keeps their letter unless it clashes, which quietly repairs a pair
+ * who both chose the same one.
+ */
+function sf_partner_letter($email, $pemail) {
+    $email  = strtolower(trim((string)$email));
+    $pemail = strtolower(trim((string)$pemail));
+    $store  = sf_dir('raw') . '/' . sf_couple_key($email, $pemail) . '.json';
+    $all    = is_file($store) ? json_decode((string)@file_get_contents($store), true) : [];
+    if (!is_array($all)) { $all = []; }
+
+    $mine = !empty($all[$email]['partner']) ? strtoupper(trim($all[$email]['partner'])) : '';
+    $theirs = '';
+    foreach ($all as $em => $p) {
+        if (strtolower(trim((string)$em)) === $email) { continue; }
+        if (!empty($p['partner'])) { $theirs = strtoupper(trim($p['partner'])); break; }
+    }
+
+    if ($theirs === '')            { return $mine !== '' ? $mine : 'A'; }  // first in
+    if ($mine !== '' && $mine !== $theirs) { return $mine; }               // already distinct
+    return $theirs === 'A' ? 'B' : 'A';                                    // clash, or second in
+}
+
 function sf_save($post) {
     if (empty($post['submitted_at'])) { $post['submitted_at'] = date('c'); }
     $name  = trim(($post['first_name'] ?? '') . ' ' . ($post['last_name'] ?? ''));

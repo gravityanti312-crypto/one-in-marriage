@@ -82,7 +82,7 @@ if (!empty($_POST['company'])) {
     exit;
 }
 
-$required = array('course','first_name','last_name','email','partner_first_name','partner_last_name','partner_email','date','partner');
+$required = array('course','first_name','last_name','email','partner_first_name','partner_last_name','partner_email','date');
 foreach ($required as $r) {
     if (empty(trim((string)($_POST[$r] ?? '')))) {
         http_response_code(400);
@@ -94,6 +94,10 @@ foreach ($required as $r) {
 }
 
 require __DIR__ . '/survey-files.php';
+
+// Nobody is asked whether they are partner A or B any more — it is worked out
+// from who answered first, so a pair can no longer both pick the same letter.
+$_POST['partner'] = sf_partner_letter($_POST['email'], $_POST['partner_email']);
 
 // Lives one level above public_html so it can never be downloaded directly.
 $csv = dirname(__DIR__) . '/questionnaire-responses.csv';
