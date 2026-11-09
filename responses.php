@@ -116,12 +116,15 @@ function unfiled($inboxDir, $csvPath) {
     if (!is_dir($inboxDir)) { return []; }
     $filed = [];
     if (is_file($csvPath) && ($fh = @fopen($csvPath, 'r'))) {
-        $head = fgetcsv($fh);
+        $head = fgetcsv($fh, null, ",", "\"", "");
         $iEm  = $head ? array_search('email', $head, true) : false;
         $iAt  = $head ? array_search('submitted_at', $head, true) : false;
         if ($iEm !== false && $iAt !== false) {
-            while (($r = fgetcsv($fh)) !== false) {
-                if (isset($r[$iEm], $r[$iAt])) { $filed[strtolower(trim($r[$iEm])) . '|' . trim($r[$iAt])] = true; }
+            while (($r = fgetcsv($fh, null, ",", "\"", "")) !== false) {
+                if (isset($r[$iEm], $r[$iAt])) {
+                    $filed[strtolower(trim($r[$iEm])) . '|' . trim($r[$iAt])] = true;
+                    $filed[strtolower(trim($r[$iEm]))] = true;      // this person is in the sheet at least once
+                }
             }
         }
         fclose($fh);
@@ -140,6 +143,7 @@ function unfiled($inboxDir, $csvPath) {
                 'email' => $em,
                 'when'  => $at ? date('j M Y, g:ia', strtotime($at)) : '',
                 'spam'  => $spam,
+                'repeat'=> $em !== '' && isset($filed[$em]),
             ];
         }
     }
@@ -147,7 +151,46 @@ function unfiled($inboxDir, $csvPath) {
 }
 
 $inboxDir = dirname(__DIR__) . '/survey-inbox';
+
+/**
+ * File by hand. "File it" puts an inbox copy into the spreadsheet and the
+ * per-person/couple files exactly as if it had gone through first time, keeping
+ * the time it was really taken. "Dismiss" is for repeats and spam. Neither
+ * deletes anything: the copy moves into survey-inbox/filed or /dismissed.
+ */
+$notice = '';
+if ($ok && !empty($_POST['inbox']) && in_array($_POST['inbox_action'] ?? '', ['file', 'dismiss'], true)) {
+    $name = basename((string)$_POST['inbox']);
+    $src  = $inboxDir . '/' . $name;
+    $still = array_filter(unfiled($inboxDir, $csv), fn($u) => $u['file'] === $name);
+    if (!$still || !is_file($src) || substr($name, -5) !== '.json') {
+        $notice = 'That one has already been dealt with.';     // a refresh re-sending the form
+    } elseif ($_POST['inbox_action'] === 'dismiss') {
+        @mkdir($inboxDir . '/dismissed', 0700, true);
+        $notice = @rename($src, $inboxDir . '/dismissed/' . $name)
+            ? 'Dismissed. The copy is kept in survey-inbox/dismissed.'
+            : 'Could not move that file &mdash; nothing was changed.';
+    } else {
+        require_once __DIR__ . '/survey-files.php';
+        $d    = json_decode((string)@file_get_contents($src), true);
+        $post = is_array($d['post'] ?? null) ? $d['post'] : [];
+        $at   = (string)($d['submitted_at'] ?? '') ?: date('c', filemtime($src));
+        if (trim((string)($post['email'] ?? '')) === '') {
+            $notice = 'That copy has no email address, so it cannot be filed. Dismiss it instead.';
+        } elseif (sf_append_csv($post, $at)) {
+            sf_save($post);
+            @mkdir($inboxDir . '/filed', 0700, true);
+            @rename($src, $inboxDir . '/filed/' . $name);
+            $who = trim(($post['first_name'] ?? '') . ' ' . ($post['last_name'] ?? '')) ?: $post['email'];
+            $notice = 'Filed ' . htmlspecialchars($who, ENT_QUOTES) . ' into the spreadsheet and the couple files.';
+        } else {
+            $notice = 'The spreadsheet could not be written &mdash; nothing was changed. Try again in a moment.';
+        }
+    }
+}
+
 $unfiled  = $ok ? unfiled($inboxDir, $csv) : [];
+$sentBy   = array_count_values(array_column($unfiled, 'email'));
 
 $count   = file_exists($csv) ? max(0, count(file($csv)) - 1) : 0;
 $couples = $ok ? listing($coupleD) : [];
@@ -183,6 +226,14 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
  .alert ul{margin:10px 0 0;padding-left:20px}
  .alert li{margin-bottom:8px}
  .alert code{font-size:.82rem;color:#8a6c3d;overflow-wrap:anywhere}
+ .alert .hint{margin:10px 0 0;color:#6b4e18;font-size:.88rem}
+ .inbox{list-style:none;padding-left:0 !important}
+ .inbox li{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid #efdcb4;margin:0 !important}
+ .inbox li > div{min-width:0}
+ .acts{display:flex;gap:8px;flex-shrink:0}
+ .acts button{min-height:38px;padding:0 15px;font-size:.85rem}
+ .notice{margin:18px 0 0;padding:14px 18px;border-left:4px solid var(--sage);border-radius:0 12px 12px 0;background:var(--sage-soft);color:var(--sage-deep);font-size:.92rem}
+ @media(max-width:620px){ .inbox li{flex-direction:column;align-items:flex-start} }
  /* On a phone the name, the date and the button cannot share one line. */
  @media(max-width:620px){
    .row{flex-wrap:wrap}
@@ -216,17 +267,34 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
   </script>
 <?php else: ?>
 
+  <?php if ($notice): ?><div class="notice"><?php echo $notice; ?></div><?php endif; ?>
+
   <?php if ($unfiled): ?>
     <div class="alert">
       <strong><?php echo count($unfiled); ?> submission<?php echo count($unfiled) === 1 ? '' : 's'; ?> did not reach the spreadsheet.</strong>
-      The answers were kept and are sitting in <code>survey-inbox</code> above <code>public_html</code>. Nothing is lost &mdash; they just need filing by hand.
-      <ul>
-        <?php foreach ($unfiled as $u): ?>
+      The answers were kept, so nothing is lost. Press <b>File it</b> to add one to the spreadsheet and the couple files, or <b>Dismiss</b> for a repeat or spam.
+      <?php if (max($sentBy ?: [0]) > 1 || in_array(true, array_column($unfiled, 'repeat'), true)): ?>
+        <p class="hint">When the same person appears more than once they were pressing the button again. File the <b>latest</b> one and dismiss the rest. Anything marked <b>already filed</b> is a repeat of someone who is in the spreadsheet.</p>
+      <?php endif; ?>
+      <ul class="inbox">
+        <?php $seen = []; foreach (array_reverse($unfiled) as $u):
+          $latest = !isset($seen[$u['email']]); $seen[$u['email']] = true; ?>
           <li>
-            <?php echo htmlspecialchars($u['name'] ?: $u['email'], ENT_QUOTES); ?>
-            <?php if ($u['when']): ?> &middot; <?php echo htmlspecialchars($u['when'], ENT_QUOTES); ?><?php endif; ?>
-            <?php if ($u['spam']): ?> &middot; <em>caught by the spam check</em><?php endif; ?>
-            <br /><code><?php echo htmlspecialchars($u['file'], ENT_QUOTES); ?></code>
+            <div>
+              <?php echo htmlspecialchars($u['name'] ?: $u['email'], ENT_QUOTES); ?>
+              <?php if ($u['when']): ?> &middot; <?php echo htmlspecialchars($u['when'], ENT_QUOTES); ?><?php endif; ?>
+              <?php if ($u['spam']): ?> &middot; <em>caught by the spam check</em><?php endif; ?>
+              <?php if ($u['repeat']): ?> <span class="tag wait">already filed</span>
+              <?php elseif ($sentBy[$u['email']] > 1 && $latest): ?> <span class="tag">latest</span><?php endif; ?>
+              <br /><code><?php echo htmlspecialchars($u['file'], ENT_QUOTES); ?></code>
+            </div>
+            <form method="POST" class="acts">
+              <input type="hidden" name="pw" value="<?php echo htmlspecialchars($pw, ENT_QUOTES); ?>">
+              <input type="hidden" name="inbox" value="<?php echo htmlspecialchars($u['file'], ENT_QUOTES); ?>">
+              <button type="submit" name="inbox_action" value="file">File it</button>
+              <button type="submit" name="inbox_action" value="dismiss" class="ghost"
+                onclick="return confirm('Dismiss this copy? It is kept in survey-inbox/dismissed, not deleted.')">Dismiss</button>
+            </form>
           </li>
         <?php endforeach; ?>
       </ul>

@@ -128,6 +128,50 @@ function sf_partner_letter($email, $pemail) {
     return $theirs === 'A' ? 'B' : 'A';                                    // clash, or second in
 }
 
+/** Lives one level above public_html so it can never be downloaded directly. */
+function sf_csv_path() {
+    return dirname(__DIR__) . '/questionnaire-responses.csv';
+}
+
+/**
+ * Work out partner A/B, stamp the time and add one row to the spreadsheet.
+ * $post is updated in place (partner, submitted_at) so the caller can hand the
+ * same array to sf_save(). Returns true only if the row was really written.
+ */
+function sf_append_csv(&$post, $takenAt, &$answered = 0) {
+    // Nobody is asked whether they are partner A or B any more — it is worked
+    // out from who answered first, so a pair can no longer both pick the same letter.
+    $post['partner'] = sf_partner_letter($post['email'] ?? '', $post['partner_email'] ?? '');
+    $post['submitted_at'] = $takenAt;
+
+    $row = array('submitted_at' => $takenAt);
+    $answered = 0;
+    foreach ($post as $k => $v) {
+        if ($k === 'submitted_at') { continue; }                // already the first column
+        if ($k === 'company') { continue; }
+        if (substr($k, -5) === '_item') { continue; }           // hidden labels from the yes/no/maybe grid
+        $val = is_array($v) ? implode(' | ', $v) : trim((string)$v);
+        $row[$k] = $val;
+        if ($k !== '' && $k[0] === 'q' && $val !== '') { $answered++; }
+    }
+
+    $csv = sf_csv_path();
+    $wrote = false;
+    $fh = @fopen($csv, 'a+');
+    if ($fh) {
+        if (@flock($fh, LOCK_EX)) {
+            clearstatcache(true, $csv);                         // filesize() is cached
+            if (filesize($csv) === 0) { fputcsv($fh, array_keys($row), ',', '"', ''); }
+            $wrote = (fputcsv($fh, array_values($row), ',', '"', '') !== false);
+            fflush($fh);
+            flock($fh, LOCK_UN);
+        }
+        fclose($fh);
+        @chmod($csv, 0600);
+    }
+    return $wrote;
+}
+
 function sf_save($post) {
     if (empty($post['submitted_at'])) { $post['submitted_at'] = date('c'); }
     $name  = trim(($post['first_name'] ?? '') . ' ' . ($post['last_name'] ?? ''));

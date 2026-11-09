@@ -118,47 +118,19 @@ foreach ($required as $r) {
 
 require __DIR__ . '/survey-files.php';
 
-// Nobody is asked whether they are partner A or B any more — it is worked out
-// from who answered first, so a pair can no longer both pick the same letter.
-$_POST['partner'] = sf_partner_letter($_POST['email'], $_POST['partner_email']);
-
-// Lives one level above public_html so it can never be downloaded directly.
-$csv = dirname(__DIR__) . '/questionnaire-responses.csv';
-
-$_POST['submitted_at'] = $takenAt;
-
-$row = array('submitted_at' => $takenAt);
-$answered = 0;
-foreach ($_POST as $k => $v) {
-    if ($k === 'submitted_at') { continue; }                // already the first column
-    if ($k === 'company') { continue; }
-    if (substr($k, -5) === '_item') { continue; }           // hidden labels from the yes/no/maybe grid
-    $val = is_array($v) ? implode(' | ', $v) : trim((string)$v);
-    $row[$k] = $val;
-    if ($k[0] === 'q' && $val !== '') { $answered++; }
-}
-
 // ---- 2. write the spreadsheet, and know whether it actually wrote ----
-$wrote = false;
-$fh = @fopen($csv, 'a+');
-if ($fh) {
-    if (@flock($fh, LOCK_EX)) {
-        clearstatcache(true, $csv);                         // filesize() is cached
-        if (filesize($csv) === 0) { fputcsv($fh, array_keys($row), ',', '"', ''); }
-        $wrote = (fputcsv($fh, array_values($row), ',', '"', '') !== false);
-        fflush($fh);
-        flock($fh, LOCK_UN);
-    }
-    fclose($fh);
-    @chmod($csv, 0600);
-}
+// Shared with the "File it" button on responses.php, so a submission filed by
+// hand from the inbox ends up exactly like one that went through first time.
+$post = $_POST;
+$wrote = sf_append_csv($post, $takenAt, $answered);
 
 // ---- 3. never report success for answers we did not keep ----
 if (!$wrote) { sq_trouble($ref, $isAjax); }
 $GLOBALS['sq_filed'] = true;
 
 // readable files for the team: one per person, one per couple
-sf_save($_POST);
+sf_save($post);
+$_POST = $post;
 
 // ---- 4. tell the person it arrived, so silence means something ----
 $first = trim((string)$_POST['first_name']);
