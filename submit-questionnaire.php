@@ -71,6 +71,29 @@ function sq_trouble($kept, $isAjax) {
 // ---- 1. keep the raw copy first, whatever else happens ----
 $ref = sq_keep_raw($inbox, $_POST, $takenAt);
 
+// If anything below dies outright (9 Nov 2026: an old survey-files.php on the
+// server lacked sf_partner_letter()), PHP sends a bare 500 and the page told
+// Jacques to "press the button again" four times while every copy sat safely
+// in the inbox. Turn any fatal into the same honest answer as sq_trouble().
+// Once the spreadsheet row is written the answers are filed, so a crash in the
+// per-person files or the receipt email still counts as received.
+$GLOBALS['sq_filed'] = false;
+register_shutdown_function(function () use ($ref, $isAjax) {
+    $e = error_get_last();
+    if (!$e || !in_array($e['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR), true)) { return; }
+    @error_log('submit-questionnaire fatal: ' . $e['message'] . ' in ' . $e['file'] . ':' . $e['line']);
+    while (ob_get_level()) { ob_end_clean(); }
+    if (!$GLOBALS['sq_filed']) { sq_trouble($ref, $isAjax); }
+    if ($isAjax) {
+        http_response_code(200);
+        header('Content-Type: application/json');
+        echo json_encode(array('ok' => true, 'ref' => $ref));
+    } else {
+        http_response_code(303);
+        header('Location: questionnaire-thanks.html');
+    }
+});
+
 // Honeypot. A real person never fills this in, but a password manager might,
 // and that used to bin a genuine submission without a word. The copy above is
 // already on disk, so anyone caught by it can be recovered.
@@ -132,6 +155,7 @@ if ($fh) {
 
 // ---- 3. never report success for answers we did not keep ----
 if (!$wrote) { sq_trouble($ref, $isAjax); }
+$GLOBALS['sq_filed'] = true;
 
 // readable files for the team: one per person, one per couple
 sf_save($_POST);
