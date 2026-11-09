@@ -123,7 +123,11 @@ function unfiled($inboxDir, $csvPath) {
             while (($r = fgetcsv($fh, null, ",", "\"", "")) !== false) {
                 if (isset($r[$iEm], $r[$iAt])) {
                     $filed[strtolower(trim($r[$iEm])) . '|' . trim($r[$iAt])] = true;
-                    $filed[strtolower(trim($r[$iEm]))] = true;      // this person is in the sheet at least once
+                    // Latest time this person is in the sheet. A copy is only a
+                    // repeat if they got through at or after it — Marilyn had a
+                    // row from October, and her new answers in November are not.
+                    $k = '@' . strtolower(trim($r[$iEm]));
+                    $filed[$k] = max($filed[$k] ?? 0, (int)strtotime(trim($r[$iAt])));
                 }
             }
         }
@@ -143,7 +147,7 @@ function unfiled($inboxDir, $csvPath) {
                 'email' => $em,
                 'when'  => $at ? date('j M Y, g:ia', strtotime($at)) : '',
                 'spam'  => $spam,
-                'repeat'=> $em !== '' && isset($filed[$em]),
+                'repeat'=> $em !== '' && $at !== '' && ($filed['@' . $em] ?? 0) >= (int)strtotime($at),
             ];
         }
     }
@@ -274,7 +278,7 @@ $done    = array_filter($couples, fn($c) => str_contains(@file_get_contents($cou
       <strong><?php echo count($unfiled); ?> submission<?php echo count($unfiled) === 1 ? '' : 's'; ?> did not reach the spreadsheet.</strong>
       The answers were kept, so nothing is lost. Press <b>File it</b> to add one to the spreadsheet and the couple files, or <b>Dismiss</b> for a repeat or spam.
       <?php if (max($sentBy ?: [0]) > 1 || in_array(true, array_column($unfiled, 'repeat'), true)): ?>
-        <p class="hint">When the same person appears more than once they were pressing the button again. File the <b>latest</b> one and dismiss the rest. Anything marked <b>already filed</b> is a repeat of someone who is in the spreadsheet.</p>
+        <p class="hint">When the same person appears more than once they were pressing the button again. File the <b>latest</b> one and dismiss the rest. Anything marked <b>already filed</b> is a repeat: that person got through at the same time or later.</p>
       <?php endif; ?>
       <ul class="inbox">
         <?php $seen = []; foreach (array_reverse($unfiled) as $u):
