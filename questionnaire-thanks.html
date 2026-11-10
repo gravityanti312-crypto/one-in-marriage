@@ -30,7 +30,7 @@
     <h1>Thank you.</h1>
     <p>Your answers are in. Your 90-day game will be built around what you shared &mdash; and your private answers stay private.</p>
     <div id="receipt" class="receipt" hidden></div>
-    <p>If your partner hasn&rsquo;t completed theirs yet, send them the link.</p>
+    <p id="partnerLine">If your partner hasn&rsquo;t completed theirs yet, send them the link.</p>
     <a class="btn" href="index.html">Back to the site</a>
   </main>
   <script>
@@ -55,8 +55,24 @@
       '<strong>' + esc(d.name || 'You') + '</strong> &middot; ' +
       esc(d.answered) + ' answers received' +
       (d.when ? ' &middot; ' + esc(d.when) : '') +
+      (d.program ? '<br />Program: ' + esc(d.program) : '') +
       (d.ref ? '<br /><span class="ref">Reference ' + esc(d.ref) + '</span>' : '');
     box.hidden = false;
+
+    // Say plainly whether they are matched yet, so nobody wonders.
+    var line = document.getElementById('partnerLine');
+    if (line && d.partner) {
+      if (d.partner.paired) {
+        line.innerHTML = 'You&rsquo;re matched with <strong>' + esc(d.partner.name) + '</strong>. Both of your answers are in, and there&rsquo;s nothing else to do.';
+      } else if (d.partner.name) {
+        line.innerHTML = 'We&rsquo;ll match you with <strong>' + esc(d.partner.name) + '</strong> as soon as they finish theirs. If they haven&rsquo;t started yet, send them the link.';
+      }
+    }
+    if (d.emailed && d.email && line) {
+      var p = document.createElement('p');
+      p.innerHTML = 'We&rsquo;ve emailed a confirmation to <strong>' + esc(d.email) + '</strong>. If it doesn&rsquo;t arrive in a few minutes, your email may have been typed wrong. Please let us know.';
+      line.parentNode.insertBefore(p, line.nextSibling);
+    }
     try { sessionStorage.removeItem('oim-survey-receipt'); } catch (e) {}
   })();
   </script>

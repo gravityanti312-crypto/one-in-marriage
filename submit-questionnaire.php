@@ -105,32 +105,63 @@ if (!empty($_POST['company'])) {
     exit;
 }
 
+/** The person needs to fix something on page 1. Their answers stay in the browser. */
+function sq_fix_first($msg, $ref, $isAjax) {
+    // They are told to fix it and send again, so this copy is not a lost
+    // submission: keep it out of the team's "did not get filed" list.
+    global $inbox;
+    if ($ref && is_file($inbox . '/' . $ref . '.json')) {
+        @mkdir($inbox . '/sent-back', 0700, true);
+        @rename($inbox . '/' . $ref . '.json', $inbox . '/sent-back/' . $ref . '.json');
+    }
+    http_response_code(400);
+    if (ob_get_level()) { ob_end_clean(); }
+    if ($isAjax) { header('Content-Type: application/json'); exit(json_encode(array('ok' => false, 'error' => $msg, 'kept' => (bool)$ref))); }
+    exit($msg);
+}
+
 $required = array('course','first_name','last_name','email','partner_first_name','partner_last_name','partner_email','date');
 foreach ($required as $r) {
     if (empty(trim((string)($_POST[$r] ?? '')))) {
-        http_response_code(400);
-        $msg = 'Please go back and complete the name, email and date fields.';
-        if (ob_get_level()) { ob_end_clean(); }
-        if ($isAjax) { header('Content-Type: application/json'); exit(json_encode(array('ok' => false, 'error' => $msg, 'kept' => (bool)$ref))); }
-        exit($msg);
+        sq_fix_first('Please go back to page 1 and complete the name, email and date fields.', $ref, $isAjax);
     }
+}
+
+// Couples are matched on these, so a typo here is what split Jacques and
+// Marilyn. The page checks the same things; this is for anyone on an old copy
+// of the page (those do not send email_confirm, so that check is skipped).
+$email = strtolower(trim((string)$_POST['email']));
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    sq_fix_first('Your email address on page 1 does not look complete. Please check it.', $ref, $isAjax);
+}
+if (isset($_POST['email_confirm']) && strtolower(trim((string)$_POST['email_confirm'])) !== $email) {
+    sq_fix_first('The two email addresses you typed on page 1 do not match. Please check them.', $ref, $isAjax);
+}
+if (!filter_var(trim((string)$_POST['partner_email']), FILTER_VALIDATE_EMAIL)) {
+    sq_fix_first("Your partner's email address on page 1 does not look complete. Please check it.", $ref, $isAjax);
 }
 
 require __DIR__ . '/survey-files.php';
 
-// ---- 2. write the spreadsheet, and know whether it actually wrote ----
-// Shared with the "File it" button on responses.php, so a submission filed by
-// hand from the inbox ends up exactly like one that went through first time.
-$post = $_POST;
-$wrote = sf_append_csv($post, $takenAt, $answered);
+// ---- 2. file it in the survey records, and know whether that worked ----
+// The same routine the "File it" button on responses.php uses, so a submission
+// filed by hand from the inbox ends up exactly like one that went through first time.
+$post   = $_POST;
+$lock   = sf_lock();
+$store  = sf_open_store();
+$filed  = is_array($store) ? sf_add($store, $post, $takenAt, 'survey page') : array('ok' => false);
+$saved  = $filed['ok'] && ($filed['dupe'] || sf_store_save($store));
 
 // ---- 3. never report success for answers we did not keep ----
-if (!$wrote) { sq_trouble($ref, $isAjax); }
+if (!$saved) { sf_unlock($lock); sq_trouble($ref, $isAjax); }
 $GLOBALS['sq_filed'] = true;
 
-// readable files for the team: one per person, one per couple
-sf_save($post);
-$_POST = $post;
+// readable files and the spreadsheet for the team, rebuilt from the records
+$match   = sf_rebuild($store);
+$partner = sf_partner_status($store, $match, $filed['entry']);
+$program = sf_program($post['course'] ?? '');
+sf_unlock($lock);
+$answered = sf_answered(sf_tidy_post($post));
 
 // ---- 4. tell the person it arrived, so silence means something ----
 $first = trim((string)$_POST['first_name']);
@@ -146,18 +177,26 @@ if (function_exists('send_email') && function_exists('branded_email') && filter_
         . '<div style="color:#a9824f;font-size:12px;font-weight:bold;letter-spacing:1.6px;text-transform:uppercase;">Survey Received</div>'
         . '<div style="font-family:Georgia,serif;font-size:26px;color:#2b2c26;margin-top:8px;">Thank you, ' . esc($first) . '.</div>'
         . '</td></tr>'
-        . '<tr><td style="padding:10px 28px 4px;color:#5f635b;font-size:15px;line-height:1.65;">We have your 90-Day Game Profile Survey &mdash; <strong>' . (int)$answered . ' answers</strong>, received on ' . esc($when) . '.</td></tr>'
+        . '<tr><td style="padding:10px 28px 4px;color:#5f635b;font-size:15px;line-height:1.65;">We have your 90-Day Game Profile Survey &mdash; <strong>' . (int)$answered . ' answers</strong>, received on ' . esc($when) . ', for the <strong>' . esc($program) . '</strong> program.</td></tr>'
+        . '<tr><td style="padding:10px 28px 4px;color:#5f635b;font-size:15px;line-height:1.65;">'
+        . ($partner['paired']
+            ? 'You are matched with <strong>' . esc($partner['name']) . '</strong> &mdash; both of your answers are in.'
+            : 'We will match you with <strong>' . esc($partner['name'] ?: 'your partner') . '</strong> as soon as they finish theirs.')
+        . '</td></tr>'
         . '<tr><td style="padding:10px 28px 4px;color:#5f635b;font-size:15px;line-height:1.65;">There is nothing else to do. If you did not get this email within a few minutes of finishing, your answers did not reach us &mdash; please tell us rather than filling it in again.</td></tr>'
         . '<tr><td style="padding:14px 28px 6px;color:#8a8d84;font-size:13px;">Reference: ' . esc((string)$ref) . '</td></tr>'
         . '<tr><td style="background:#f6efe0;padding:16px 28px;color:#8a8d84;font-size:12px;text-align:center;">ONE in Marriage &middot; A Pattern-Aware Marriage Experience</td></tr>';
-    @send_email($to, 'We have your survey — ONE in Marriage', branded_email($inner), $to);
+    $emailed = (@send_email($to, 'We have your survey — ONE in Marriage', branded_email($inner), $to) !== false);
 }
 
 // ---- done ----
 if (ob_get_level()) { ob_end_clean(); }
 if ($isAjax) {
     header('Content-Type: application/json');
-    exit(json_encode(array('ok' => true, 'name' => $first, 'answered' => $answered, 'when' => $when, 'ref' => $ref)));
+    exit(json_encode(array(
+        'ok' => true, 'name' => $first, 'answered' => $answered, 'when' => $when, 'ref' => $ref,
+        'program' => $program, 'partner' => $partner, 'email' => $to, 'emailed' => !empty($emailed),
+    )));
 }
 header('Location: questionnaire-thanks.html');
 exit;

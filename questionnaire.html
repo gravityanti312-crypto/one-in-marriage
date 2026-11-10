@@ -75,6 +75,29 @@
     }
     .foot{margin-top:46px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
     @media(max-width:560px){.top-fields{grid-template-columns:1fr}.ymn-row{align-items:flex-start;flex-direction:column}}
+    /* page 1: how matching works, and the email checks */
+    .matchnote{margin:16px 0 0;padding:16px 18px;border-left:3px solid var(--sage);border-radius:0 14px 14px 0;background:var(--sage-soft);color:#4b5742;font-size:.93rem;line-height:1.55}
+    .matchnote strong{display:block;margin-bottom:4px;color:var(--sage-deep)}
+    .matchnote ul{margin:6px 0 0;padding-left:20px}
+    .matchnote li{margin-bottom:3px}
+    .field-head{grid-column:1/-1;margin:8px 0 -4px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .field input.bad{border-color:#c98b76;background:#fdf4f0}
+    .fixhint{margin:2px 0 0;font-size:.85rem;color:#8a6c3d}
+    .fixhint button{margin-left:4px;padding:2px 10px;border:1px solid var(--sage);border-radius:999px;background:#fff;color:var(--sage-deep);font:inherit;font-size:.8rem;font-weight:600;cursor:pointer}
+    /* the last check before sending */
+    .check{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(43,44,38,.45)}
+    .check[hidden]{display:none}
+    .check-card{width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:26px 24px 22px;border-radius:20px;background:var(--paper);box-shadow:var(--shadow)}
+    .check-card h2{margin:0 0 6px}
+    .check-card p{margin:0 0 14px;color:var(--body);font-size:.95rem}
+    .check-list{margin:0 0 18px;padding:0;border:1px solid var(--line);border-radius:14px;background:#fff}
+    .check-list div{padding:11px 14px;border-top:1px solid var(--line)}
+    .check-list div:first-child{border-top:0}
+    .check-list dt{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .check-list dd{margin:2px 0 0;font-weight:600;overflow-wrap:anywhere}
+    .check-list dd span{display:block;font-weight:400;color:var(--body)}
+    .check-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+    @media(max-width:560px){ .check-actions{flex-direction:column-reverse} .check-actions button{width:100%} }
   </style>
 </head>
 <body>
@@ -101,20 +124,32 @@
       <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
       <div class="page" data-page="1" >
   <h2 class="pagetitle">Your details</h2>
+<div class="matchnote">
+  <strong>How we match you with your partner</strong>
+  We put the two of you together using your names and email addresses, so please:
+  <ul>
+    <li>use the email address you check most, and type it twice so we know it&rsquo;s right;</li>
+    <li>write your partner&rsquo;s name the way they write it, and the email they&rsquo;ll use;</li>
+    <li>choose the same course as your partner.</li>
+  </ul>
+</div>
 <div class="top-fields">
-        <div class="field field-full"><label for="course">Which course are you in?</label>
+        <div class="field"><label for="course">Which course are you in?</label>
           <select id="course" name="course" required>
             <option value="">Choose your course</option>
             <option>December 3&ndash;5, 2026 &mdash; Alpine, Utah</option>
           </select>
         </div>
-        <div class="field"><label for="first_name">First name</label><input id="first_name" name="first_name" type="text" required></div>
-        <div class="field"><label for="last_name">Last name</label><input id="last_name" name="last_name" type="text" required></div>
-        <div class="field"><label for="email">Your email</label><input id="email" name="email" type="email" required></div>
-        <div class="field"><label for="partner_first_name">Partner&rsquo;s first name</label><input id="partner_first_name" name="partner_first_name" type="text" required></div>
-        <div class="field"><label for="partner_last_name">Partner&rsquo;s last name</label><input id="partner_last_name" name="partner_last_name" type="text" required></div>
-        <div class="field"><label for="partner_email">Your partner&rsquo;s email</label><input id="partner_email" name="partner_email" type="email" required></div>
         <div class="field"><label for="date">Today&rsquo;s date</label><input id="date" name="date" type="date" required></div>
+        <p class="field-head">You</p>
+        <div class="field"><label for="first_name">Your first name</label><input id="first_name" name="first_name" type="text" autocomplete="given-name" required></div>
+        <div class="field"><label for="last_name">Your last name</label><input id="last_name" name="last_name" type="text" autocomplete="family-name" required></div>
+        <div class="field"><label for="email">Your email</label><input id="email" name="email" type="email" autocomplete="email" inputmode="email" required><p class="fixhint" id="emailHint" hidden></p></div>
+        <div class="field"><label for="email_confirm">Type your email again</label><input id="email_confirm" name="email_confirm" type="email" autocomplete="off" inputmode="email" required></div>
+        <p class="field-head">Your partner</p>
+        <div class="field"><label for="partner_first_name">Partner&rsquo;s first name</label><input id="partner_first_name" name="partner_first_name" type="text" autocomplete="off" required></div>
+        <div class="field"><label for="partner_last_name">Partner&rsquo;s last name</label><input id="partner_last_name" name="partner_last_name" type="text" autocomplete="off" required></div>
+        <div class="field"><label for="partner_email">Your partner&rsquo;s email</label><input id="partner_email" name="partner_email" type="email" autocomplete="off" inputmode="email" required><p class="fixhint" id="partnerEmailHint" hidden></p></div>
       </div>
 
 
@@ -709,6 +744,19 @@
             <p class="note">Your answers go only to the ONE in Marriage team. They are not shared with your partner except where Section 7 matches.</p>
     </form>
 
+    <div class="check" id="checkBox" role="dialog" aria-modal="true" aria-labelledby="checkTitle" hidden>
+      <div class="check-card">
+        <p class="eyebrow">One last check</p>
+        <h2 id="checkTitle">Are these details right?</h2>
+        <p>We use them to match your answers with your partner&rsquo;s. If anything is wrong, fix it now: it&rsquo;s much harder to sort out afterwards.</p>
+        <dl class="check-list" id="checkList"></dl>
+        <div class="check-actions">
+          <button type="button" class="nav-back" id="checkEdit">Let me fix something</button>
+          <button type="button" class="nav-next" id="checkSend">Yes, send my answers</button>
+        </div>
+      </div>
+    </div>
+
     <div class="foot">
       <a href="privacy.html">Privacy</a> &middot; Questions? <a href="mailto:jacques@sharingvitality.com">jacques@sharingvitality.com</a>
     </div>
@@ -743,7 +791,7 @@
     var submitBtn = document.getElementById('navSubmit');
     var err       = document.getElementById('formErr');
     var savedNote = document.getElementById('savedNote');
-    var REQUIRED  = ['course','first_name','last_name','email','partner_first_name','partner_last_name','partner_email','date','partner'];
+    var REQUIRED  = ['course','date','first_name','last_name','email','email_confirm','partner_first_name','partner_last_name','partner_email'];
     var cur = 1;
 
     function render() {
@@ -799,6 +847,54 @@
       return true;
     }
 
+    // ---- page 1: the details couples are matched on ----
+    function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+    function markBad(ids) {
+      ['email', 'email_confirm', 'partner_email'].forEach(function (id) {
+        document.getElementById(id).classList.toggle('bad', ids.indexOf(id) !== -1);
+      });
+    }
+    var EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+    // Common slips in the part after the @. Only ever offered, never changed silently.
+    var DOMAIN_FIX = {
+      'gmial.com':'gmail.com','gmal.com':'gmail.com','gmai.com':'gmail.com','gamil.com':'gmail.com','gnail.com':'gmail.com',
+      'gmaill.com':'gmail.com','gmail.co':'gmail.com','gmail.con':'gmail.com','gmail.cm':'gmail.com','gmail.om':'gmail.com','gmail.comm':'gmail.com',
+      'hotmial.com':'hotmail.com','hotmai.com':'hotmail.com','hotmal.com':'hotmail.com','hotmail.co':'hotmail.com','hotmail.con':'hotmail.com',
+      'yaho.com':'yahoo.com','yahooo.com':'yahoo.com','yahoo.co':'yahoo.com','yahoo.con':'yahoo.com',
+      'outlok.com':'outlook.com','outloo.com':'outlook.com','outlook.co':'outlook.com','outlook.con':'outlook.com',
+      'iclod.com':'icloud.com','icloud.co':'icloud.com','icloud.con':'icloud.com','aol.co':'aol.com','aol.con':'aol.com'
+    };
+    function suggestFix(v) {
+      var m = /^([^@\s]+)@([^@\s]+)$/.exec(v.trim().toLowerCase());
+      return (m && DOMAIN_FIX[m[2]]) ? m[1] + '@' + DOMAIN_FIX[m[2]] : '';
+    }
+    function escHtml(v) {
+      return String(v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+    }
+    function wireHint(inputId, hintId) {
+      var el = document.getElementById(inputId), hint = document.getElementById(hintId);
+      function show() {
+        var fix = suggestFix(el.value);
+        if (!fix) { hint.hidden = true; return; }
+        hint.innerHTML = 'Did you mean <b>' + escHtml(fix) + '</b>? <button type="button">Yes, fix it</button>';
+        hint.hidden = false;
+        hint.querySelector('button').onclick = function () {
+          el.value = fix; hint.hidden = true;
+          if (inputId === 'email') {           // the second box should agree with the corrected first one
+            var c = document.getElementById('email_confirm');
+            if (suggestFix(c.value) === fix) c.value = fix;
+          }
+          save();
+        };
+      }
+      el.addEventListener('blur', show);
+      el.addEventListener('input', function () { if (!hint.hidden) show(); el.classList.remove('bad'); });
+    }
+    wireHint('email', 'emailHint');
+    wireHint('partner_email', 'partnerEmailHint');
+    document.getElementById('email_confirm').addEventListener('input', function () { this.classList.remove('bad'); });
+
+    var sameEmailOk = false;
     function page1Valid() {
       var missing = [];
       REQUIRED.forEach(function (id) {
@@ -813,15 +909,52 @@
         err.hidden = false;
         return false;
       }
+      var e1 = val('email').toLowerCase(), e2 = val('email_confirm').toLowerCase(), pe = val('partner_email').toLowerCase();
+      var problem = '', bad = [];
+      if (!EMAIL_RE.test(e1)) { problem = 'Your email address doesn’t look complete. Please check it.'; bad = ['email']; }
+      else if (e1 !== e2) { problem = 'Your two email addresses don’t match. Please type your email again carefully.'; bad = ['email', 'email_confirm']; }
+      else if (!EMAIL_RE.test(pe)) { problem = 'Your partner’s email address doesn’t look complete. Please check it.'; bad = ['partner_email']; }
+      markBad(bad);
+      if (problem) { err.textContent = problem; err.hidden = false; return false; }
+      if (e1 === pe && !sameEmailOk) {
+        // Fine for a couple who share one inbox, but usually a slip.
+        if (!window.confirm('You gave the same email for yourself and your partner.\n\nThat’s fine if you share one email. Is that right?')) {
+          markBad(['partner_email']); return false;
+        }
+        sameEmailOk = true;
+      }
       return true;
     }
+
+    // ---- the last check before sending ----
+    var checkBox = document.getElementById('checkBox');
+    function openCheck() {
+      var course = val('course');
+      var rows = [
+        ['Course', escHtml(course)],
+        ['You', escHtml(val('first_name') + ' ' + val('last_name')) + '<span>' + escHtml(val('email')) + '</span>'],
+        ['Your partner', escHtml(val('partner_first_name') + ' ' + val('partner_last_name')) + '<span>' + escHtml(val('partner_email')) + '</span>']
+      ];
+      document.getElementById('checkList').innerHTML = rows.map(function (r) {
+        return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
+      }).join('');
+      checkBox.hidden = false;
+      document.getElementById('checkSend').focus();
+    }
+    function closeCheck() { checkBox.hidden = true; }
+    document.getElementById('checkEdit').addEventListener('click', function () { closeCheck(); go(1); });
+    document.getElementById('checkSend').addEventListener('click', function () { closeCheck(); submitAndConfirm(); });
+    checkBox.addEventListener('click', function (e) { if (e.target === checkBox) closeCheck(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !checkBox.hidden) closeCheck(); });
 
     function go(n) { cur = Math.min(Math.max(n, 1), total); render(); save(); }
 
     next.addEventListener('click', function () { if (!pageValid()) return; go(cur + 1); });
     back.addEventListener('click', function () { go(cur - 1); });
     form.addEventListener('submit', function (e) {
-      if (!page1Valid()) { e.preventDefault(); cur = 1; render(); return; }
+      // render() clears the message, so check again to show what needs fixing
+      // (someone half-way through from before 9 Nov has no second email yet).
+      if (!page1Valid()) { e.preventDefault(); cur = 1; render(); page1Valid(); return; }
       for (var i = 2; i <= total; i++) {
         if (checkPage(pages[i - 1], true) > 0) {
           e.preventDefault();
@@ -837,9 +970,10 @@
       // instant you pressed the button, so when a submission was lost on the
       // server the person had nothing left and had to start over. Send it
       // ourselves, wait for the verdict, and only clear once the server has
-      // confirmed it filed them.
+      // confirmed it filed them. First, one look at the details couples are
+      // matched on, because a typo there is what split Jacques and Marilyn.
       e.preventDefault();
-      submitAndConfirm();
+      openCheck();
     });
 
     var sending = false;
