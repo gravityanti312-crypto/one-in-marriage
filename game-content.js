@@ -606,3 +606,38 @@
     ].join('\n') }
   };
 })();
+
+/* AI missions — optional creative activities the couple does with an AI tool of their choice.
+   The game builds the prompt on the phone from their answers; nothing is sent anywhere by the game. */
+window.OIM_AI_MISSIONS = [
+  { id: 'AI1', icon: '🎬', title: 'Our Movie Trailer', minutes: 20,
+    tagline: 'Turn your story into a 60-second movie trailer.',
+    questions: ['How did you meet? One or two sentences.', 'A funny moment you both still laugh about.', 'A hard season you came through together (only what you’re both comfortable sharing).', 'What genre should your movie be? (romantic comedy, adventure, epic, documentary…)'],
+    prompt: 'Write a 60-second movie trailer voiceover about a married couple, {A} and {B}{team}. Make it warm, funny and a little dramatic, in the style of a {ans4} trailer. Use these true details:\n\n{answers}\n\nKeep it kind to both people — the obstacles are outside them, never each other. End with a title card for the movie.',
+    offline: 'Write the trailer by hand together: one dramatic narrator line each, five lines total. Read it in your best movie-trailer voice.' },
+  { id: 'AI2', icon: '🎵', title: 'Our Theme Song', minutes: 25,
+    tagline: 'Write original lyrics for a song about the two of you.',
+    questions: ['Three places, inside jokes or little rituals that are “so us”.', 'One word for how your marriage feels at its best.', 'What music style do you both enjoy?'],
+    prompt: 'Write original song lyrics (two verses and a chorus) about a couple named {A} and {B}{team}. Style: {ans3}. The feeling at the heart of the song: {ans2}. Weave in these details naturally:\n\n{answers}\n\nDon’t copy any existing song. Keep it heartfelt with a little humor.',
+    offline: 'Pick a tune you both know and write new words for the chorus together. Sing it once — badly is perfect.' },
+  { id: 'AI3', icon: '📝', title: 'The Unofficial Incident Report', minutes: 20,
+    tagline: 'Rewrite a harmless shared mishap as a very serious mission report.',
+    questions: ['A small, harmless mishap you both laugh about now. What happened, in three beats?', 'The outside “villain” of the story (the weather, a recipe, a flat-pack bookshelf…).', 'One useful thing each of you did.'],
+    prompt: 'Write a short, funny “official incident report” in the deadpan style of a secret-agent mission file about this true event involving {A} and {B}{team}:\n\n{answers}\n\nThe villain is the outside obstacle, never either person. Give both agents credit. Under 300 words, with a case number and a ridiculous official conclusion.',
+    offline: 'Write the report by hand: case number, the villain, what each agent did, and the official conclusion. Read it aloud like a news anchor.' },
+  { id: 'AI4', icon: '🛡️', title: 'Design Our Team Crest', minutes: 20,
+    tagline: 'Create a family crest and motto for your team.',
+    questions: ['Your team codename (or the one you’re considering).', 'Three values you want your marriage to stand for.', 'A symbol, animal or object that feels like you two.'],
+    prompt: 'Design a family crest for a married couple, {A} and {B}{team}. Describe the shield, colors, symbols and layout, and write a short motto (in English and, just for fun, in Latin). Base it on:\n\n{answers}\n\nIf you can make images, also create a simple, elegant image of the crest.',
+    offline: 'Draw the crest on paper together: a shield split in four, one symbol each, two shared. Write the motto underneath.' },
+  { id: 'AI5', icon: '🌟', title: 'Date Night Planner', minutes: 15,
+    tagline: 'Get three date ideas that fit both of you.',
+    questions: ['What does each of you enjoy? (a few things each)', 'Budget and how much time you have.', 'Stay home, go out, or either? Anything to avoid?'],
+    prompt: 'Suggest three creative date ideas for a married couple, {A} and {B}. Make one free, one low-cost and one a little special. Each should take into account what both people enjoy, with a simple plan and one conversation question to ask during the date. Details:\n\n{answers}',
+    offline: 'Each write three date ideas on slips of paper, fold them into a cup, and draw one together.' },
+  { id: 'AI6', icon: '❓', title: 'Our Question Deck', minutes: 15,
+    tagline: 'Generate 20 conversation questions made for the two of you.',
+    questions: ['Topics you’d love to talk about more (dreams, childhood, travel, faith, work…).', 'How deep do you want to go: light and fun, medium, or deep?', 'Anything you’d rather not be asked about right now?'],
+    prompt: 'Create 20 conversation questions for a married couple, {A} and {B}, to ask each other over the next few weeks. Mix playful and meaningful questions, start light and get gradually deeper, and avoid anything that sounds like therapy or blame. Preferences:\n\n{answers}\n\nNumber them and group them into four rounds of five.',
+    offline: 'Each write five questions you’ve never asked each other. Swap and answer one a night.' }
+];
