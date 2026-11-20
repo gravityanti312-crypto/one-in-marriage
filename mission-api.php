@@ -226,7 +226,78 @@ function summary($c) {
         'committed' => ['partner_a' => !empty($c['commits']['partner_a']) && $c['commits']['partner_a']['startDate'] === $c['startDate'],
                         'partner_b' => !empty($c['commits']['partner_b']) && $c['commits']['partner_b']['startDate'] === $c['startDate']],
         'started' => $d['committed'], 'open' => $d['started'], 'day' => $d['day'], 'finished' => $d['finished'], 'graded' => $graded,
-        'keys' => ['partner_a' => link_for($c, 'partner_a'), 'partner_b' => link_for($c, 'partner_b')], 'updated' => $c['updated'] ?? $c['created']];
+        'keys' => ['partner_a' => link_for($c, 'partner_a'), 'partner_b' => link_for($c, 'partner_b')], 'updated' => $c['updated'] ?? $c['created'],
+        'emails' => obj($c['emails'] ?? []), 'invites' => obj($c['invites'] ?? [])];
+}
+
+/* ---------- invitations by email ----------
+   Uses the site's existing Resend sender, send_email() in payment-config.php on
+   the server. If that isn't available, the admin page says so and the links
+   can still be copied by hand. */
+function clean_email($s) { $s = strtolower(trim((string)$s)); return ($s !== '' && filter_var($s, FILTER_VALIDATE_EMAIL) && strlen($s) <= 254) ? $s : ''; }
+function mc_h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+function mail_ready() {
+    if (!function_exists('send_email') && is_file(__DIR__ . '/payment-config.php')) { ob_start(); require_once __DIR__ . '/payment-config.php'; ob_end_clean(); }
+    return function_exists('send_email');
+}
+function game_url($c, $slot) {
+    $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+    $dir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+    return ($https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'oneinmarriage.com') . $dir . '/game.html?k=' . link_for($c, $slot);
+}
+function invite_html($c, $slot, $url) {
+    $me = mc_h($c['names'][$slot]); $other = mc_h($c['names'][$slot === 'partner_a' ? 'partner_b' : 'partner_a']);
+    $p = 'style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#2b2c26"';
+    return '<p ' . $p . '>Hi ' . $me . ',</p>'
+        . '<p ' . $p . '>Your 90-day game, <b>Mission Control</b>, is ready. The button below is <b>your personal login</b> &mdash; it opens the game as you, on your phone.</p>'
+        . '<p style="margin:24px 0"><a href="' . mc_h($url) . '" style="display:inline-block;background:#122029;color:#f3ecdc;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:700;font-size:16px">Open my game</a></p>'
+        . '<p ' . $p . '><b>Your first step:</b> open it, choose Day 1 together, and tick your commitments on your own phone. ' . $other . ' gets their own link.</p>'
+        . '<p ' . $p . '>Please don\'t forward this email &mdash; the link is just for you. Bookmark it once it opens.</p>'
+        . '<p style="margin:0 0 16px;font-size:13px;color:#7a7d74">If the button doesn\'t work, copy this into your browser:<br>' . mc_h($url) . '</p>'
+        . '<p ' . $p . '>&mdash; Jacques, ONE in Marriage</p>';
+}
+/** Sends one partner their link; records the result on the couple. */
+function send_invite(&$c, $slot) {
+    $to = $c['emails'][$slot] ?? '';
+    if ($to === '') return ['ok' => false, 'error' => 'No email address for ' . $c['names'][$slot] . '.'];
+    if (!mail_ready()) return ['ok' => false, 'error' => 'Email isn\'t set up on this server. Copy the link instead.'];
+    $html = invite_html($c, $slot, game_url($c, $slot));
+    if (function_exists('branded_email')) $html = branded_email($html);
+    $ok = false;
+    try { $ok = (@send_email($to, "Your Mission Control game is ready \u{2014} ONE in Marriage", $html, 'jacques@sharingvitality.com') !== false); } catch (Throwable $e) { $ok = false; }
+    $c['invites'][$slot] = ['to' => $to, 'at' => gmdate('c'), 'ok' => $ok];
+    return $ok ? ['ok' => true] : ['ok' => false, 'error' => 'The email to ' . $to . ' could not be sent. Copy the link instead.'];
+}
+function send_invites($id, $slots) {
+    $results = [];
+    $c = with_couple($id, function (&$c) use ($slots, &$results) {
+        foreach ($slots as $s) if (in_array($s, SLOTS, true)) $results[$s] = send_invite($c, $s);
+    });
+    return [$c, $results];
+}
+
+/* ---------- finished surveys (read-only, from survey-files.php) ---------- */
+function survey_couples() {
+    if (!is_file(__DIR__ . '/survey-files.php')) return [];
+    require_once __DIR__ . '/survey-files.php';
+    $store = sf_load();
+    if (!is_array($store)) return [];
+    $match = sf_match($store); $active = sf_active($store); $files = sf_file_names($store, $match);
+    $games = [];
+    foreach (glob(md_dir('couples') . '/*.json') ?: [] as $f) { $g = json_decode((string)file_get_contents($f), true); if (!empty($g['emails'])) $games[] = array_values(array_filter((array)$g['emails'])); }
+    $out = [];
+    foreach ($match as $program => $grp) {
+        foreach ($grp['couples'] as $cp) {
+            $A = sf_who($active[$cp['a']]['post']); $B = sf_who($active[$cp['b']]['post']);
+            $has = false;
+            foreach ($games as $em) if (in_array($A['email'], $em, true) && in_array($B['email'], $em, true)) $has = true;
+            $out[] = ['program' => $program, 'a' => ['first' => $A['first'], 'last' => $A['last'], 'email' => $A['email'], 'at' => $active[$cp['a']]['at']],
+                'b' => ['first' => $B['first'], 'last' => $B['last'], 'email' => $B['email'], 'at' => $active[$cp['b']]['at']],
+                'file' => $files['couple'][$cp['a']] ?? '', 'hasGame' => $has];
+        }
+    }
+    usort($out, function ($x, $y) { return strcmp(max($y['a']['at'], $y['b']['at']), max($x['a']['at'], $x['b']['at'])); });
+    return $out;
 }
 function clean_game($g) {
     if (!is_array($g)) fail('That isn\'t a game file.');
@@ -288,23 +359,46 @@ if (strpos($action, 'admin_') === 0) {
                 'settings' => array_merge(settings_from($in, $g), ['tz' => 'America/Denver']),
                 'keys' => ['partner_a' => bin2hex(random_bytes(16)), 'partner_b' => bin2hex(random_bytes(16))],
                 'team' => $g ? clip($g['team']['name'] ?? '', 60) : '',
+                'emails' => ['partner_a' => clean_email($in['emails']['partner_a'] ?? ''), 'partner_b' => clean_email($in['emails']['partner_b'] ?? '')],
+                'invites' => [],
             ]);
+            foreach (SLOTS as $s) if (trim((string)($in['emails'][$s] ?? '')) !== '' && $c['emails'][$s] === '') fail('Check the email address for ' . $c['names'][$s] . '.');
             if ($g) { $json = json_encode($g, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); $c['gameHash'] = substr(hash('sha256', $json), 0, 16); if (@file_put_contents(game_path($id), $json) === false) fail('Could not save the game file.', 500); }
             create_file(couple_path($id), $c);
-            out(['ok' => true, 'couple' => summary($c)]);
+            $results = [];
+            if (!empty($in['send'])) { list($c, $results) = send_invites($id, array_values(array_filter(SLOTS, function ($s) use ($c) { return $c['emails'][$s] !== ''; }))); }
+            out(['ok' => true, 'couple' => summary($c), 'sent' => $results, 'mail' => mail_ready()]);
         case 'admin_update':
             $id = (string)($in['id'] ?? '');
             if (!read_couple($id)) fail('That couple was not found.', 404);
             $c = with_couple($id, function (&$c) use ($in) {
                 if (isset($in['names'])) foreach (SLOTS as $s) { $v = clip($in['names'][$s] ?? '', 30); need($v !== '', 'Names can\'t be empty.'); $c['names'][$s] = $v; }
+                if (isset($in['emails'])) foreach (SLOTS as $s) { $raw = trim((string)($in['emails'][$s] ?? '')); $v = clean_email($raw); need($raw === '' || $v !== '', 'Check the email address for ' . $c['names'][$s] . '.'); $c['emails'][$s] = $v; }
                 if (array_key_exists('target', $in)) { need(!started($c), 'The target is fixed once both partners have committed.'); $c['settings'] = array_merge($c['settings'], settings_from($in, null)); }
             });
             out(['ok' => true, 'couple' => summary($c)]);
         case 'admin_relink':
             $id = (string)($in['id'] ?? ''); $slot = (string)($in['slot'] ?? '');
             if (!read_couple($id) || !in_array($slot, SLOTS, true)) fail('That couple was not found.', 404);
-            $c = with_couple($id, function (&$c) use ($slot) { $c['keys'][$slot] = bin2hex(random_bytes(16)); });
-            out(['ok' => true, 'couple' => summary($c)]);
+            $c = with_couple($id, function (&$c) use ($slot) { $c['keys'][$slot] = bin2hex(random_bytes(16)); unset($c['invites'][$slot]); });
+            $results = [];
+            if (!empty($in['send']) && !empty($c['emails'][$slot])) list($c, $results) = send_invites($id, [$slot]);
+            out(['ok' => true, 'couple' => summary($c), 'sent' => $results]);
+        case 'admin_invite':
+            $id = (string)($in['id'] ?? '');
+            if (!read_couple($id)) fail('That couple was not found.', 404);
+            $slots = array_values(array_intersect((array)($in['slots'] ?? []), SLOTS));
+            if (!$slots) fail('Choose who to invite.');
+            list($c, $results) = send_invites($id, $slots);
+            out(['ok' => true, 'couple' => summary($c), 'sent' => $results]);
+        case 'admin_surveys':
+            out(['ok' => true, 'couples' => survey_couples(), 'mail' => mail_ready()]);
+        case 'admin_survey_file':
+            $file = (string)($in['file'] ?? '');
+            if (!preg_match('/^[a-z0-9-]{1,160}\.md$/', $file)) fail('That file name isn\'t valid.');
+            $path = dirname(__DIR__) . '/survey-data/couples/' . $file;
+            if (!is_file($path)) fail('That couple file isn\'t there yet. Open the survey responses page once so it rebuilds, then try again.', 404);
+            out(['ok' => true, 'name' => $file, 'text' => (string)file_get_contents($path)]);
         case 'admin_remove':
             $id = (string)($in['id'] ?? '');
             if (!read_couple($id)) fail('That couple was not found.', 404);
