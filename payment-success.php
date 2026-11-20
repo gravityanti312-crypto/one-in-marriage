@@ -60,7 +60,7 @@ function notify_also($fields, $session) {
                . '<p style="color:#5f635b;margin:0 0 18px">' . ($name !== '' ? $x($name) . ' just registered and paid.' : 'Someone just registered and paid.') . '</p>'
                . '<table style="border-collapse:collapse;width:100%">' . $rows . '</table>'
                . '<p style="color:#7a7d74;font-size:13px;margin-top:20px">You get this because you are on the ONE in Marriage registration notification list.</p>';
-        $html = function_exists('branded_email') ? branded_email($inner) : $inner;
+        $html = function_exists('branded_email') ? branded_email('<tr><td style="padding:26px 28px 16px;">' . $inner . '</td></tr>') : $inner;
         $subject = $name !== '' ? 'New paid registration — ' . $name : 'New paid registration — ONE in Marriage';
         foreach ($list as $to) {
             if (function_exists('send_email')) { @send_email($to, $subject, $html, 'jacques@sharingvitality.com'); }

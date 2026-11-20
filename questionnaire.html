@@ -57,6 +57,20 @@
     .steplabel{margin:0 0 4px;font-size:.78rem;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase}
     .steplabel b{color:var(--sage-deep)}
     .saved{margin:6px 0 0;font-size:.82rem;color:var(--sage-deep)}
+    .sections{margin:14px 0 4px;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+    .sections-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;border:0;background:none;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;text-align:left}
+    .sections-toggle small{font-weight:600;color:var(--muted);font-size:.85rem}
+    .sections-toggle .chev{transition:transform .2s;color:var(--sage-deep)}
+    .sections.open .chev{transform:rotate(180deg)}
+    .sections-list{display:none;padding:0 8px 8px}
+    .sections.open .sections-list{display:grid;gap:4px}
+    .sec-btn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 10px;border:0;border-radius:12px;background:none;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+    .sec-btn:hover{background:var(--sage-soft)}
+    .sec-btn[aria-current=step]{background:var(--sage-soft);font-weight:700}
+    .sec-btn .n{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:800;border:2px solid var(--line);color:var(--muted)}
+    .sec-btn.done .n{background:var(--sage);border-color:var(--sage);color:#fff}
+    .sec-btn.part .n{border-color:var(--tan);color:var(--tan)}
+    .sec-btn .st{margin-left:auto;font-size:.78rem;color:var(--muted);white-space:nowrap}
     .pagetitle{margin:30px 0 4px;font-family:'Lora',Georgia,serif;font-weight:600;font-size:1.5rem}
     .page{animation:fade .25s ease}
     @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
@@ -119,6 +133,10 @@
     <form id="qform" action="submit-questionnaire.php" method="POST" novalidate>
       <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
       <p class="steplabel"><b id="stepNum">Page 1 of 9</b> &middot; <span id="stepTitle">Your details</span></p>
+      <div class="sections" id="sections">
+        <button type="button" class="sections-toggle" id="sectionsToggle" aria-expanded="false" aria-controls="sectionsList"><span>Jump to a section <small id="sectionsCount"></small></span><span class="chev" aria-hidden="true">&#9662;</span></button>
+        <div class="sections-list" id="sectionsList"></div>
+      </div>
       <p class="saved" id="savedNote" hidden>Your answers are saved on this device &mdash; you can close this and come back.</p>
 
       <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
@@ -804,8 +822,52 @@
       next.hidden = (cur === total);
       submitBtn.hidden = (cur !== total);
       err.hidden = true;
+      drawSections();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // ---- jump to any section (for doing one part during the training) ----
+    // Sections can be filled in any order and over several visits; everything
+    // is still checked before sending. A link can open a section directly:
+    // questionnaire.html#section-5
+    var secBox = document.getElementById('sections'), secList = document.getElementById('sectionsList');
+    function sectionState(i) {
+      var pageEl = pages[i - 1];
+      if (i === 1) {
+        var filled = REQUIRED.filter(function (id) { var el = document.getElementById(id); return el && el.value.trim(); }).length;
+        return filled === REQUIRED.length ? 'done' : (filled ? 'part' : '');
+      }
+      var qs = pageEl.querySelectorAll('.q').length, bad = checkPage(pageEl, false);
+      return bad === 0 ? 'done' : (bad < qs ? 'part' : '');
+    }
+    function drawSections() {
+      var done = 0, html = '';
+      pages.forEach(function (p, k) {
+        var i = k + 1, st = sectionState(i), t = p.querySelector('.pagetitle');
+        if (st === 'done') done++;
+        html += '<button type="button" class="sec-btn ' + st + '" data-sec="' + i + '"' + (i === cur ? ' aria-current="step"' : '') + '>'
+              + '<span class="n">' + (st === 'done' ? '&#10003;' : i) + '</span><span>' + escHtml(t ? t.textContent : 'Section ' + i) + '</span>'
+              + '<span class="st">' + (st === 'done' ? 'Done' : st === 'part' ? 'Started' : '') + '</span></button>';
+      });
+      secList.innerHTML = html;
+      document.getElementById('sectionsCount').textContent = '\u00b7 ' + done + ' of ' + total + ' done';
+    }
+    document.getElementById('sectionsToggle').addEventListener('click', function () {
+      var open = !secBox.classList.contains('open');
+      secBox.classList.toggle('open', open);
+      this.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    secList.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-sec]'); if (!b) return;
+      secBox.classList.remove('open');
+      document.getElementById('sectionsToggle').setAttribute('aria-expanded', 'false');
+      go(Number(b.getAttribute('data-sec')));
+    });
+    function sectionFromLink() {
+      var m = /^#(?:section|page)-?(\d+)$/i.exec(location.hash || '');
+      return m ? Math.min(Math.max(parseInt(m[1], 10), 1), total) : 0;
+    }
+    window.addEventListener('hashchange', function () { var n = sectionFromLink(); if (n) go(n); });
 
     /** Every question on a page must be answered. Returns the number unanswered. */
     function checkPage(pageEl, mark) {
@@ -1025,6 +1087,7 @@
         localStorage.setItem(KEY, JSON.stringify(data));
         savedNote.hidden = false;
       } catch (x) {}
+      drawSections();
     }
     function restore() {
       var raw = null;
@@ -1073,6 +1136,7 @@
     form.addEventListener('input', function (e) { if (e.target.type === 'text' || e.target.type === 'email') save(); });
 
     restore();
+    if (sectionFromLink()) cur = sectionFromLink();
     render();
   </script>
 </body>

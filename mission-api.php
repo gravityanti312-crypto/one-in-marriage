@@ -262,7 +262,7 @@ function send_invite(&$c, $slot) {
     if ($to === '') return ['ok' => false, 'error' => 'No email address for ' . $c['names'][$slot] . '.'];
     if (!mail_ready()) return ['ok' => false, 'error' => 'Email isn\'t set up on this server. Copy the link instead.'];
     $html = invite_html($c, $slot, game_url($c, $slot));
-    if (function_exists('branded_email')) $html = branded_email($html);
+    if (function_exists('branded_email')) $html = branded_email('<tr><td style="padding:26px 28px 10px;">' . $html . '</td></tr>');
     $ok = false;
     try { $ok = (@send_email($to, "Your Mission Control game is ready \u{2014} ONE in Marriage", $html, 'jacques@sharingvitality.com') !== false); } catch (Throwable $e) { $ok = false; }
     $c['invites'][$slot] = ['to' => $to, 'at' => gmdate('c'), 'ok' => $ok];

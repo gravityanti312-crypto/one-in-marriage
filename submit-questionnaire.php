@@ -189,6 +189,41 @@ if (function_exists('send_email') && function_exists('branded_email') && filter_
     $emailed = (@send_email($to, 'We have your survey — ONE in Marriage', branded_email($inner), $to) !== false);
 }
 
+// ---- 5. tell the team when a couple is complete ----
+// Only the first time both partners are in (not when someone updates their
+// answers later), and only who finished: never any answers, which are private.
+// Goes to the team inbox in payment-config.php plus anyone in team-notify.php.
+try {
+    $isUpdate = false;
+    foreach ($store['subs'] as $s) {
+        if ($s['entry'] === $filed['entry'] && $s['status'] === 'replaced') { $isUpdate = true; break; }
+    }
+    if ($partner['paired'] && empty($filed['dupe']) && !$isUpdate && function_exists('send_email')) {
+        $teamTo = array();
+        $ALSO_NOTIFY = array();
+        if (is_file(__DIR__ . '/team-notify.php')) { include __DIR__ . '/team-notify.php'; }
+        foreach (array_merge(explode(',', (string)($RECIPIENT ?? '')), (array)$ALSO_NOTIFY) as $e) {
+            $e = strtolower(trim((string)$e));
+            if (filter_var($e, FILTER_VALIDATE_EMAIL) && !in_array($e, $teamTo, true)) { $teamTo[] = $e; }
+        }
+        $me    = trim($first . ' ' . trim((string)($_POST['last_name'] ?? '')));
+        $admin = 'https://' . ($_SERVER['HTTP_HOST'] ?? 'oneinmarriage.com') . '/admin.html';
+        $x     = function ($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
+        $inner =
+              '<tr><td style="padding:28px 28px 6px;">'
+            . '<div style="color:#a9824f;font-size:12px;font-weight:bold;letter-spacing:1.6px;text-transform:uppercase;">Couple ready for a game</div>'
+            . '<div style="font-family:Georgia,serif;font-size:24px;color:#2b2c26;margin-top:8px;">' . $x($partner['name']) . ' &amp; ' . $x($me) . '</div>'
+            . '</td></tr>'
+            . '<tr><td style="padding:10px 28px 4px;color:#5f635b;font-size:15px;line-height:1.65;">Both partners have now finished the 90-Day Game Profile Survey for the <strong>' . $x($program) . '</strong> program. ' . $x($first) . ' was second, on ' . $x($when) . '.</td></tr>'
+            . '<tr><td style="padding:16px 28px 8px;"><a href="' . $x($admin) . '" style="display:inline-block;background:#122029;color:#f3ecdc;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold;">Open the admin page</a></td></tr>'
+            . '<tr><td style="padding:6px 28px 18px;color:#8a8d84;font-size:13px;line-height:1.6;">Their couple file is under <strong>Finished surveys</strong>. Download it, run it through the game creator, then upload the game file there to invite them.</td></tr>';
+        $html = function_exists('branded_email') ? branded_email($inner) : $inner;
+        foreach ($teamTo as $t) {
+            @send_email($t, 'Both finished: ' . $partner['name'] . ' & ' . $me . ' — ready for a game', $html, 'jacques@sharingvitality.com');
+        }
+    }
+} catch (Throwable $e) { /* the answers are filed; a missed alert must not change that */ }
+
 // ---- done ----
 if (ob_get_level()) { ob_end_clean(); }
 if ($isAjax) {
