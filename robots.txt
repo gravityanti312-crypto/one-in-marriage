@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /admin/
+Disallow: /operator.html
+Disallow: /game.html
+Disallow: /responses.php
+Disallow: /send-survey.php
+Disallow: /questionnaire-thanks.html
+Disallow: /thank-you.html
+Disallow: /sold-out.html
+
+Sitemap: https://oneinmarriage.com/sitemap.xml

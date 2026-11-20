@@ -1,13 +1,24 @@
-# Force HTTPS
-RewriteEngine On
-RewriteCond %{HTTPS} !=on
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# ONE in Marriage — server rules for public_html.
+# http -> https is switched on in cPanel (Domains -> Force HTTPS Redirect),
+# so it is not repeated here.
 
-# Cache images for a year, always revalidate the page
+RewriteEngine On
+
+# One address for the site: www.oneinmarriage.com -> oneinmarriage.com.
+# Certificate renewals under /.well-known/ are left alone.
+RewriteCond %{HTTP_HOST} ^www\.oneinmarriage\.com$ [NC]
+RewriteCond %{REQUEST_URI} !^/\.well-known/
+RewriteRule ^(.*)$ https://oneinmarriage.com/$1 [L,R=301]
+
+# Cache images and fonts for a year (a changed image gets a new file name);
+# always revalidate the pages themselves.
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 year"
   ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 
@@ -25,7 +36,8 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   </IfModule>
 </Files>
 
-<FilesMatch "\.(log|bak|sql|zip)$">
+# Logs, backups, spreadsheets, notes and upload zips are never served.
+<FilesMatch "\.(log|bak|sql|zip|csv|md)$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>
