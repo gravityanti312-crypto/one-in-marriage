@@ -237,7 +237,14 @@ function summary($c) {
 function clean_email($s) { $s = strtolower(trim((string)$s)); return ($s !== '' && filter_var($s, FILTER_VALIDATE_EMAIL) && strlen($s) <= 254) ? $s : ''; }
 function mc_h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 function mail_ready() {
-    if (!function_exists('send_email') && is_file(__DIR__ . '/payment-config.php')) { ob_start(); require_once __DIR__ . '/payment-config.php'; ob_end_clean(); }
+    if (!function_exists('send_email') && is_file(__DIR__ . '/payment-config.php')) {
+        ob_start(); require_once __DIR__ . '/payment-config.php'; ob_end_clean();
+        // Loaded inside a function, the config's settings ($RESEND_API_KEY,
+        // $FROM_EMAIL, $SITE_NAME...) land as local variables here. send_email()
+        // reads them as globals, so hand them over — without this it silently
+        // skips Resend and falls back to mail() with a blank sender.
+        foreach (get_defined_vars() as $k => $v) $GLOBALS[$k] = $v;
+    }
     return function_exists('send_email');
 }
 function game_url($c, $slot) {
