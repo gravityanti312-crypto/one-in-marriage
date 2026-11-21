@@ -231,7 +231,8 @@ function wire() {
     var f = this.files[0]; if (!f) return; var rd = new FileReader();
     rd.onload = function () {
       var g; try { g = JSON.parse(rd.result); } catch (e) { $('#gInfo').textContent = 'That file isn’t valid JSON.'; return; }
-      if (['1.0.0', '2.0.0', '2.1.0'].indexOf(g.schema_version) < 0 || !Array.isArray(g.missions) || g.missions.length !== 90 || !Array.isArray(g.partners) || g.partners.length !== 2) { $('#gInfo').textContent = 'That doesn’t look like a complete 90-day game file.'; return; }
+      if (['1.0.0', '2.0.0', '2.1.0', '2.2.0'].indexOf(g.schema_version) < 0) { $('#gInfo').textContent = 'This game file is version ' + (g.schema_version || '(none)') + '. The site reads versions 1.0.0, 2.0.0, 2.1.0 and 2.2.0. Send the file to Ryan so the game can be updated for it.'; return; }
+      if (!Array.isArray(g.missions) || g.missions.length !== 90 || !Array.isArray(g.partners) || g.partners.length !== 2) { $('#gInfo').textContent = 'That doesn’t look like a complete 90-day game file.'; return; }
       var keep = { na: $('#na').value.trim(), nb: $('#nb').value.trim(), ea: $('#ea').value.trim(), eb: $('#eb').value.trim(), label: prefill && prefill.label };
       newGame = g; prefill = { na: keep.na || g.partners[0].display_name, nb: keep.nb || g.partners[1].display_name, ea: keep.ea || g.partners[0].email || '', eb: keep.eb || g.partners[1].email || '', label: keep.label }; render();
     };

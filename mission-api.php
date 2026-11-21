@@ -308,7 +308,8 @@ function survey_couples() {
 }
 function clean_game($g) {
     if (!is_array($g)) fail('That isn\'t a game file.');
-    if (!in_array($g['schema_version'] ?? '', ['1.0.0', '2.0.0', '2.1.0'], true)) fail('Unsupported game format. Use the current 2.1.0 file.');
+    $v = (string)($g['schema_version'] ?? '');
+    if (!in_array($v, ['1.0.0', '2.0.0', '2.1.0', '2.2.0'], true)) fail('This game file is version ' . ($v === '' ? '(none)' : clip($v, 20)) . '. The site reads versions 1.0.0, 2.0.0, 2.1.0 and 2.2.0. Send the file to Ryan so the game can be updated for it.');
     if (!isset($g['missions']) || !is_array($g['missions']) || count($g['missions']) !== 90) fail('A game file needs exactly 90 daily missions.');
     foreach ($g['missions'] as $i => $m) if (!is_array($m) || (int)($m['day'] ?? 0) !== $i + 1 || empty($m['title'])) fail('Mission ' . ($i + 1) . ' is missing or out of order.');
     if (!isset($g['support_cards']) || !is_array($g['support_cards'])) fail('The game file has no support cards.');
@@ -403,6 +404,16 @@ if (strpos($action, 'admin_') === 0) {
         case 'admin_survey_file':
             $file = (string)($in['file'] ?? '');
             if (!preg_match('/^[a-z0-9-]{1,160}\.md$/', $file)) fail('That file name isn\'t valid.');
+            // The couple files are only rebuilt when a survey comes in, so after
+            // survey-files.php changes they would keep the old layout. Rebuild
+            // first when the code or the answers are newer than the files.
+            if (is_file(__DIR__ . '/survey-files.php')) {
+                require_once __DIR__ . '/survey-files.php';
+                $built = sf_dir() . '/.built';
+                if (!is_file($built) || @filemtime(__DIR__ . '/survey-files.php') > @filemtime($built) || @filemtime(sf_store_path()) > @filemtime($built)) {
+                    $lock = sf_lock(); $store = sf_load(); if (is_array($store)) sf_rebuild($store); sf_unlock($lock);
+                }
+            }
             $path = dirname(__DIR__) . '/survey-data/couples/' . $file;
             if (!is_file($path)) fail('That couple file isn\'t there yet. Open the survey responses page once so it rebuilds, then try again.', 404);
             out(['ok' => true, 'name' => $file, 'text' => (string)file_get_contents($path)]);

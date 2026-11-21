@@ -9,7 +9,7 @@
  *   questionnaire-responses.csv            each person's current answers, by program
  *   questionnaire-responses-replaced.csv   older answers a resubmission replaced (the backup)
  *   survey-data/people/*.md                one readable file per person
- *   survey-data/couples/*.md               one per couple, with the Section 7 mutual matches
+ *   survey-data/couples/*.md               one per couple: both partners' full answers + Section 7 mutual matches
  *
  * Rules agreed with Jacques on 9 Nov 2026:
  *   - Same person, same program: the newest submission replaces the older one
@@ -615,12 +615,23 @@ function sf_couple_markdown($A, $B, $howText) {
     $wa = sf_who($A['post']); $wb = sf_who($B['post']);
     $na = sf_name_of($wa) ?: 'Partner A'; $nb = sf_name_of($wb) ?: 'Partner B';
 
-    $md  = "# $na & $nb — Couple Profile\n\n";
+    $md  = "# $na & $nb — Couple File\n\n";
     $md .= "- **Program:** " . $A['program'] . "\n";
     $md .= "- **Status:** both partners have completed the survey\n";
     $md .= "- **Taken:** $na " . sf_when($A['at']) . " · $nb " . sf_when($B['at']) . " · for the " . $A['program'] . " program\n";
     $md .= "- **How they were matched:** $howText\n";
     $md .= "- **This file generated:** " . date('j F Y, g:ia') . "\n\n";
+    // Brett (20 Nov 2026): one file with everything, so the game maker never
+    // needs the separate person files. Full answers first, matches last.
+    $md .= "**Everything for the game maker is in this one file. The separate person files are not needed.**\n\n";
+    $md .= "1. $na (partner A) — every survey answer, including Section 7\n";
+    $md .= "2. $nb (partner B) — every survey answer, including Section 7\n";
+    $md .= "3. Section 7 — mutual matches: the only intimacy items both answered Yes or Maybe\n\n";
+
+    foreach ([[$A, $na, 'A', $nb], [$B, $nb, 'B', $na]] as $t) {
+        [$s, $name, $letter, $other] = $t;
+        $md .= "---\n\n# $name ($letter) — full survey answers\n\n" . sf_person_header($s, $other, $letter) . "\n" . sf_answers_markdown($s['post']);
+    }
 
     $a = sf_intimacy($A['post']); $b = sf_intimacy($B['post']);
     $both = $only = [];
@@ -636,11 +647,6 @@ function sf_couple_markdown($A, $B, $howText) {
     $md .= "\n### Not a match — keep out of the game\n\n";
     $md .= $only ? ('- ' . implode("\n- ", $only) . "\n") : "_None._\n";
     $md .= "\n";
-
-    foreach ([[$A, $na, 'A', $nb], [$B, $nb, 'B', $na]] as $t) {
-        [$s, $name, $letter, $other] = $t;
-        $md .= "---\n\n# $name ($letter)\n\n" . sf_person_header($s, $other, $letter) . "\n" . sf_answers_markdown($s['post']);
-    }
     return $md;
 }
 
