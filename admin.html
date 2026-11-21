@@ -195,7 +195,8 @@ function newHTML() {
 }
 function gamesHTML() {
   if (!couples.length) return '<div class="empty" style="margin-top:16px">No games yet. Start from <b>Finished surveys</b> or <b>+ New game</b>.</div>';
-  return couples.map(function (c) {
+  return '<div class="row" style="justify-content:space-between;align-items:center;margin:14px 0 2px"><span class="muted small">' + couples.length + ' game' + (couples.length === 1 ? '' : 's') + ' · ' + (couples.length * 2) + ' personal links</span><button class="btn sm" id="copyAll">Copy all links</button></div>' +
+    couples.map(function (c) {
     return '<div class="card"><div class="row" style="justify-content:space-between"><div><h3>' + esc(c.names.partner_a) + ' &amp; ' + esc(c.names.partner_b) + '</h3><div class="muted small">' + esc(c.title) + (c.settings.target ? ' · target ' + c.settings.target + ' ' + (c.settings.basis === 'A' ? 'A' : 'A/B') + ' days' : '') + ' · created ' + esc(new Date(c.created).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })) + '</div></div>' + status(c) + '</div>' +
       slotsHTML(c) +
       '<div class="row" style="margin-top:12px"><button class="btn sm" data-test="' + c.id + '">Test mode with this game</button></div>' +
@@ -203,6 +204,15 @@ function gamesHTML() {
       '<div class="row"><button class="btn sm" data-saveem="' + c.id + '">Save emails</button><button class="btn sm" data-relink="' + c.id + ':partner_a">New link for ' + esc(c.names.partner_a) + '</button><button class="btn sm" data-relink="' + c.id + ':partner_b">New link for ' + esc(c.names.partner_b) + '</button><button class="btn sm danger" data-remove="' + c.id + '">Remove game</button></div>' +
       '<p class="muted" style="font-size:13px;margin-bottom:0">A new link stops the old one working (use it if a link was forwarded by mistake) and emails the new one if there’s an address. Removing hides the game; its data is kept on the server.</p></details></div>';
   }).join('');
+}
+/** Every partner's personal link, grouped by couple, ready to paste into notes. */
+function allLinks() {
+  return 'ONE in Marriage — game links\nEach link logs in as that person. Send each person only their own.\n\n' +
+    couples.map(function (c) {
+      return c.names.partner_a + ' & ' + c.names.partner_b + '\n' +
+        c.names.partner_a + ': ' + linkFor(c.keys.partner_a) + '\n' +
+        c.names.partner_b + ': ' + linkFor(c.keys.partner_b);
+    }).join('\n\n');
 }
 function find(id) { if (justMade && justMade.id === id) return justMade; return couples.filter(function (c) { return c.id === id; })[0]; }
 function afterSend(r, who) {
@@ -246,6 +256,7 @@ function wire() {
   };
   if ($('#testNew')) $('#testNew').onclick = function () { if (!newGame) return; startTest(newGame, { partner_a: $('#na').value.trim() || newGame.partners[0].display_name, partner_b: $('#nb').value.trim() || newGame.partners[1].display_name }, { basis: 'A+B', target: 60 }); };
   $$('[data-invite]').forEach(function (b) { b.onclick = function () { var p = b.getAttribute('data-invite').split(':'), c = find(p[0]); b.disabled = true; api({ action: 'admin_invite', id: p[0], slots: [p[1]] }).then(function (r) { b.disabled = false; if (!r.ok) return toast(r.error); if (justMade && justMade.id === p[0]) justMade = r.couple; afterSend(r, c.names[p[1]]); load(); }); }; });
+  if ($('#copyAll')) $('#copyAll').onclick = function () { copy(allLinks(), 'All ' + (couples.length * 2) + ' links copied — paste them anywhere.'); };
   $$('[data-copy]').forEach(function (b) { b.onclick = function () { var p = b.getAttribute('data-copy').split(':'), c = find(p[0]); copy(linkFor(c.keys[p[1]]), 'Link for ' + c.names[p[1]] + ' copied.'); }; });
   $$('[data-msg]').forEach(function (b) { b.onclick = function () { var p = b.getAttribute('data-msg').split(':'), c = find(p[0]); copy(message(c, p[1]), 'Message for ' + c.names[p[1]] + ' copied — paste it into a text.'); }; });
   $$('[data-test]').forEach(function (b) { b.onclick = function () { var c = find(b.getAttribute('data-test')); api({ action: 'admin_game', id: c.id }).then(function (r) { if (!r.ok) return toast(r.error); startTest(r.game, r.names, r.settings); }); }; });
