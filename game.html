@@ -207,6 +207,15 @@ textarea.input{min-height:96px;resize:vertical;line-height:1.5}
 .role .lead{font-size:11px;font-weight:800;color:var(--sage-deep)}
 .note{border-left:3px solid var(--sage);padding:4px 0 4px 14px;margin:16px 0;color:var(--body)}
 .note b{color:var(--ink)}
+.note.consent{border-left-color:var(--red)}
+.victory{background:rgba(198,167,101,.16);border:1px solid rgba(198,167,101,.5);border-radius:14px;padding:10px 14px;margin:16px 0;font-weight:600}
+.orig{display:block;font-size:13px;font-weight:600;font-style:normal;letter-spacing:0;opacity:.7;margin-top:3px}
+.qsec{margin:16px 0 6px;font-size:15px}
+.oppfile{border-top:1px solid var(--line);padding:14px 0}
+.oppfile.focus{background:var(--tan-soft);border-radius:12px;padding:14px 12px}
+.oppfile h3{margin:0 0 6px}
+.oppfile p{margin:6px 0}
+button.chip{cursor:pointer}
 .qbox{background:var(--night);color:var(--on-night);border-radius:18px;padding:18px;margin-top:18px}
 .qbox .kicker{color:var(--gold)}
 .qbox p{font-family:var(--serif);font-size:19px;margin:6px 0 0}
@@ -455,13 +464,15 @@ function sGet(st, k) { try { return st.getItem(k); } catch (e) { return null; } 
 function sSet(st, k, v) { try { st.setItem(k, v); return true; } catch (e) { return false; } }
 function sJ(st, k) { try { var v = st.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
 var LS = window.localStorage, SS = window.sessionStorage;
+/* A copy of the game in a subfolder (like /dev2/) keeps its own saved links on the phone. */
+var NS = location.pathname.replace(/[^\/]*$/, '') === '/' ? '' : location.pathname.replace(/[^\/]*$/, '');
 
 /* ---------- mode: player (personal link), test (operator only) or landing ---------- */
 var params = new URLSearchParams(location.search), MODE = 'landing', KEY = null;
 var qk = params.get('k');
-if (qk && /^[a-f0-9]{44}$/.test(qk)) { KEY = qk; MODE = 'player'; sSet(LS, 'oim-mission-key', qk); }
+if (qk && /^[a-f0-9]{44}$/.test(qk)) { KEY = qk; MODE = 'player'; sSet(LS, NS + 'oim-mission-key', qk); }
 else if (params.get('test')) { MODE = sGet(SS, 'oim-operator') ? 'test' : 'landing'; }
-else { var sk = sGet(LS, 'oim-mission-key'); if (sk && /^[a-f0-9]{44}$/.test(sk)) { KEY = sk; MODE = 'player'; try { history.replaceState(null, '', '?k=' + sk); } catch (e) {} } }
+else { var sk = sGet(LS, NS + 'oim-mission-key'); if (sk && /^[a-f0-9]{44}$/.test(sk)) { KEY = sk; MODE = 'player'; try { history.replaceState(null, '', '?k=' + sk); } catch (e) {} } }
 
 var S = null, G = BUILTIN, ME = 'partner_a', L = null;
 var ui = { view: MODE === 'player' ? 'loading' : MODE === 'test' ? 'hq' : 'landing', sub: null, missionDay: null, gradePick: null, agreed: false, err: null, editDate: false, ticks: {}, justGraded: null, depth: 0, jDate: null };
@@ -484,6 +495,17 @@ function who(slot) { return slot === ME ? 'you' : nm(slot); }
 function mission(day) { return G.missions.filter(function (m) { return m.day === day; })[0]; }
 function cardById(id) { var all = G.support_cards.concat(G.bonus_missions || []); for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i]; return null; }
 function cardsOf(kind) { return G.support_cards.filter(function (c) { return c.kind === kind; }); }
+function itemById(id) { return cardById(id) || G.missions.filter(function (m) { return m.id === id; })[0] || null; }
+/* Brett's game files name the opponents (patterns, never a partner). */
+function opps() { return (G && Array.isArray(G.opponents)) ? G.opponents : []; }
+function oppById(id) { return opps().filter(function (o) { return o.id === id; })[0] || null; }
+function oppChips(ids) { var l = (ids || []).map(oppById).filter(Boolean); return l.length ? '<div class="chips" style="margin:10px 0">' + l.map(function (o) { return '<button class="chip" data-opp="' + esc(o.id) + '">vs ' + esc(o.name) + '</button>'; }).join('') + '</div>' : ''; }
+/* Nicknames: a couple's own name for an activity. The original title stays underneath. */
+function nickOf(c) { return (c && c.id && !c.adapted && S && S.nicks && S.nicks[c.id]) || ''; }
+function tname(c) { var n = nickOf(c); return n ? (/^♥/.test(c.title || '') || c.romance ? '♥ ' : '') + esc(n) + '<span class="orig">' + fill(c.title) + '</span>' : fill(c.title); }
+function nickLink(c) { return c && c.id && !c.adapted ? '<button class="linkbtn" data-nick="' + esc(c.id) + '">' + (nickOf(c) ? 'Change our nickname' : 'Give it a nickname') + '</button>' : ''; }
+function unlocked(c) { var u = c.reward && c.reward.catalog_unlock; return !u || progress().daily >= u.count; }
+function unlockLabel(c) { var n = c.reward.catalog_unlock.count; return 'Unlocks after ' + n + ' A or B day' + (n === 1 ? '' : 's'); }
 function actOf(day) { return day <= 30 ? ['Act I', 'See'] : day <= 60 ? ['Act II', 'Soften & Repair'] : ['Act III', 'Create']; }
 function tz() { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { return ''; } }
 function backBar(label) { return '<button class="back no-print" data-back><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>' + esc(label || 'Back') + '</button>'; }
@@ -491,10 +513,10 @@ function backBar(label) { return '<button class="back no-print" data-back><svg v
 /* ---------- shared state ---------- */
 function blankS(names, st) {
   return { title: G.title, names: names, settings: { basis: st.basis || null, target: st.target || null, budget: st.budget || 'free', tz: tz() }, gameRef: G === BUILTIN ? 'builtin' : 'file',
-    startDate: null, startBy: null, commits: { partner_a: null, partner_b: null }, grades: {}, accepted: {}, offDuty: [], claims: {}, redeemed: {}, souvenirs: {}, agreement: {}, team: (G.team && G.team.name) || '', villain: '', rev: 0 };
+    startDate: null, startBy: null, commits: { partner_a: null, partner_b: null }, grades: {}, accepted: {}, offDuty: [], claims: {}, redeemed: {}, souvenirs: {}, agreement: {}, nicks: {}, team: (G.team && G.team.name) || '', villain: '', rev: 0 };
 }
 function setState(st) {
-  ['grades', 'accepted', 'claims', 'redeemed', 'souvenirs', 'agreement'].forEach(function (k) { if (!st[k] || Array.isArray(st[k])) st[k] = {}; });
+  ['grades', 'accepted', 'claims', 'redeemed', 'souvenirs', 'agreement', 'nicks'].forEach(function (k) { if (!st[k] || Array.isArray(st[k])) st[k] = {}; });
   if (!Array.isArray(st.offDuty)) st.offDuty = [];
   st.offDuty = st.offDuty.map(Number);
   S = st;
@@ -527,6 +549,7 @@ function ledger() {
   return Object.keys(S.claims).map(function (d) { return { key: 'daily:' + d, cardId: S.claims[d].cardId, day: +d }; }).concat(onceGrants())
     .map(function (g) { g.redeemedAt = S.redeemed[g.key] || null; return g; });
 }
+function lockedRewards() { var funded = S.settings.budget && S.settings.budget !== 'free'; return cardsOf('reward').filter(function (c) { return !unlocked(c) && !(c.reward.funded_only && !funded); }); }
 function rewardChoices() {
   var funded = S.settings.budget && S.settings.budget !== 'free', used = Object.keys(S.claims).map(function (d) { return S.claims[d].cardId; });
   return cardsOf('reward').filter(function (c) {
@@ -540,7 +563,7 @@ function rewardChoices() {
 
 /* ---------- local (this phone only) ---------- */
 function freshL() { return { journal: { partner_a: {}, partner_b: {} }, breaks: [], badges: {}, jarDraws: 0, repairsUsed: 0, aiDone: {}, launched: false, welcome: {}, seen: {}, viewAs: 'partner_a' }; }
-function localKey() { return MODE === 'test' ? 'oim-test-local' : 'oim-mc-local-' + KEY.slice(0, 12) + '-' + ME; }
+function localKey() { return MODE === 'test' ? 'oim-test-local' : NS + 'oim-mc-local-' + KEY.slice(0, 12) + '-' + ME; }
 function fixL() { if (!L.journal) L.journal = {}; SLOTS.forEach(function (s) { L.journal[s] = L.journal[s] || {}; }); L.aiDone = L.aiDone || {}; L.welcome = L.welcome || {}; L.seen = L.seen || {}; L.badges = L.badges || {}; L.breaks = L.breaks || []; }
 function loadL() { L = sJ(MODE === 'test' ? SS : LS, localKey()) || freshL(); fixL(); }
 function saveL() { sSet(MODE === 'test' ? SS : LS, localKey(), JSON.stringify(L)); }
@@ -578,6 +601,11 @@ function localApply(op) {
       break;
     case 'team': S.team = String(op.value).slice(0, 60); break;
     case 'villain': S.villain = String(op.value).slice(0, 60); break;
+    case 'nick':
+      need(/^[A-Za-z0-9_-]{1,40}$/.test(op.id || ''), 'Choose an activity.');
+      var nv = String(op.value || '').trim().slice(0, 40);
+      if (nv) S.nicks[op.id] = nv; else delete S.nicks[op.id];
+      break;
     default: throw new Error('Unknown action.');
   }
   S.rev++;
@@ -617,7 +645,7 @@ function badgeTest(id) {
     case 'breaker': return L.breaks.length > 0;
     case 'jar': return L.jarDraws >= 5;
     case 'ai': return Object.keys(L.aiDone).length > 0;
-    case 'villain': return !!S.villain;
+    case 'villain': return opps().length ? !!L.seen.oppFile : !!S.villain;
     case 'journal': return Object.keys(L.journal[ME] || {}).length > 0;
     case 'souvenir': return Object.keys(S.souvenirs).length >= 3;
     case 'agreement': return ARTICLES.every(function (a) { return (S.agreement[a[0]] || '').trim(); }) && !!(S.agreement.sigA && S.agreement.sigB);
@@ -685,11 +713,13 @@ function md(src) {
 function welcomeToday(id) { return L && L.welcome[id] === todayStr(); }
 function safe(c) {
   if (!c || !c.invitations || !c.invitations.length || welcomeToday(c.id)) return c;
-  var alts = c.invitations.map(function (i) { return i.nonphysical_alternative; }), x = {};
+  var alts = c.invitations.map(function (i) { return i.nonphysical_alternative; }).filter(function (a, i, all) { return a && all.indexOf(a) === i; }), x = {};
   for (var k in c) x[k] = c[k];
   x.title = (c.romance ? '♥ ' : '') + 'A moment of connection'; x.steps = alts; x.dual_role = false; x.roles = [];
   x.guidance = 'Choose what feels welcome today. This version is complete in itself.'; x.example = '';
   x.small_version = alts[0]; x.adapted = true; x.small_or_free_option = alts[0]; x.questions = []; x.prompt = '';
+  ['tagline', 'intro', 'before_you_begin', 'style_prompt', 'revision_prompt', 'sharing_guidance', 'reflection', 'next_step'].forEach(function (k) { x[k] = ''; });
+  ['materials', 'session_labels', 'question_sections', 'tool_steps', 'source_urls'].forEach(function (k) { x[k] = []; });
   return x;
 }
 function welcomeCheck(id) {
@@ -700,19 +730,40 @@ function welcomeCheck(id) {
     '<div class="row" style="margin-top:18px"><button class="btn btn-sage" id="wGo">Open the original</button><button class="btn btn-line" data-close>Keep the alternative</button></div>',
     function (sh) { $('#wGo', sh).onclick = function () { if (!$('#wA', sh).checked || !$('#wB', sh).checked) { toast('Both of you need to say yes. The alternative stays — and that’s a complete choice.'); return; } L.welcome[id] = todayStr(); saveL(); closeModal(); render(); }; });
 }
+function arr(a) { return (Array.isArray(a) ? a : []).filter(Boolean); }
 function cardBody(c0) {
-  var c = safe(c0), h = '';
+  var c = safe(c0), h = '', rom = c0.romance, mins = arr(c.session_plan_minutes);
+  if (rom && rom.consent_reminder) h += '<div class="note consent" style="margin-top:0"><b>♥ Only if you both want it.</b> ' + inline(rom.consent_reminder) + '</div>';
+  if (c0.reward && c0.reward.catalog_unlock) h += '<p class="muted" style="margin-top:0">' + (unlocked(c0) ? '🔓 <b>Unlocked.</b> It stays in your catalog.' : '🔒 <b>' + unlockLabel(c0) + '</b> · you have ' + progress().daily + ' so far.') + (c0.reward.catalog_unlock_text ? ' ' + inline(c0.reward.catalog_unlock_text) : '') + '</p>';
+  if (c.tagline) h += '<p style="font-family:var(--serif);font-size:19px;margin-top:0">' + inline(c.tagline) + '</p>';
   if (c.deployment) h += '<p class="muted" style="margin-top:0">' + inline(c.deployment) + '</p>';
   if (c.intro) h += '<p>' + inline(c.intro) + '</p>';
+  h += oppChips(c0.opponent_ids);
+  if (c.before_you_begin) h += '<div class="note"><b>Before you begin.</b> ' + inline(c.before_you_begin) + '</div>';
+  if (arr(c.materials).length) h += '<p><b>You’ll need:</b> ' + arr(c.materials).map(inline).join(' · ') + '</p>';
+  if (arr(c.session_labels).length) h += '<h3 style="margin:18px 0 8px">The plan</h3><ol class="ol">' + arr(c.session_labels).map(function (s, i) { return '<li><b>' + inline(s) + '</b>' + (mins[i] ? ' · ' + mins[i] + ' min' : '') + '</li>'; }).join('') + '</ol>';
   if (c.steps && c.steps.length) h += '<ol class="ol" style="margin-top:14px">' + c.steps.map(function (s) { return '<li>' + inline(s) + '</li>'; }).join('') + '</ol>';
+  if (arr(c.tool_steps).length) h += '<h3 style="margin:18px 0 8px">Step by step</h3><ol class="ol">' + arr(c.tool_steps).map(function (s) { return '<li>' + inline(s) + '</li>'; }).join('') + '</ol>';
   if (c.guidance) h += '<div class="note">' + inline(c.guidance) + '</div>';
   if (c.example) h += '<p class="muted"><em>' + inline(c.example.replace(/^Example:\s*/, '')) + '</em></p>';
   if (c.small_or_free_option) h += '<p><b>Smaller option:</b> ' + inline(c.small_or_free_option) + '</p>';
-  if (c.questions && c.questions.length) h += '<h3 style="margin:18px 0 8px">The questions</h3><ol>' + c.questions.map(function (q) { return '<li style="margin-bottom:8px">' + inline(q) + '</li>'; }).join('') + '</ol><button class="btn btn-line btn-sm" data-copyq>Copy the questions</button>';
+  if (c.questions && c.questions.length) {
+    var li = function (q) { return '<li style="margin-bottom:8px">' + inline(q) + '</li>'; }, secs = arr(c.question_sections);
+    h += '<h3 style="margin:18px 0 8px">The questions</h3>' + (secs.length ? secs.map(function (s) { return '<h4 class="qsec">' + inline(s.title) + '</h4><ol start="' + (+s.start || 1) + '">' + c.questions.slice((+s.start || 1) - 1, +s.end || c.questions.length).map(li).join('') + '</ol>'; }).join('') : '<ol>' + c.questions.map(li).join('') + '</ol>') + '<button class="btn btn-line btn-sm" data-copyq>Copy the questions</button>';
+  }
   if (c.prompt) h += '<h3 style="margin:18px 0 8px">Prompt to copy</h3><textarea class="input" readonly style="min-height:140px">' + esc(c.prompt) + '</textarea><div class="ailinks"><button class="btn btn-line btn-sm" data-copy>Copy prompt</button><a class="btn btn-line btn-sm" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Open ChatGPT</a><a class="btn btn-line btn-sm" href="https://claude.ai/" target="_blank" rel="noopener noreferrer">Open Claude</a></div>';
+  if (c.style_prompt) h += '<h3 style="margin:18px 0 8px">Music style</h3><p class="muted" style="margin-top:0">For a recording: paste this into the Style box in Suno (or your music tool) and your finished lyrics into the Lyrics box.</p><textarea class="input" readonly style="min-height:90px">' + esc(c.style_prompt) + '</textarea><div class="ailinks"><button class="btn btn-line btn-sm" data-copystyle>Copy music style</button><a class="btn btn-line btn-sm" href="https://suno.com/" target="_blank" rel="noopener noreferrer">Open Suno</a></div>';
+  if (c.revision_prompt) h += '<h3 style="margin:18px 0 8px">Make it better</h3><p class="muted" style="margin-top:0">After the first draft, paste this in and fill in the brackets.</p><textarea class="input" readonly style="min-height:110px">' + esc(c.revision_prompt) + '</textarea><button class="btn btn-line btn-sm" data-copyrev>Copy revision prompt</button>';
+  var urls = arr(c.source_urls).filter(function (u) { return /^https:\/\//.test(u); });
+  if (urls.length) h += '<p class="muted" style="font-size:14px"><b>Help pages:</b> ' + urls.map(function (u, i) { var host = u.replace(/^https:\/\/(www\.)?([^\/]+).*$/, '$2'); return '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(host) + ' ' + (i + 1) + '</a>'; }).join(' · ') + '</p>';
   if (c.offline_option) h += '<p><b>No AI? Offline route:</b> ' + inline(c.offline_option) + '</p>';
+  if (c.sharing_guidance) h += '<div class="note"><b>Sharing it.</b> ' + inline(c.sharing_guidance) + '</div>';
+  if (c.reflection) h += '<p><b>Afterwards:</b> ' + inline(c.reflection) + '</p>';
+  if (c.next_step) h += '<p><b>Next step:</b> ' + inline(c.next_step) + '</p>';
+  if (c.team_victory) h += '<div class="victory">🏆 ' + inline(c.team_victory) + '</div>';
   if (c.reward && c.reward.funded_cap_minor && S.settings.budget !== 'free') h += '<p class="muted">Up to ' + money(c.reward.funded_cap_minor) + ' from your agreed budget, or the free version.</p>';
   if (c.adapted) h += '<div class="row" style="margin-top:14px"><button class="btn btn-line btn-sm" data-welcome="' + esc(c0.id) + '">Welcome check for the original</button></div>';
+  var nl = nickLink(c); if (nl) h += '<p style="margin:16px 0 0">' + nl + '</p>';
   return h;
 }
 function rawFill(s) { return String(s).replace(/\{A\}/g, nm('partner_a')).replace(/\{B\}/g, nm('partner_b')); }
@@ -722,7 +773,7 @@ function copyText(text, msg) {
 }
 function openCard(id, opts) {
   var c0 = cardById(id); if (!c0) return; var c = safe(c0); opts = opts || {};
-  modal(sheetHead(KIND[c.kind] || 'Card', fill(c.title)) + cardBody(c0) +
+  modal(sheetHead(KIND[c.kind] || 'Card', tname(c)) + cardBody(c0) +
     (c.kind === 'repair' ? '<div class="row" style="margin-top:18px"><button class="btn btn-sage" data-used>We used this</button>' + (/breaker/i.test(c.title) ? '<button class="btn btn-line" data-breaker>Open the Pattern Breaker</button>' : '') + '</div>' : '') +
     (c.kind === 'bonus' && c.prompt ? '<button class="btn btn-sage btn-block" style="margin-top:18px" data-aidone>We did this one</button>' : '') +
     (opts.claimDay ? '<button class="btn btn-sage btn-block" style="margin-top:18px" data-claim>Choose this reward for Mission ' + opts.claimDay + '</button>' : ''),
@@ -731,6 +782,8 @@ function openCard(id, opts) {
       var br = $('[data-breaker]', sh); if (br) br.onclick = breaker;
       var w = $('[data-welcome]', sh); if (w) w.onclick = function () { welcomeCheck(w.getAttribute('data-welcome')); };
       var cp = $('[data-copy]', sh); if (cp) cp.onclick = function () { copyText(c.prompt, 'Prompt copied — paste it into your AI tool.'); };
+      var cs = $('[data-copystyle]', sh); if (cs) cs.onclick = function () { copyText(c.style_prompt, 'Music style copied — paste it into the Style box.'); };
+      var cr = $('[data-copyrev]', sh); if (cr) cr.onclick = function () { copyText(c.revision_prompt, 'Revision prompt copied.'); };
       var cq = $('[data-copyq]', sh); if (cq) cq.onclick = function () { copyText(c.questions.map(function (q, i) { return (i + 1) + '. ' + rawFill(q); }).join('\n'), 'Questions copied.'); };
       var ad = $('[data-aidone]', sh); if (ad) ad.onclick = function () { L.aiDone[id] = todayStr(); saveL(); closeModal(); celebrate('Bonus mission complete!'); changed(); };
       var cl = $('[data-claim]', sh); if (cl) cl.onclick = function () { closeModal(); act({ type: 'claim', day: opts.claimDay, cardId: id }).then(function (ok) { if (ok) celebrate('Reward earned: ' + fill(c.title)); }); };
@@ -760,6 +813,8 @@ document.addEventListener('click', function (e) {
   var g = e.target.closest('[data-go]'); if (g) { e.preventDefault(); if (!S || !committed()) return; go(g.getAttribute('data-go'), g.getAttribute('data-sub'), +g.getAttribute('data-gday') || null); return; }
   var c = e.target.closest('[data-card]'); if (c) { openCard(c.getAttribute('data-card')); return; }
   var ai = e.target.closest('[data-ai]'); if (ai) { aiMission(ai.getAttribute('data-ai')); return; }
+  var op = e.target.closest('[data-opp]'); if (op) { oppSheet(op.getAttribute('data-opp')); return; }
+  var nk = e.target.closest('[data-nick]'); if (nk) { nickTool(nk.getAttribute('data-nick')); return; }
   var d = e.target.closest('[data-day]'); if (d) openDay(+d.getAttribute('data-day'));
 });
 function openDay(day) {
@@ -819,7 +874,7 @@ function vError() {
 }
 function aError() {
   $('#retry').onclick = function () { location.reload(); };
-  $('#forget').onclick = function () { try { LS.removeItem('oim-mission-key'); } catch (e) {} location.href = 'game.html'; };
+  $('#forget').onclick = function () { try { LS.removeItem(NS + 'oim-mission-key'); } catch (e) {} location.href = 'game.html'; };
 }
 
 /* ===== SETUP: Day 1 + my commitments, each on their own phone ===== */
@@ -886,7 +941,7 @@ function statusBar(day) { var s = statusOf(day); return '<div class="statusbar '
 function nextButton(fromDay) {
   if (fromDay >= 90) return '<div class="panel" style="text-align:center"><div style="font-size:44px">🏆</div><h2>All 90 missions complete.</h2><p class="lead">Look back over your scorecard, souvenirs and Agreement — then celebrate.</p></div>';
   var ns = safe(mission(fromDay + 1));
-  return '<button class="next" data-gday="' + (fromDay + 1) + '" data-go="mission"><div><div class="k">Next mission unlocked · Mission ' + (fromDay + 1) + '</div><b>' + fill(ns.title) + '</b><span>' + fill(ns.purpose || '') + '</span></div><span class="arr">→</span></button>';
+  return '<button class="next" data-gday="' + (fromDay + 1) + '" data-go="mission"><div><div class="k">Next mission unlocked · Mission ' + (fromDay + 1) + '</div><b>' + tname(ns) + '</b><span>' + fill(ns.purpose || '') + '</span></div><span class="arr">→</span></button>';
 }
 
 /* ===== HQ ===== */
@@ -898,13 +953,14 @@ function vHQ() {
   else if (d.finished) h += '<div class="sec">' + nextButton(90) + '</div>';
   else {
     var m = safe(mission(d.day)), st = statusOf(d.day);
-    h += '<div class="paper today" style="margin-top:18px"><span class="stamp">TOP SECRET</span><div class="kicker">Your current mission · Mission ' + d.day + ' of 90</div><h2>' + fill(m.title) + '</h2><p class="muted" style="margin:0 0 14px">' + fill(m.purpose || '') + '</p>' +
+    h += '<div class="paper today" style="margin-top:18px"><span class="stamp">TOP SECRET</span><div class="kicker">Your current mission · Mission ' + d.day + ' of 90</div><h2>' + tname(m) + '</h2><p class="muted" style="margin:0 0 14px">' + fill(m.purpose || '') + '</p>' +
       '<div class="row"><span class="status-pill ' + (st.cls === 'new' ? '' : 'ok') + '">' + st.ico + ' ' + esc(st.t) + '</span></div>' +
       '<div class="row" style="margin-top:16px"><button class="btn btn-ink" data-go="mission">' + (S.accepted[d.day] ? 'Open mission' : 'Open the briefing') + '</button>' + (S.accepted[d.day] || S.offDuty.indexOf(d.day) >= 0 ? '<button class="btn btn-line" data-go="tonight">Report back</button>' : '') + '</div></div>';
   }
   if (p.pending.length) h += '<button class="panel" data-go="tonight" style="margin-top:12px;width:100%;text-align:left;display:flex;gap:12px;align-items:center;color:inherit"><span style="font-size:28px">🎁</span><span><b>' + p.pending.length + ' reward' + (p.pending.length > 1 ? 's' : '') + ' waiting</b><br><span class="muted">You earned it. Choose it on the Report page.</span></span></button>';
   h += '<div class="sec">' + scorecard() + '</div>';
-  h += '<div class="sec"><div class="opp" style="display:flex;gap:12px;align-items:center"><span style="font-size:30px">🦹</span><div style="flex:1"><span class="kicker">The real opponent</span><b>' + esc(S.villain || 'The Pattern') + '</b><p>Never each other — always the loop. ' + (S.villain ? '' : 'Name it on Mission 29.') + '</p></div><button class="btn btn-ghost btn-sm" id="nameVillain">' + (S.villain ? 'Rename' : 'Name it') + '</button></div></div>';
+  if (opps().length) h += '<div class="sec"><div class="opp" style="display:flex;gap:12px;align-items:center"><span style="font-size:30px">🦹</span><div style="flex:1"><span class="kicker">The real opponents</span><b>' + opps().map(function (o) { return esc(o.name); }).join(' · ') + '</b><p>Never each other — always the pattern.</p></div><button class="btn btn-ghost btn-sm" data-opp="">Opponent file</button></div></div>';
+  else h += '<div class="sec"><div class="opp" style="display:flex;gap:12px;align-items:center"><span style="font-size:30px">🦹</span><div style="flex:1"><span class="kicker">The real opponent</span><b>' + esc(S.villain || 'The Pattern') + '</b><p>Never each other — always the loop. ' + (S.villain ? '' : 'Name it on Mission 29.') + '</p></div><button class="btn btn-ghost btn-sm" id="nameVillain">' + (S.villain ? 'Rename' : 'Name it') + '</button></div></div>';
   var nb = BADGES.filter(function (b) { return !L.badges[b[0]]; })[0];
   h += '<div class="sec"><div class="sec-h"><h3>Rank · ' + esc(r.name) + '</h3><button class="linkbtn" data-go="dossier" data-sub="badges">' + Object.keys(L.badges).length + ' of ' + BADGES.length + ' badges</button></div>' +
     (nb ? '<div class="panel row" style="flex-wrap:nowrap"><span class="badge-ico">' + nb[1] + '</span><div><b>Next badge: ' + esc(nb[2]) + '</b><div class="muted" style="font-size:14px">' + esc(nb[3]) + (r.next ? ' · ' + (r.next[0] - p.recorded) + ' more mission' + (r.next[0] - p.recorded === 1 ? '' : 's') + ' to ' + r.next[1] : '') + '</div></div></div>' : '<div class="panel">Every badge earned. Legendary.</div>') + '</div>';
@@ -946,7 +1002,8 @@ function rolesHTML(m) {
 function toolCTA(m) {
   var map = { breaker: ['Open the Pattern Breaker', 'data-tool="breaker"'], agreement: ['Open our Agreement', 'data-go="dossier" data-sub="agreement"'], villain: [S.villain ? 'Villain: ' + S.villain + ' (rename)' : 'Name our villain', 'data-tool="villain"'],
     codename: [S.team ? 'Codename: ' + S.team + ' (change)' : 'Save our codename', 'data-tool="codename"'], houdini: ['Take the Houdini Lens Assessment', 'data-tool="houdini"'] };
-  var x = m.tool && map[m.tool]; return x ? '<button class="btn btn-sage btn-sm" ' + x[1] + '>' + esc(x[0]) + '</button>' : '';
+  var t = m.tool || (G.team && G.team.naming_mission_id && G.team.naming_mission_id === m.id ? 'codename' : '');
+  var x = t && map[t]; return x ? '<button class="btn btn-sage btn-sm" ' + x[1] + '>' + esc(x[0]) + '</button>' : '';
 }
 function vMission() {
   var d = dayInfo(), h = backBar();
@@ -959,10 +1016,10 @@ function vMission() {
   if (day > d.day) return h + '<div class="paper"><div class="kicker">Mission ' + day + '</div><h2 style="margin:6px 0">Still classified.</h2><p class="muted">Each mission unlocks when the one before it is graded.</p></div>';
   var m0 = mission(day), m = safe(m0), g = S.grades[day], a = S.accepted[day], off = S.offDuty.indexOf(day) >= 0, isCur = !d.finished && day === d.day;
   var small = !!(a && a.small);
-  h += '<div class="chips" style="margin-bottom:14px"><span class="chip">Mission ' + day + ' of 90</span><span class="chip">' + esc(actOf(day).join(' · ')) + '</span>' + (m.primary_type ? '<span class="chip sage">' + esc(m.primary_type) + '</span>' : '') + (m.dual_role ? '<span class="chip">Role mission</span>' : '') + '</div>';
+  h += '<div class="chips" style="margin-bottom:14px"><span class="chip">Mission ' + day + ' of 90</span><span class="chip">' + esc(actOf(day).join(' · ')) + '</span>' + (m.primary_type ? '<span class="chip sage">' + esc(m.primary_type) + '</span>' : '') + (m.dual_role ? '<span class="chip">Role mission</span>' : '') + (m0.opponent_ids || []).map(oppById).filter(Boolean).map(function (o) { return '<button class="chip" data-opp="' + esc(o.id) + '">vs ' + esc(o.name) + '</button>'; }).join('') + '</div>';
   h += statusBar(day);
   if (isCur && !a && !g && !off) {
-    return h + '<div class="envelope"><span class="classified">CLASSIFIED</span><div class="kicker">Mission ' + esc(m.id || day) + '</div><h1>' + fill(m.title) + '</h1><p class="brief">' + fill(m.briefing || '') + '</p>' +
+    return h + '<div class="envelope"><span class="classified">CLASSIFIED</span><div class="kicker">Mission ' + esc(m.id || day) + '</div><h1>' + tname(m) + '</h1><p class="brief">' + fill(m.briefing || '') + '</p>' +
       '<p class="muted" style="font-size:14px;margin-top:-6px">About ' + ((m.timing && m.timing.total_minutes) || 15) + ' minutes · ' + esc(m.materials || 'No purchase required') + '</p>' +
       (m.adapted ? '<p class="muted" style="font-size:14px">This mission is showing its complete welcome-first version.</p>' : '') +
       '<div class="row" style="margin-top:22px"><button class="btn btn-ink fuse" id="acceptM">Accept the mission</button><button class="btn btn-line" id="acceptS">Accept the small version</button></div>' +
@@ -974,7 +1031,7 @@ function vMission() {
   h += '<div class="paper reveal">' + (g ? '<span class="donestamp">COMPLETE · ' + g.grade + '</span>' : '') +
     '<div class="row" style="justify-content:space-between;align-items:flex-start"><div class="kicker">Mission ' + esc(m.id || day) + (g ? ' · locked' : a ? ' · accepted' : '') + '</div>' +
     (isCur && a && !g ? '<div class="toggle-ver" role="group" aria-label="Version"><button aria-pressed="' + !small + '" data-ver="full">Full</button><button aria-pressed="' + small + '" data-ver="small">Small</button></div>' : '') + '</div>' +
-    '<h1 style="color:var(--ink);font-size:clamp(26px,6vw,36px);margin:10px 0 8px;' + (g ? 'padding-right:110px' : '') + '">' + fill(m.title) + '</h1><p class="brief" style="font-size:17px;margin-bottom:18px">' + fill(m.briefing || '') + '</p>';
+    '<h1 style="color:var(--ink);font-size:clamp(26px,6vw,36px);margin:10px 0 8px;' + (g ? 'padding-right:110px' : '') + '">' + tname(m) + '</h1><p class="brief" style="font-size:17px;margin-bottom:18px">' + fill(m.briefing || '') + '</p>';
   if (small) h += '<div class="note" style="border-color:var(--gold)"><b>Small version:</b> ' + inline(m.small_version) + '</div>';
   else {
     if (m.dual_role && m.roles && m.roles.length) h += rolesHTML(m);
@@ -983,8 +1040,10 @@ function vMission() {
     if (m.example) h += '<p class="muted"><em>' + inline(m.example.replace(/^Example:\s*/, '')) + '</em></p>';
     if (m.completion) h += '<p style="margin-bottom:0"><b>Mission complete when:</b> ' + inline(m.completion) + '</p>';
   }
-  var tc = toolCTA(m0), sc = (m.support_card_ids || []).map(function (id) { var c = cardById(id); return c ? '<button class="btn btn-line btn-sm" data-card="' + esc(id) + '">' + fill(safe(c).title) + '</button>' : ''; }).join('');
+  if (m.team_victory) h += '<div class="victory">🏆 ' + inline(m.team_victory) + '</div>';
+  var tc = toolCTA(m0), sc = (m.support_card_ids || []).map(function (id) { var c = cardById(id); return c ? '<button class="btn btn-line btn-sm" data-card="' + esc(id) + '">' + tname(safe(c)) + '</button>' : ''; }).join('');
   if (tc || sc) h += '<div class="row" style="margin-top:16px">' + tc + sc + '</div>';
+  if (nickLink(m)) h += '<p style="margin:14px 0 0;font-size:14px">' + nickLink(m) + '</p>';
   if (m.adapted) h += '<div class="row" style="margin-top:12px"><button class="btn btn-line btn-sm" id="wc">Welcome check for the original</button></div>';
   h += '<div class="qbox"><div class="kicker">Tonight’s notice question</div><p>' + fill(m.notice_question || 'What helped us feel like a team today?') + '</p></div></div>';
   if (g) h += '<div class="sec">' + nextButton(day) + '</div>';
@@ -1017,6 +1076,25 @@ function tool(t) {
   }
 }
 
+function oppSheet(focus) {
+  var l = opps(); if (!l.length) return;
+  modal(sheetHead('Know your opponents', 'The opponent file') + '<p class="muted" style="margin-top:0">Each opponent is a pattern the two of you beat together — never each other.</p>' +
+    l.map(function (o) { return '<div class="oppfile' + (o.id === focus ? ' focus' : '') + '" id="opp-' + esc(o.id) + '"><h3>🦹 ' + esc(o.name) + '</h3>' + (o.pattern ? '<p>' + inline(o.pattern) + '</p>' : '') + (o.team_countermove ? '<p><b>Our counter-move:</b> ' + inline(o.team_countermove) + '</p>' : '') + (o.shared_cue ? '<p><b>Say it together:</b> “' + inline(o.shared_cue) + '”</p>' : '') + '</div>'; }).join(''),
+    function (sh) { var f = focus && [].filter.call(sh.querySelectorAll('.oppfile'), function (x) { return x.id === 'opp-' + focus; })[0]; if (f) setTimeout(function () { f.scrollIntoView({ block: 'center' }); }, 50); });
+  if (!L.seen.oppFile) { L.seen.oppFile = 1; saveL(); checkBadges(); }
+}
+function nickTool(id) {
+  var c = itemById(id); if (!c) return; var cur = (S.nicks || {})[id] || '';
+  modal(sheetHead('Nickname', fill(c.title)) +
+    '<p class="muted" style="margin-top:0">Give this activity an inside-joke name you both enjoy. The original title stays underneath it, and clearing the nickname brings the original back.</p>' +
+    '<input class="input" id="nv" maxlength="40" value="' + esc(cur) + '" placeholder="Our name for it"><label class="check" style="margin-top:12px"><input type="checkbox" id="nagree"><span>We both enjoy this nickname.</span></label>' +
+    '<div class="row" style="margin-top:16px"><button class="btn btn-sage" id="nsave">Save nickname</button>' + (cur ? '<button class="btn btn-line" id="nclear">Use the original title</button>' : '') + '</div>',
+    function (sh) {
+      $('#nsave', sh).onclick = function () { var v = $('#nv', sh).value.trim(); if (!v) { toast('Type a nickname first.'); return; } if (!$('#nagree', sh).checked) { toast('Choose a nickname you both enjoy, then tick the box.'); return; } closeModal(); act({ type: 'nick', id: id, value: v }, 'Nickname saved.'); };
+      var cl = $('#nclear', sh); if (cl) cl.onclick = function () { closeModal(); act({ type: 'nick', id: id, value: '' }, 'Original title is back.'); };
+    });
+}
+
 /* ===== REPORT BACK: grade locks the mission, unlocks the next ===== */
 function vTonight() {
   var d = dayInfo(), p = progress(), h = backBar() + '<div class="kicker">Report back</div><h1 style="margin-top:6px">Grade the day.</h1><p class="lead">Together, at the end of the day. Rate the <b>day</b>, never the person. Between two grades? Choose the higher one. A settled grade locks the mission and unlocks the next one.</p>';
@@ -1032,7 +1110,7 @@ function vTonight() {
     {
       if (!a && !off) h += '<div class="panel sec" style="font-size:14.5px"><b>Mission ' + day + ' wasn\u2019t marked as accepted.</b> <span class="muted">That\u2019s fine \u2014 reporting back still completes it and unlocks the next one. </span><button class="linkbtn" data-go="mission">Read Mission ' + day + '</button></div>';
       var pick = ui.gradePick, ready = pick && ui.agreed;
-      h += '<div class="paper sec"><div class="kicker">Mission ' + day + ' · ' + fill(m.title) + '</div><p style="font-family:var(--serif);font-size:19px;margin:8px 0 16px">' + fill(m.notice_question || 'What helped us feel like a team today?') + '</p>' +
+      h += '<div class="paper sec"><div class="kicker">Mission ' + day + ' · ' + tname(m) + '</div><p style="font-family:var(--serif);font-size:19px;margin:8px 0 16px">' + fill(m.notice_question || 'What helped us feel like a team today?') + '</p>' +
         '<div class="grades">' + GRADES.map(function (g) { return '<button class="gbtn" data-g="' + g[0] + '" aria-pressed="' + (pick === g[0]) + '"><b>' + g[0] + '</b><span>' + esc(g[1]) + '</span></button>'; }).join('') + '</div>' +
         '<label class="check" style="margin-top:16px"><input type="checkbox" id="agree"' + (ui.agreed ? ' checked' : '') + '><span><b>We’re choosing this grade together.</b> <span class="help" style="display:block;margin:2px 0 0">Once settled, Mission ' + day + ' locks and can’t be changed. Nothing is ever deducted.</span></span></label>' +
         '<button class="btn ' + (ready ? 'btn-ink' : 'btn-line') + ' btn-block" style="margin-top:16px" id="settle"' + (ready ? '' : ' disabled') + '>' + (!pick ? 'Choose a grade above' : !ui.agreed ? 'Tick “We’re choosing this together”' : 'Settle & lock Mission ' + day + ' as ' + pick) + '</button></div>';
@@ -1041,10 +1119,11 @@ function vTonight() {
   if (p.pending.length) {
     var pd = p.pending[0];
     h += '<div class="sec"><div class="sec-h"><h3>Choose your reward · Mission ' + pd + '</h3><span class="kicker">' + p.pending.length + ' waiting</span></div><p class="muted" style="margin-top:-4px">One shared reward for every A or B day. Tap to see it, then choose.</p><div class="cards">' +
-      rewardChoices().map(function (c) { var s = safe(c); return '<button class="gc" data-claimcard="' + esc(c.id) + '" data-claimday="' + pd + '"><span class="kicker">' + (c.reward && c.reward.funded_only ? 'Funded' : 'Free') + '</span><b>' + fill(s.title) + '</b><p>' + inline((s.steps || [])[0] || '') + '</p></button>'; }).join('') + '</div></div>';
+      rewardChoices().map(function (c) { var s = safe(c); return '<button class="gc" data-claimcard="' + esc(c.id) + '" data-claimday="' + pd + '"><span class="kicker">' + (c.reward && c.reward.funded_only ? 'Funded' : 'Free') + '</span><b>' + tname(s) + '</b><p>' + inline((s.steps || [])[0] || '') + '</p></button>'; }).join('') +
+      lockedRewards().map(function (c) { return '<button class="gc locked" data-card="' + esc(c.id) + '"><span class="kicker">🔒 ' + esc(unlockLabel(c)) + '</span><b>' + tname(safe(c)) + '</b><p>You have ' + p.daily + ' so far.</p></button>'; }).join('') + '</div></div>';
   }
   var earned = ledger().filter(function (g) { return !g.redeemedAt; });
-  if (earned.length) h += '<div class="sec"><div class="sec-h"><h3>Earned, not yet enjoyed</h3></div><div class="cards">' + earned.map(function (g) { var c = cardById(g.cardId); if (!c) return ''; return '<div class="gc earned"><span class="kicker">' + (KIND[c.kind] || '') + ' · ' + (g.day ? 'Mission ' + g.day : 'unlocked') + '</span><b>' + fill(safe(c).title) + '</b><div class="row" style="margin-top:auto"><button class="btn btn-sage btn-sm" data-redeem="' + esc(g.key) + '">We enjoyed it</button><button class="linkbtn" data-card="' + esc(c.id) + '">Details</button></div></div>'; }).join('') + '</div></div>';
+  if (earned.length) h += '<div class="sec"><div class="sec-h"><h3>Earned, not yet enjoyed</h3></div><div class="cards">' + earned.map(function (g) { var c = cardById(g.cardId); if (!c) return ''; return '<div class="gc earned"><span class="kicker">' + (KIND[c.kind] || '') + ' · ' + (g.day ? 'Mission ' + g.day : 'unlocked') + '</span><b>' + tname(safe(c)) + '</b><div class="row" style="margin-top:auto"><button class="btn btn-sage btn-sm" data-redeem="' + esc(g.key) + '">We enjoyed it</button><button class="linkbtn" data-card="' + esc(c.id) + '">Details</button></div></div>'; }).join('') + '</div></div>';
   h += '<div class="panel sec row" style="flex-wrap:nowrap"><span style="font-size:28px">📓</span><div style="flex:1"><b>Private journal</b><div class="muted" style="font-size:14px">Three quiet questions, just for you. Stays on this phone.</div></div><button class="btn btn-ghost btn-sm" data-go="dossier" data-sub="journal">Write</button></div>';
   return h;
 }
@@ -1069,13 +1148,13 @@ function aTonight() {
 function isAI(c) { return !!(c.ai_optional || /\bAI\b/.test(c.badge || '')); }
 function vKit() {
   var bonus = G.bonus_missions || [], aiBonus = bonus.filter(isAI), chBonus = bonus.filter(function (c) { return !isAI(c); });
-  var aiOwn = AI_MISSIONS.filter(function (a) { return !aiBonus.some(function (c) { return (c.title || '').toLowerCase() === a.title.toLowerCase(); }); });
+  var aiOwn = bonus.length ? [] : AI_MISSIONS.filter(function (a) { return !aiBonus.some(function (c) { return (c.title || '').toLowerCase() === a.title.toLowerCase(); }); });
   var jarKinds = [['jar_together', '🏺', 'Together jar', 'Something to do side by side'], ['jar_a', '🎁', nm('partner_a') + '’s jar', 'A move for ' + nm('partner_a')], ['jar_b', '🎁', nm('partner_b') + '’s jar', 'A move for ' + nm('partner_b')]].filter(function (j) { return cardsOf(j[0]).length; });
   if (!ui.sub) {
     var tiles = [
       ['repair', '🧰', 'Repairs', 'Always open. The Pattern Breaker and every repair card — never earned, never locked.', cardsOf('repair').length + ' repair cards'],
       ['challenge', '🎲', 'Challenge me', 'Draw from the jars or take on a bonus mission.', jarKinds.length + ' jars' + (chBonus.length ? ' · ' + chBonus.length + ' bonus mission' + (chBonus.length > 1 ? 's' : '') : '')],
-      ['ai', '🤖', 'AI missions', 'Creative activities with an AI tool of your choice — a movie trailer, a theme song, a team crest.', (aiOwn.length + aiBonus.length) + ' missions']
+      ['ai', '🤖', 'AI missions', aiBonus.length ? 'Optional creative projects, made for you two: ' + esc(aiBonus.map(function (c) { return c.title; }).join(' · ')) + '.' : 'Creative activities with an AI tool of your choice — a movie trailer, a theme song, a team crest.', (aiOwn.length + aiBonus.length) + ' missions']
     ];
     return backBar() + '<div class="kicker">Toolkit</div><h1 style="margin-top:6px">Choose your gear.</h1><p class="lead">Use anything here any day, alongside your mission.</p>' +
       '<div class="ktiles sec">' + tiles.map(function (t) { return '<button class="ktile" data-go="kit" data-sub="' + t[0] + '"><span class="e">' + t[1] + '</span><span><b>' + t[2] + '</b><span class="d">' + t[3] + '</span><em>' + esc(t[4]) + '</em></span><span class="arr">→</span></button>'; }).join('') + '</div>' +
@@ -1087,18 +1166,18 @@ function vKit() {
   if (ui.sub === 'repair') {
     h += '<div class="kicker">Toolkit · Repairs</div><h1 style="margin:6px 0 4px">Always open.</h1><p class="lead">Repair is never earned and never locked.</p>';
     h += '<div class="sec"><button class="paper" id="openBreaker" style="width:100%;text-align:left;border:0;display:flex;gap:16px;align-items:center"><span style="font-size:40px">🔗</span><span><span class="kicker">Signature tool</span><b style="display:block;font-family:var(--serif);font-size:22px;margin:2px 0">The Pattern Breaker</b><span class="muted">Event → Meaning → Feeling → Decision → Lens → Pattern. Walk a moment through it together and choose a new response.</span></span></button></div>';
-    h += '<div class="sec"><div class="sec-h"><h3>Repair cards</h3><span class="kicker">Used ' + L.repairsUsed + '×</span></div><div class="cards">' + cardsOf('repair').map(function (c) { var s = safe(c); return '<button class="gc" data-card="' + esc(c.id) + '"><span class="kicker">Repair</span><b>' + fill(s.title) + '</b><p>' + inline((s.small_or_free_option || (s.steps || [])[0] || '')) + '</p></button>'; }).join('') + '</div></div>';
+    h += '<div class="sec"><div class="sec-h"><h3>Repair cards</h3><span class="kicker">Used ' + L.repairsUsed + '×</span></div><div class="cards">' + cardsOf('repair').map(function (c) { var s = safe(c); return '<button class="gc" data-card="' + esc(c.id) + '"><span class="kicker">Repair</span><b>' + tname(s) + '</b><p>' + inline((s.small_or_free_option || (s.steps || [])[0] || '')) + '</p></button>'; }).join('') + '</div></div>';
     if (L.breaks.length) h += '<div class="sec"><div class="sec-h"><h3>Patterns broken</h3><span class="kicker">' + L.breaks.length + '</span></div>' + L.breaks.slice().reverse().slice(0, 5).map(function (b) { return '<div class="panel" style="margin-bottom:8px"><span class="kicker">' + esc(niceDate(b.date)) + (b.lens ? ' · ' + esc(b.lens) : '') + '</span><p style="margin:6px 0 0"><b>New response:</b> ' + esc(b.response) + '</p></div>'; }).join('') + '</div>';
   } else if (ui.sub === 'challenge') {
     h += '<div class="kicker">Toolkit · Challenge me</div><h1 style="margin:6px 0 4px">Feeling brave?</h1><p class="lead">Draw a card from a jar, or take on a bonus mission. Do it instead of, or as well as, today’s mission.</p>';
     h += '<div class="sec"><div class="sec-h"><h3>The jars</h3><span class="kicker">Drawn ' + L.jarDraws + '×</span></div><div class="grid3">' + jarKinds.map(function (j) { return '<button class="jar" data-jar="' + j[0] + '"><span class="ico">' + j[1] + '</span><b>' + esc(j[2]) + '</b><p>' + esc(j[3]) + '</p></button>'; }).join('') + '</div></div>';
-    if (chBonus.length) h += '<div class="sec"><div class="sec-h"><h3>Bonus missions</h3><span class="kicker">Optional · no points</span></div><div class="cards">' + chBonus.map(function (c) { var s = safe(c); return '<button class="gc" data-card="' + esc(c.id) + '"><span class="kicker">' + esc(c.badge || 'Bonus') + '</span><b>' + fill(s.title) + '</b><p>' + inline(s.tagline || s.deployment || '') + '</p></button>'; }).join('') + '</div></div>';
-    else h += '<div class="sec"><div class="sec-h"><h3>Bonus missions</h3></div><button class="gc" data-go="kit" data-sub="ai" style="width:100%"><span class="kicker">Big bonus</span><b>Try an AI mission</b><p>Six creative bonus missions are waiting in AI missions.</p></button></div>';
+    if (chBonus.length) h += '<div class="sec"><div class="sec-h"><h3>Bonus missions</h3><span class="kicker">Optional · no points</span></div><div class="cards">' + chBonus.map(function (c) { var s = safe(c); return '<button class="gc" data-card="' + esc(c.id) + '"><span class="kicker">' + esc(c.badge || 'Bonus') + '</span><b>' + tname(s) + '</b><p>' + inline(s.tagline || s.deployment || '') + '</p></button>'; }).join('') + '</div></div>';
+    else h += '<div class="sec"><div class="sec-h"><h3>Bonus missions</h3></div><button class="gc" data-go="kit" data-sub="ai" style="width:100%"><span class="kicker">Big bonus</span><b>Try an AI mission</b><p>' + (aiOwn.length + aiBonus.length) + ' creative bonus missions are waiting in AI missions.</p></button></div>';
   } else if (ui.sub === 'ai') {
-    h += '<div class="kicker">Toolkit · AI missions</div><h1 style="margin:6px 0 4px">Create something together.</h1><p class="lead">Answer a few questions together, and the game writes a ready-to-paste prompt for ChatGPT, Claude or any AI tool you like. Every mission has a no-AI version too.</p>' +
+    h += '<div class="kicker">Toolkit · AI missions</div><h1 style="margin:6px 0 4px">Create something together.</h1><p class="lead">' + (aiBonus.length && !aiOwn.length ? 'Each one has questions to answer together and a prompt to copy into ChatGPT, Claude or any AI tool you like. Every one has a no-AI version too.' : 'Answer a few questions together, and the game writes a ready-to-paste prompt for ChatGPT, Claude or any AI tool you like. Every mission has a no-AI version too.') + '</p>' +
       '<div class="panel sec" style="font-size:14px"><b>Privacy:</b> <span class="muted">Only put in details you’re both comfortable sharing with an AI company. This game doesn’t send your answers anywhere — you copy the prompt yourself.</span></div>';
     h += '<div class="cards sec">' + aiOwn.map(function (a) { return '<button class="gc' + (L.aiDone[a.id] ? ' earned' : '') + '" data-ai="' + a.id + '"><span class="kicker">' + a.icon + ' ' + a.minutes + ' min' + (L.aiDone[a.id] ? ' · done' : '') + '</span><b>' + esc(a.title) + '</b><p>' + esc(a.tagline) + '</p></button>'; }).join('') +
-      aiBonus.map(function (c) { var s = safe(c); return '<button class="gc' + (L.aiDone[c.id] ? ' earned' : '') + '" data-card="' + esc(c.id) + '"><span class="kicker">' + esc(c.badge || 'Bonus') + '</span><b>' + fill(s.title) + '</b><p>' + inline(s.tagline || s.deployment || '') + '</p></button>'; }).join('') + '</div>';
+      aiBonus.map(function (c) { var s = safe(c); return '<button class="gc' + (L.aiDone[c.id] ? ' earned' : '') + '" data-card="' + esc(c.id) + '"><span class="kicker">' + esc(c.badge || 'Bonus') + '</span><b>' + tname(s) + '</b><p>' + inline(s.tagline || s.deployment || '') + '</p></button>'; }).join('') + '</div>';
   }
   return h;
 }
@@ -1137,7 +1216,7 @@ function drawJar(kind, last) {
   var choices = pool.length > 1 ? pool.filter(function (c) { return c.id !== last; }) : pool, c0 = choices[Math.floor(Math.random() * choices.length)], c = safe(c0);
   L.jarDraws++; saveL();
   modal(sheetHead('Drawing from the jar', 'Your card') +
-    '<div class="flip" id="flip"><div class="flip-in"><div class="face front"><span class="one">1</span><div class="kicker" style="margin-top:14px">Tap to reveal</div></div><div class="face back"><span class="kicker">' + (KIND[c.kind] || 'Jar') + '</span><b>' + fill(c.title) + '</b><p style="margin:0;color:var(--body)">' + inline((c.steps || [])[0] || '') + '</p></div></div></div>' +
+    '<div class="flip" id="flip"><div class="flip-in"><div class="face front"><span class="one">1</span><div class="kicker" style="margin-top:14px">Tap to reveal</div></div><div class="face back"><span class="kicker">' + (KIND[c.kind] || 'Jar') + '</span><b>' + tname(c) + '</b><p style="margin:0;color:var(--body)">' + inline((c.steps || [])[0] || '') + '</p></div></div></div>' +
     '<div id="jarMore" class="hidden">' + cardBody(c0) + '</div><div class="row" style="margin-top:12px"><button class="btn btn-sage" data-close>We’ll do it</button><button class="btn btn-line" id="redraw">Redraw</button></div>',
     function (sh) {
       var f = $('#flip', sh), rev = function () { f.classList.add('on'); setTimeout(function () { $('#jarMore', sh).classList.remove('hidden'); }, 500); };
@@ -1207,10 +1286,10 @@ function dRewards() {
   h += '<div class="sec"><div class="sec-h"><h3>Milestones &amp; finale</h3></div><div class="cards">' + once.map(function (c) {
     var has = got.some(function (g) { return g.cardId === c.id; }), th = c.kind === 'final' ? p.target : p.th[(c.reward.milestone_order || 1) - 1];
     var lbl = has ? 'Unlocked' : !p.target ? 'No target set' : th ? 'Unlocks at ' + th : 'Not used with this target';
-    return '<button class="gc ' + (has ? 'earned' : 'locked') + '" data-card="' + esc(c.id) + '"><span class="kicker">' + KIND[c.kind] + ' · ' + esc(lbl) + '</span><b>' + fill(safe(c).title) + '</b></button>';
+    return '<button class="gc ' + (has ? 'earned' : 'locked') + '" data-card="' + esc(c.id) + '"><span class="kicker">' + KIND[c.kind] + ' · ' + esc(lbl) + '</span><b>' + tname(safe(c)) + '</b></button>';
   }).join('') + '</div></div>';
-  h += '<div class="sec"><div class="sec-h"><h3>Daily reward catalog</h3></div><div class="cards">' + cardsOf('reward').map(function (c) { var s = safe(c); return '<button class="gc" data-card="' + esc(c.id) + '"><span class="kicker">' + (c.reward && c.reward.funded_only ? 'Funded' : 'Free') + '</span><b>' + fill(s.title) + '</b><p>' + inline((s.steps || [])[0] || '') + '</p></button>'; }).join('') + '</div></div>';
-  h += '<div class="sec"><div class="sec-h"><h3>Our ledger</h3><span class="kicker">' + got.length + ' earned</span></div>' + (got.length ? got.reverse().map(function (g) { var c = cardById(g.cardId); return '<div class="panel row" style="margin-bottom:8px;flex-wrap:nowrap"><span style="font-size:22px">' + (g.redeemedAt ? '✅' : '🎁') + '</span><div style="flex:1"><b>' + (c ? fill(safe(c).title) : esc(g.cardId)) + '</b><div class="muted" style="font-size:13px">' + (g.day ? 'Mission ' + g.day : 'Milestone') + ' · ' + (g.redeemedAt ? 'enjoyed' : 'waiting to be enjoyed') + '</div></div></div>'; }).join('') : '<div class="empty">Your first A or B day earns your first reward.</div>') + '</div>';
+  h += '<div class="sec"><div class="sec-h"><h3>Daily reward catalog</h3></div><div class="cards">' + cardsOf('reward').map(function (c) { var s = safe(c), lk = !unlocked(c); return '<button class="gc' + (lk ? ' locked' : '') + '" data-card="' + esc(c.id) + '"><span class="kicker">' + (lk ? '🔒 ' + esc(unlockLabel(c)) + ' · ' : '') + (c.reward && c.reward.funded_only ? 'Funded' : 'Free') + '</span><b>' + tname(s) + '</b><p>' + inline((s.steps || [])[0] || '') + '</p></button>'; }).join('') + '</div></div>';
+  h += '<div class="sec"><div class="sec-h"><h3>Our ledger</h3><span class="kicker">' + got.length + ' earned</span></div>' + (got.length ? got.reverse().map(function (g) { var c = cardById(g.cardId); return '<div class="panel row" style="margin-bottom:8px;flex-wrap:nowrap"><span style="font-size:22px">' + (g.redeemedAt ? '✅' : '🎁') + '</span><div style="flex:1"><b>' + (c ? tname(safe(c)) : esc(g.cardId)) + '</b><div class="muted" style="font-size:13px">' + (g.day ? 'Mission ' + g.day : 'Milestone') + ' · ' + (g.redeemedAt ? 'enjoyed' : 'waiting to be enjoyed') + '</div></div></div>'; }).join('') : '<div class="empty">Your first A or B day earns your first reward.</div>') + '</div>';
   return h;
 }
 function dBadges() {
@@ -1237,12 +1316,12 @@ function dJournal() {
 }
 function dSouvenirs() {
   var d = dayInfo();
-  return '<p class="muted">Optional keepsakes from special missions, shared between your phones. Photos stay in your camera roll — a caption here helps you find them later.</p>' + G.missions.filter(function (m) { return m.souvenir; }).map(function (m) { var s = S.souvenirs[m.id]; return '<div class="panel" style="margin-top:10px"><span class="kicker">Mission ' + m.day + ' · ' + fill(m.title) + '</span>' + (s ? '<p style="font-family:var(--serif);font-size:18px;margin:8px 0 0">“' + esc(s.text) + '”</p>' : '<p class="muted" style="margin:8px 0 0">' + (d.started && m.day <= d.day ? 'No souvenir saved. <button class="linkbtn" data-day="' + m.day + '">Add one</button>' : 'Unlocks with Mission ' + m.day + '.') + '</p>') + '</div>'; }).join('');
+  return '<p class="muted">Optional keepsakes from special missions, shared between your phones. Photos stay in your camera roll — a caption here helps you find them later.</p>' + G.missions.filter(function (m) { return m.souvenir; }).map(function (m) { var s = S.souvenirs[m.id]; return '<div class="panel" style="margin-top:10px"><span class="kicker">Mission ' + m.day + ' · ' + tname(m) + '</span>' + (s ? '<p style="font-family:var(--serif);font-size:18px;margin:8px 0 0">“' + esc(s.text) + '”</p>' : '<p class="muted" style="margin:8px 0 0">' + (d.started && m.day <= d.day ? 'No souvenir saved. <button class="linkbtn" data-day="' + m.day + '">Add one</button>' : 'Unlocks with Mission ' + m.day + '.') + '</p>') + '</div>'; }).join('');
 }
 function dGuide() { return '<div class="paper md">' + md((G.guide && G.guide.markdown) || BUILTIN.guide.markdown) + '</div>'; }
 function dSettings() {
   var h = '<div class="panel"><div class="kicker">Operation</div><h3 style="margin:4px 0 6px">' + esc(S.title || G.title) + '</h3><p class="muted" style="margin:0">' + esc(nm('partner_a')) + ' &amp; ' + esc(nm('partner_b')) + ' · Day 1 was ' + esc(niceDate(S.startDate)) + (S.settings.target ? ' · target ' + S.settings.target + ' ' + (S.settings.basis === 'A' ? 'A' : 'A+B') + ' days' : '') + '.</p>' +
-    '<div class="row" style="margin-top:14px"><button class="btn btn-ghost btn-sm" data-tool2="codename">Codename</button><button class="btn btn-ghost btn-sm" data-tool2="villain">Villain</button></div></div>';
+    '<div class="row" style="margin-top:14px"><button class="btn btn-ghost btn-sm" data-tool2="codename">Codename</button>' + (opps().length ? '<button class="btn btn-ghost btn-sm" data-opp="">Opponent file</button>' : '<button class="btn btn-ghost btn-sm" data-tool2="villain">Villain</button>') + '</div></div>';
   if (MODE === 'player') {
     h += '<div class="panel sec"><div class="kicker">Your personal link</div><p class="muted" style="margin:6px 0 12px">This link opens the game as <b>' + esc(nm(ME)) + '</b>. Don’t share it — ' + esc(nm(OTHER())) + ' has their own. Bookmark it or add it to your home screen.</p><button class="btn btn-ghost btn-sm" id="copyLink">Copy my link</button></div>';
     h += '<div class="panel sec"><div class="kicker">This phone</div><p class="muted" style="margin:6px 0 12px">Forgetting the link signs this phone out. Your game is safe on the server; your private journal stays on this phone.</p><button class="btn btn-ghost btn-sm" id="forget" style="border-color:var(--red);color:#e7a493">Forget my link on this phone</button></div>';
@@ -1268,7 +1347,7 @@ function aDossier() {
   if (ui.sub === 'settings') {
     $$('[data-tool2]').forEach(function (b) { b.onclick = function () { tool(b.getAttribute('data-tool2')); }; });
     if ($('#copyLink')) $('#copyLink').onclick = function () { copyText(new URL('game.html?k=' + KEY, location.href).href, 'Your link is copied.'); };
-    if ($('#forget')) $('#forget').onclick = function () { if (!confirm('Sign this phone out? You’ll need your personal link to open the game again.')) return; try { LS.removeItem('oim-mission-key'); } catch (e) {} location.href = 'game.html'; };
+    if ($('#forget')) $('#forget').onclick = function () { if (!confirm('Sign this phone out? You’ll need your personal link to open the game again.')) return; try { LS.removeItem(NS + 'oim-mission-key'); } catch (e) {} location.href = 'game.html'; };
   }
 }
 
@@ -1289,7 +1368,11 @@ function refresh() {
     changed();
   });
 }
+function adaptToGame() {
+  if (opps().length) BADGES.forEach(function (b) { if (b[0] === 'villain') { b[2] = 'Know Your Opponents'; b[3] = 'Open your opponent file.'; } });
+}
 function boot() {
+  if (NS) { var dv = document.createElement('div'); dv.textContent = 'TEST COPY · ' + NS.replace(/\//g, ' ').trim().toUpperCase(); dv.style.cssText = 'position:fixed;left:10px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:80;background:#b4553f;color:#fff;font:700 11px/1 system-ui,sans-serif;letter-spacing:.12em;padding:6px 10px;border-radius:999px;pointer-events:none;opacity:.92'; document.body.appendChild(dv); }
   if (MODE === 'landing') { render(); return; }
   if (MODE === 'test') {
     G = sJ(SS, 'oim-test-game') || BUILTIN;
@@ -1298,19 +1381,19 @@ function boot() {
     var sig = (G.game_id || 'builtin') + '|' + names.partner_a + '|' + names.partner_b;
     var saved = sJ(SS, 'oim-test-state');
     if (saved && saved.sig === sig) setState(saved); else { setState(blankS(names, st)); S.sig = sig; saveTest(); SS.removeItem('oim-test-local'); }
-    L = sJ(SS, 'oim-test-local') || freshL(); fixL();
+    L = sJ(SS, 'oim-test-local') || freshL(); fixL(); adaptToGame();
     ME = L.viewAs || 'partner_a';
     ui.view = committed() ? 'hq' : 'setup'; render(); return;
   }
   render();
-  var cg = sJ(LS, 'oim-mc-game');
+  var cg = sJ(LS, NS + 'oim-mc-game');
   post({ action: 'load', k: KEY, have: cg ? cg.hash : '' }).then(function (r) {
     if (!r.ok) { ui.view = 'error'; ui.err = r.error; render(); return; }
     ME = r.slot; setState(r.state);
     if (S.gameRef === 'builtin') G = BUILTIN;
-    else if (r.game) { G = r.game; sSet(LS, 'oim-mc-game', JSON.stringify({ hash: S.gameHash, game: r.game })); }
+    else if (r.game) { G = r.game; sSet(LS, NS + 'oim-mc-game', JSON.stringify({ hash: S.gameHash, game: r.game })); }
     else if (cg && cg.game) G = cg.game;
-    loadL();
+    loadL(); adaptToGame();
     ui.view = committed() ? 'hq' : 'setup';
     checkOnce(); checkBadges(); render();
     setInterval(refresh, 20000);

@@ -1,0 +1,10 @@
+# Dev 2: a test copy of the game. Keep it out of search results.
+<IfModule mod_headers.c>
+Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# Fonts and the other site pages live on the main site
+RewriteRule ^assets/(.*)$ /assets/$1 [R=302,L]
+RewriteRule ^(houdini|questionnaire|links|privacy|terms|refund-policy)\.html$ /$1.html [R=302,L]
+</IfModule>

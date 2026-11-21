@@ -32,8 +32,19 @@ const GRADES = ['A', 'B', 'C', 'D', 'F', 'U'];
 const BUILTIN_TITLE = 'Mission Impossible: Operation ONE';
 
 /* ---------- storage ---------- */
+/** Where the data lives: the folder above public_html. A test copy of the site in a
+    subfolder (like /dev2) names its own folder in data-folder.php, so its test
+    couples stay outside public_html and never mix with the live ones. */
+function data_root() {
+    static $root = null;
+    if ($root === null) {
+        $root = dirname(__DIR__);
+        if (is_file(__DIR__ . '/data-folder.php')) { $r = include __DIR__ . '/data-folder.php'; if (is_string($r) && $r !== '') $root = rtrim($r, '/'); }
+    }
+    return $root;
+}
 function md_dir($sub = '') {
-    $d = dirname(__DIR__) . '/mission-data' . ($sub !== '' ? '/' . $sub : '');
+    $d = data_root() . '/mission-data' . ($sub !== '' ? '/' . $sub : '');
     if (!is_dir($d)) @mkdir($d, 0750, true);
     return $d;
 }
@@ -95,7 +106,7 @@ function day_info($c) {
 function blank_state() {
     return ['startDate' => null, 'startBy' => null, 'commits' => ['partner_a' => null, 'partner_b' => null],
         'grades' => [], 'accepted' => [], 'offDuty' => [], 'claims' => [], 'redeemed' => [], 'souvenirs' => [],
-        'agreement' => [], 'pauses' => [], 'team' => '', 'villain' => '', 'rev' => 0];
+        'agreement' => [], 'pauses' => [], 'nicks' => [], 'team' => '', 'villain' => '', 'rev' => 0];
 }
 function obj($a) { return (is_array($a) && count($a)) ? $a : new stdClass(); }
 function public_state($c) {
@@ -104,7 +115,7 @@ function public_state($c) {
         'startDate' => $c['startDate'], 'startBy' => $c['startBy'], 'commits' => $c['commits'],
         'grades' => obj($c['grades']), 'accepted' => obj($c['accepted']), 'offDuty' => array_values($c['offDuty']),
         'claims' => obj($c['claims']), 'redeemed' => obj($c['redeemed']), 'souvenirs' => obj($c['souvenirs']),
-        'agreement' => obj($c['agreement']), 'pauses' => $c['pauses'], 'team' => $c['team'], 'villain' => $c['villain'],
+        'agreement' => obj($c['agreement']), 'pauses' => $c['pauses'], 'nicks' => obj($c['nicks'] ?? []), 'team' => $c['team'], 'villain' => $c['villain'],
         'rev' => $c['rev'], 'today' => day_info($c)['today']];
 }
 function clip($s, $n) { $s = trim((string)$s); return function_exists('mb_substr') ? mb_substr($s, 0, $n) : substr($s, 0, $n); }
@@ -195,6 +206,15 @@ function apply_op(&$c, $slot, $op) {
             break;
         case 'team':    $c['team'] = clip($op['value'] ?? '', 60); break;
         case 'villain': $c['villain'] = clip($op['value'] ?? '', 60); break;
+        case 'nick':
+            // The couple's own name for an activity. The game keeps showing the original title under it.
+            $id = (string)($op['id'] ?? '');
+            need(preg_match('/^[A-Za-z0-9_-]{1,40}$/', $id), 'Choose an activity.');
+            if (!isset($c['nicks']) || !is_array($c['nicks'])) $c['nicks'] = [];
+            $v = clip($op['value'] ?? '', 40);
+            if ($v === '') unset($c['nicks'][$id]);
+            else { need(isset($c['nicks'][$id]) || count($c['nicks']) < 300, 'That\'s a lot of nicknames. Clear one first.'); $c['nicks'][$id] = $v; }
+            break;
         default:
             throw new RuntimeException('Unknown action.');
     }
@@ -213,7 +233,8 @@ function player_auth($k) {
 /* ---------- operator ---------- */
 function operator_auth($pw) {
     $PASSWORD = '';
-    if (is_file(__DIR__ . '/team-password.php')) { require __DIR__ . '/team-password.php'; $PASSWORD = isset($TEAM_PASSWORD) ? (string)$TEAM_PASSWORD : ''; }
+    // A test copy in a subfolder (like /dev2) uses the main site's team password.
+    foreach ([__DIR__, dirname(__DIR__)] as $dir) if (is_file($dir . '/team-password.php')) { require $dir . '/team-password.php'; $PASSWORD = isset($TEAM_PASSWORD) ? (string)$TEAM_PASSWORD : ''; break; }
     if ($PASSWORD === '' || $PASSWORD === 'CHANGE_THIS_PASSWORD') fail('Operator login is not set up: upload team-password.php.', 503);
     if (!is_string($pw) || $pw === '' || !hash_equals($PASSWORD, $pw)) { usleep(600000); fail('That password isn\'t right.', 403); }
 }

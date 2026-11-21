@@ -87,6 +87,8 @@ var couples = [], surveys = [], mailReady = null, newGame = null, prefill = null
 function $(s) { return document.querySelector(s); }
 function $$(s) { return [].slice.call(document.querySelectorAll(s)); }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+/* A copy of the site in a subfolder (like /dev2/) is for testing: say so on every screen. */
+(function () { var d = location.pathname.replace(/[^\/]*$/, ''); if (d === '/') return; var b = document.createElement('div'); b.textContent = 'TEST COPY (' + d.replace(/\//g, ' ').trim() + ') · couples made here are separate from the live site'; b.style.cssText = 'background:#b4553f;color:#fff;font:700 13px/1.4 system-ui,sans-serif;text-align:center;padding:8px 12px'; document.body.insertBefore(b, document.body.firstChild); })();
 var tt; function toast(m) { var t = $('#toast'); t.innerHTML = '<div></div>'; t.firstChild.textContent = m; clearTimeout(tt); tt = setTimeout(function () { t.innerHTML = ''; }, 3400); }
 function api(body) {
   body.pw = PW;
